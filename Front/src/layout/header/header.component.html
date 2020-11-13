@@ -80,12 +80,14 @@
                     Agendamentos do Dia
                 </a>
             </li>
-            <!-- <li class="opt-menu-item">
-                <a class="opt-menu-link" [routerLink]="['/enviar-mensagem']" routerLinkActive="opt-active-link-page">
-                    <mat-icon>message</mat-icon>
-                    Enviar Mensagem
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="calls()" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>phone</mat-icon>
+                    <span [matBadge]="callsSize" [hidden]="callsSize === 0">Ligações em Espera</span>
+                    <span [hidden]="callsSize !== 0">Ligações em Espera</span>                    
                 </a>
-            </li> -->
+            </li>
             <li class="opt-menu-item">
                 <a class="opt-menu-link" [routerLink]="['/painel-de-agendamentos']"
                     routerLinkActive="opt-active-link-page">
@@ -512,6 +514,14 @@
                     (click)="closeMenu()">
                     <mat-icon>event_available</mat-icon>
                     Agendamentos do Dia
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="calls()" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>phone</mat-icon>
+                    <span [matBadge]="callsSize" [hidden]="callsSize === 0">Ligações em Espera</span>
+                    <span [hidden]="callsSize !== 0">Ligações em Espera</span>                    
                 </a>
             </li>
             <!-- <li class="opt-menu-item">

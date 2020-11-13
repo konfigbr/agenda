@@ -62,7 +62,11 @@
                             </p>
                             <p  class="opt-current-scheduling-item">
                                 <span class="opt-item-title">Contato do(a) assistente: </span>
-                                <span class="opt-item-value">{{ currentScheduling?.assistente?.telefone }}</span>
+                                <span class="opt-item-value">{{
+                                    (currentScheduling?.assistente?.telefone.length == 11 ? 
+                                        (currentScheduling?.assistente?.telefone | mask: '+55 (00) 00000-0000' ) : 
+                                        (currentScheduling?.assistente?.telefone | mask: '(00) 00000-0000' ) )
+                                }}</span>
                             </p>
                         </div>
                         <div class="opt-row-panel">  
@@ -72,7 +76,11 @@
                             </p>
                             <p  class="opt-current-scheduling-item">
                                 <span class="opt-item-title">Contato do(a) profissional: </span>
-                                <span class="opt-item-value">{{ currentScheduling?.user?.telefone }}</span>
+                                <span class="opt-item-value">{{ 
+                                    currentScheduling?.user?.telefone.length === 11 ? 
+                                        (currentScheduling?.user?.telefone | mask: '+55 (00) 00000-0000' ) : 
+                                        (currentScheduling?.user?.telefone | mask: '(00) 00000-0000' ) 
+                                }}</span>
                             </p>
                         </div>
 

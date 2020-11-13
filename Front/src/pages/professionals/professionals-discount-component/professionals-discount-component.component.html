@@ -22,7 +22,9 @@
             <div class="opt-form-control" >
                 <mat-form-field appearance="outline">
                     <mat-label>Valor do desconto</mat-label>
-                    <input [(ngModel)]="discountRegister.percentual" type="number" min="0" max="100" matInput formControlName="value"
+                    <input 
+                        [mask]="'00%'" [specialCharacters]="['%']" [dropSpecialCharacters]="true"
+                        [(ngModel)]="discountRegister.percentual" type="text" matInput formControlName="value"
                         placeholder="Valor Cobrável">
                     <mat-error>
                         O Valor do desconto é <strong>obrigatório</strong>!

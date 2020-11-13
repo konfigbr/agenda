@@ -38,7 +38,7 @@ export class SpecialtyFormComponent implements OnInit {
   ) {
     this.specialtyFormGroup = this.formBuilder.group({
       name: new FormControl('', [Validators.required]),
-      prices: new FormControl('', [Validators.nullValidator]),
+      prices: new FormControl('', [Validators.required,Validators.nullValidator]),
       aceite: new FormControl( [Validators.required]),
       showInProfessionalRegister: new FormControl('', [Validators.nullValidator])
     })

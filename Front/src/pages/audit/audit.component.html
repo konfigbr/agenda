@@ -23,7 +23,7 @@
 
             <ng-container matColumnDef="nome">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
-                <td mat-cell *matCellDef="let element"> {{element?.user?.nome || '-'}} </td>
+                <td mat-cell *matCellDef="let element"> {{element?.userName || '-'}} </td>
             </ng-container>
             <ng-container matColumnDef="data">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header> Data </th>

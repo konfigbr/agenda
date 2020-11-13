@@ -363,13 +363,17 @@ export class ScheduleRoomByTheTeamComponent implements OnInit {
             }
           })
         }
-        actions.push({
-          // tslint:disable-next-line:max-line-length
-          label: `<span class="opt-gear-icon ${(scheduling.status === 'PENDENTE' || equipamentosPendentes > 0) ? 'opt-gear-icon-ajt' : ''}">⊕</span>`,
-          onClick: ({ event }: { event: CalendarEvent }): void => {
-            this.addEquipment(event)
-          }
-        })
+        let today = new Date().getTime()
+        let dataSchedule = new Date(scheduling.inicio).getTime()
+        if(dataSchedule > today){
+          actions.push({
+            // tslint:disable-next-line:max-line-length
+            label: `<span class="opt-gear-icon ${(scheduling.status === 'PENDENTE' || equipamentosPendentes > 0) ? 'opt-gear-icon-ajt' : ''}">⊕</span>`,
+            onClick: ({ event }: { event: CalendarEvent }): void => {
+              this.addEquipment(event)
+            }
+          })
+        }
       }
 
     }
@@ -599,8 +603,14 @@ export class ScheduleRoomByTheTeamComponent implements OnInit {
 
     if (this.authService.getAccessType() === 'ROLE_PROFISSIONAL') {
       this.isProfessional = true
-      this.getShedulings()
-      // this.clearCart()
+      this.clearCart()
+      this.dataSourceSale = new MatTableDataSource([])
+      this.dataTableDetails.next([])
+      this.refreshResumoCompra.next()
+      this.refresh.next(true);
+      this.idScheduling.next(undefined)
+      this.total = 0
+      this.getShedulings()      
     } else {
       this.clearCartAttendant()
     }

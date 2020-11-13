@@ -23,7 +23,8 @@ import Specialty from 'src/models/specialty.model';
 import { UtilsService } from 'src/services/utils.service';
 import { CepService } from 'src/services/cep.service';
 import EmpresaRegister from 'src/models/auth/empresa-register.model';
-
+import { HttpResponse } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   if (!control.parent || !control) {
@@ -49,6 +50,7 @@ export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl):
   styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent implements OnInit {
+  appVersion: String = environment.appVersion;
   userLogin: UserLogin = new UserLogin()
   usernameRecoverPassword$: Observable<string>
   isSubmitted: boolean = false;
@@ -123,9 +125,12 @@ export class AuthComponent implements OnInit {
       numero: new FormControl({ value: '', disabled: true }, [Validators.required]),
       profDocument: new FormControl('', [Validators.required]),
       orgao: new FormControl({ value: '', disabled: true }, [Validators.required]),
-      specialty: new FormControl({ disabled: true }, [Validators.required]),
+      specialty: new FormControl('', [Validators.required]),
       razaoSocial: new FormControl({ value: '', disabled: true }, [Validators.required]),
-      cnpj: new FormControl('', [Validators.required, Validators.minLength(11), this.cnpjValidator])
+      cnpj: new FormControl('', [Validators.required, Validators.minLength(11), this.cnpjValidator]),
+      ufProfessional: new FormControl('', [Validators.required]),
+      categoria: new FormControl(),
+      especialty: new FormControl('', [Validators.required])
     })
     this.changePasswordFormGroup = this.formBuilder.group({
       newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
@@ -133,20 +138,29 @@ export class AuthComponent implements OnInit {
     })
   }
 
+  goToResponsavelTecnico() {
+    console.log(this.empresa)
+  }
+
+  get isOdontologia() { return this.empresa.especialidade?.tipoAceite === "ODONTOLOGIA" }
+
+
+  especialidadeChange() {
+    this.verificarObgCategoria();
+  }
+
+  verificarObgCategoria() {
+    let control = this.formGroupEmpresaRegister.controls['categoria'];
+    if (this.isOdontologia)
+      control.setValidators([Validators.required]);
+
+    else
+      control.clearValidators();
+
+    control.updateValueAndValidity();
+  }
+
   ngOnInit(): void {
-
-    const params1 = {
-      inscricao: "21661",
-      uf: "RJ"
-    }
-
-    this.documentService.getProfessionalByCFM(params1).subscribe((res: any[]) => {
-      console.log(res);
-    }, error => {
-      this.isLoading = false;
-      console.log(error)
-    })
-
     this.usernameRecoverPassword$ = this.store.select(selectUsernameRecoverPassword);
     this.pageInit();
   }
@@ -161,6 +175,7 @@ export class AuthComponent implements OnInit {
       console.log(error)
     })
   }
+
   getCep() {
     const cep = this.empresa.cep
 
@@ -172,6 +187,7 @@ export class AuthComponent implements OnInit {
       }, _ => { })
     }
   }
+
   cpfValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     if (!control.parent || !control) {
       return null;
@@ -191,7 +207,7 @@ export class AuthComponent implements OnInit {
     }
     const cnpj = control.parent.get('cnpj').value
 
-    if (this.utilService.validaCNPJ(cnpj)) {
+    if (cnpj && this.utilService.validaCNPJ(cnpj)) {
       return null
     }
     return { invalidCnpj: true }
@@ -200,6 +216,7 @@ export class AuthComponent implements OnInit {
   formChangePasswordHasError(control: any, error: string) {
     return this.changePasswordFormGroup.controls[control].hasError(error);
   }
+
   pageInit() {
     this.route.params.subscribe(params => {
       this.page = params.page && params.page;
@@ -209,6 +226,7 @@ export class AuthComponent implements OnInit {
       this.getSpecialties();
     });
   }
+
   onSubmit() {
     if (!this.isLoading && this.emailFormControl.valid && this.passwordFormControl.valid) {
       this.isLoading = true;
@@ -216,12 +234,15 @@ export class AuthComponent implements OnInit {
     }
 
   }
+
   formRegisterHasError(control: any, error: string) {
     return this.formGroupUserRegister.controls[control].hasError(error);
   }
+
   formEmpresaRegisterHasError(control: any, error: string) {
     return this.formGroupEmpresaRegister.controls[control].hasError(error);
   }
+
   onSubmitLogin(userLogin: UserLogin) {
     this.authService.login(userLogin).subscribe(res => {
       if ((res.passwordRecovered || res.accountLocked) && res.accessType !== `ROLE_PACIENTE`) {
@@ -265,12 +286,14 @@ export class AuthComponent implements OnInit {
         this.isLoading = false;
       })
   }
+
   setProfile(user) {
     this.authService.getFullUser().subscribe(response => {
       localStorage.setItem('usuario', JSON.stringify(response));
       localStorage.setItem('perfil', user.roles[0]);
     }, error => console.log(error))
   }
+
   onSubmitRegister() {
     if (!this.isLoading && this.formGroupUserRegister.valid) {
       this.authService.userRegister(
@@ -289,14 +312,59 @@ export class AuthComponent implements OnInit {
     }
   }
 
-  onSubmitRegisterEmpresa() {
-    if (this.empresa.orgao !== "ATIVA"){
-      return this.openSnackBar("Empresa encontra-se inativa", 'OK', 5000)
-    }
-    
-    console.log(this.empresa);
+  next() {
+    // this.formGroupEmpresaRegister.markAllAsTouched();
+    // if (this.formGroupEmpresaRegister.valid) {
+    //   this.validarCRM().then(retorno => {
+    //     if (retorno)
+          this.goToRepresentante();
+    //   }).catch(err => this.openSnackBar(err.error.message, 'OK', 5000));
+    // }
+  }
 
-    const empresa  = {
+  async validarCRM(): Promise<boolean> {
+    this.isLoading = true;
+
+    if (this.isOdontologia) {
+      let retornoCfo: any = await this.authService.getUserCFO(this.empresa.profDocument, this.empresa.ufProfissional, this.empresa.categoria).toPromise();
+      if (retornoCfo.code === 200) {
+        this.isLoading = false;
+        return true;
+      }
+      else {
+        this.isLoading = false;
+        this.openSnackBar("O documento do profissional não foi encontrado", 'OK', 5000);
+        return false;
+      }
+
+    } else if (this.empresa.especialidade.tipoAceite === "MEDICINA") {
+      let retornoCfm: any = await this.authService.getUserCFM(this.empresa.profDocument, this.empresa.ufProfissional).toPromise();
+      if (retornoCfm.code === 200) {
+        this.isLoading = false;
+        return true;
+      }
+      else {
+        this.isLoading = false;
+        this.openSnackBar("O documento do profissional não foi encontrado", 'OK', 5000);
+        return false;
+      }
+
+    } else if (this.empresa.especialidade.tipoAceite === "FONOAUDIOLOGIA") {
+      this.isLoading = false;
+      return true;
+    }
+  }
+
+  registerEmpresa() {
+    if (this.empresa.orgao !== "ATIVA") {
+      this.isLoading = false;
+      return this.openSnackBar("Empresa encontra-se inativa", 'OK', 5000);
+    }
+
+    if (!this.isOdontologia)
+      this.empresa.categoria = null;
+
+    const empresa = {
       cnpj: this.empresa.cnpj,
       nome: this.empresa.nome,
       razaoSocial: this.empresa.razaoSocial,
@@ -307,18 +375,24 @@ export class AuthComponent implements OnInit {
       municipio: this.empresa.municipio,
       uf: this.empresa.uf,
       situacao: this.empresa.orgao,
-      representanteLegal: null
+      representanteLegal: null,
+      categoria: this.empresa.categoria,
+      ufcrm: this.empresa.ufProfissional,
+      refEspecialidadeEntity: this.empresa.especialidade
     }
 
-    if(this.formGroupEmpresaRegister.valid){
-      console.log('ascasc');
-      this.authService.companyRegister(empresa).subscribe(res =>{
-        this.openSnackBar("Empresa criada com sucesso", 'OK', 5000)
-      }, error =>{
-        this.openSnackBar(error.error.message, 'OK', 5000)
+    if (this.formGroupEmpresaRegister.valid) {
+      this.authService.companyRegister(empresa).subscribe(res => {
+        this.openSnackBar("Empresa criada com sucesso", 'OK', 5000);
+        this.isLoading = false;
+      }, error => {
+        this.openSnackBar(error.error.message, 'OK', 5000);
+        this.isLoading = false;
       });
+    } else {
+      this.openSnackBar("Erros presentes no formulário", 'OK', 5000);
+      this.isLoading = false;
     }
-    
   }
 
   onSubmitChangePassword() {
@@ -326,7 +400,7 @@ export class AuthComponent implements OnInit {
       this.isLoading = true;
       this.authService.changePassword(this.changePassword.newPassword, this.token).subscribe(res => {
         this.isRegister = true;
-        this.onSubmitLogin({ username: this.userLogin.username, password: this.changePassword.newPassword })
+        this.onSubmitLogin({ username: this.userLogin.username, password: this.changePassword.newPassword });
       }, error => {
         this.isLoading = false
         console.log(error)
@@ -354,6 +428,8 @@ export class AuthComponent implements OnInit {
   inputEvent($event) {
     this.changed = true;
   }
+
+
 
   inputAtributeUserLogin(atribute) {
     this.store.dispatch(new SetUserLogin({ userLogin: atribute }));
@@ -414,47 +490,7 @@ export class AuthComponent implements OnInit {
     })
   }
 
-  onEspecilidadeChange() {
-    if (this.empresa.especialidade) {
-      switch (this.empresa.especialidade?.tipoAceite) {
-        case "MEDICINA": {
-
-          break
-        }
-        case "ODONTOLOGIA": {
-
-          break
-        }
-        case "FONOAUDIOLOGIA": {
-
-          break
-        }
-        default: {
-          break
-        }
-      }
-    }
-  }
-
-  onDocumentChange() {
-    if (this.empresa.especialidade) {
-      switch (this.empresa.especialidade?.tipoAceite) {
-        case "MEDICINA": {
-
-          break
-        }
-        case "ODONTOLOGIA": {
-
-          break
-        }
-        case "FONOAUDIOLOGIA": {
-
-          break
-        }
-        default: {
-          break
-        }
-      }
-    }
+  goToRepresentante() {
+    this.page = 'representante-legal';
   }
 }

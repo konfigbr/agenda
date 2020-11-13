@@ -5,13 +5,22 @@
             <h1>Minhas Consultas</h1>
         </div>
         <div>
+            <div class="opt-form-control opt-filter-list-container" *ngIf="isAtentente">
+                <mat-form-field appearance="outline">
+                    <mat-label>Paciente</mat-label>
+                    <mat-select (selectionChange)="getMyAppointment($event.value.id)">
+                        <mat-option *ngFor="let patient of patients" [value]="patient">
+                            {{ patient.nome }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
             <div class="opt-form-control opt-filter-list-container">
                 <mat-form-field appearance="outline">
                     <mat-label>Pesquisar</mat-label>
                     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium">
                 </mat-form-field>
             </div>
-           
         </div>
     </div>
     

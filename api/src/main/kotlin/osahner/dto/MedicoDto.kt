@@ -27,6 +27,7 @@ data class MedicoDto (
   var ativo :String?,
   var url :String?,
   var tipoDocumento: TipoDocumento?,
+  var categoria: String?,
   var termoUsoPrivacidade: StatusTermoDeUso?,
   var numero: String?,
   var logradouro: String?,
@@ -35,5 +36,6 @@ data class MedicoDto (
   var nacionalidade: String?,
   var estadoCivil: String?,
   var uf: String?,
-  var dateCreated: LocalDateTime?
+  var dateCreated: LocalDateTime?,
+  var ramal: String?
 )

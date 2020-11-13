@@ -47,7 +47,6 @@ class EmpresaController(private val empresaService: EmpresaService) {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
     fun saveCompanyWithRepresentative(@RequestBody dto: EmpresaDto): Any? {
         if (empresaService.existsByCnpj(dto.cnpj)) {
             val empresa = empresaService.findByCnpj(dto.cnpj).get()

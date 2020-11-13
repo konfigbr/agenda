@@ -28,6 +28,7 @@ data class MedicoCustomDto (
   var ativo: String?,
   var url: String?,
   var tipoDocumento: TipoDocumento?,
+  var categoria: String?,
   var termoUsoPrivacidade: StatusTermoDeUso?,
   var numero: String?,
   var logradouro: String?,
@@ -37,5 +38,6 @@ data class MedicoCustomDto (
   var estadoCivil: String?,
   var uf: String?,
   var dateCreated: LocalDateTime?,
-  var hasDescontoVigente: Boolean?
+  var hasDescontoVigente: Boolean?,
+  var ramal: String?
 )

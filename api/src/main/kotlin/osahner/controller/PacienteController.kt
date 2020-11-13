@@ -60,7 +60,8 @@ class PacienteController(
     val createUser = CreateUserDto(
       username = createPacienteDto.username,
       password = newPassword,
-      nome = createPacienteDto.nome
+      nome = createPacienteDto.nome,
+      categoria = null
     )
     val newUser = userService.criarUsuarioEnviarEmail(createUser, "ROLE_PACIENTE").toDTO()
 

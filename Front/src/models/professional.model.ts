@@ -20,6 +20,7 @@ export default class Professional {
   public imageFoto: string | null = null;
   public status!: string;
   public tipoDocumento: any = {};
+  public categoria: string;
   public url: string;
   public previa: string;
   public termoUsoPrivacidade: string;
@@ -32,5 +33,5 @@ export default class Professional {
   public bairro!: string;
   public cidade!: string;
   public uf!: string;
-
+  public ramal?: string;
 }

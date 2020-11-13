@@ -1,6 +1,7 @@
 package osahner.domain
 
 import osahner.dto.ConsultaDto
+import osahner.dto.ConsultaCustomDto
 import osahner.enums.StatusConsulta
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -60,6 +61,18 @@ open class Consulta {
             this.motivo,
             this.status,
             this.observacao
+    )
+    fun toCustomDTO(): ConsultaCustomDto = ConsultaCustomDto(
+            this.id,
+            this.version,
+            this.refPacienteEntity?.toCustomDTO(),
+            this.refMedicoEntity?.toCustomDTO(),
+            this.dataInicio,
+            this.dataFim,
+            this.motivo,
+            this.status,
+            this.observacao,
+            this.refAgendamentoEntity?.agendaSalas?.first()?.sala?.toDTO()
     )
 
     // constant value returned to avoid entity inequality to itself before and after it's update/merge

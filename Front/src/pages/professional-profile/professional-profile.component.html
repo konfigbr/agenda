@@ -77,13 +77,13 @@
                     </div>
                     <div class="opt-form-control ">
                         <mat-form-field appearance="outline">
-                            <mat-label>Telefone</mat-label>
+                            <mat-label>Celular</mat-label>
                             <input (input)="inputEvent($event)" mask="(00) 00000-0000"
                                 [specialCharacters]="[ '(' , ' ' ,  ')' , '-' ]" [dropSpecialCharacters]="true"
                                 [(ngModel)]="professional.telefone" matInput formControlName="phone"
-                                [errorStateMatcher]="matcher" placeholder="Telefone">
+                                [errorStateMatcher]="matcher" placeholder="Celular">
                             <mat-error *ngIf="formProfessionalHasError('phone', 'required')">
-                                O telefone é <strong>obrigatório</strong>!
+                                O Celular é <strong>obrigatório</strong>!
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -101,6 +101,9 @@
                             <mat-error *ngIf="formProfessionalHasError('nacionalidade', 'required')">
                                 O nome do profissional é <strong>obrigatório</strong>!
                             </mat-error>
+                            <mat-error *ngIf="formProfessionalHasError('nacionalidade', 'pattern')">
+                                A nacionalidade só aceita <strong>letras</strong>!
+                            </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="opt-form-control ">
@@ -110,6 +113,9 @@
                                 formControlName="estadoCivil" [errorStateMatcher]="matcher" placeholder="Estado Civil">
                             <mat-error *ngIf="formProfessionalHasError('estadoCivil', 'required')">
                                 O estado civil é <strong>obrigatório</strong>!
+                            </mat-error>
+                            <mat-error *ngIf="formProfessionalHasError('estadoCivil', 'pattern')">
+                                O estado civil só aceita <strong>letras</strong>!
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -228,6 +234,45 @@
                         </label>
                     </div>
                 </div>
+
+                <div class="opt-row" *ngIf="isOdontologia">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                        <mat-label>Categoria Profissional</mat-label>
+                        <mat-select [(ngModel)]="professional.categoria" formControlName="categoria">
+                            <mat-option value="TODAS">
+                                Todas
+                            </mat-option>
+                            <mat-option value="CD">
+                                Cirurgião Dentista
+                            </mat-option>
+                            <mat-option value="EPAO">
+                                Entidade Prestadora de Assistência Odontológica
+                            </mat-option>
+                            <mat-option value="TPD">
+                                Técnico em Prótese Dentária
+                            </mat-option>
+                            <mat-option value="LB">
+                                Laboratório de Prótese Dentária
+                            </mat-option>
+                            <mat-option value="TSB">
+                                Técnico em Saúde Bucal
+                            </mat-option>
+                            <mat-option value="ASB">
+                                Auxiliar em Saúde Bucal
+                            </mat-option>
+                            <mat-option value="APD">
+                                Auxiliar em Prótese Dentária
+                            </mat-option>
+                            <mat-option value="EPO">
+                                Empresa de Produtos Odontológicos
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formProfessionalHasError('categoria', 'required')">
+                            A Categoria Profissional é <strong>obrigatória</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
                 <div class="opt-row">
                     <div class="opt-form-control">
                         <mat-form-field appearance="outline">
@@ -247,8 +292,8 @@
                     <div class="opt-form-control">
                         <mat-form-field appearance="outline">
                             <mat-label>CEP</mat-label>
-                            <input (input)="inputEvent($event)" (blur)="getCep()" mask="00.000-000"
-                                [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true"
+                            <input (input)="inputEvent($event)" (blur)="getCep()" mask="00000-000"
+                                [specialCharacters]="['-' ]" [dropSpecialCharacters]="true"
                                 [(ngModel)]="professional.cep" matInput formControlName="cep"
                                 [errorStateMatcher]="matcher" placeholder="CEP">
                             <mat-error *ngIf="formProfessionalHasError('cep', 'required')">
@@ -257,33 +302,7 @@
                         </mat-form-field>
                     </div>
 
-
                 </div>
-                <!--  <div class="opt-row">
-                    <div class="opt-form-control">
-                        <mat-form-field appearance="outline">
-                            <mat-label>Endereço</mat-label>
-                            <input (input)="inputEvent($event)" [(ngModel)]="professional.endereco" matInput
-                                formControlName="address" [errorStateMatcher]="matcher" placeholder="Endereço">
-                            <mat-icon class="show-document-btn" (click)="showDocument('end')" matTooltip="Ver documento"
-                                matSuffix>subtitles</mat-icon>
-                            <mat-error *ngIf="formProfessionalHasError('address', 'required')">
-                                O endereço é <strong>obrigatório</strong>!
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-
-                    <div class="opt-form-control opt-form-control-file" *ngIf="!isEdit">
-                        <label for="opt-form-end-file">
-                            <div class="opt-file-btn">Imagem End</div>
-                            <span>{{fileEnd ? fileEnd.name : 'Nome do arquivo' }}</span>
-                            <input (input)="setFile('end', $event)" type="file" id="opt-form-end-file"
-                                accept="image/png, image/jpeg">
-                        </label>
-                    </div>
-
-                </div>
- -->
                 <!--    INICIO DE NOVOS CAMPOS  LOGRADOURO / NUMERO / CIDADE/ ESTADO  -->
 
                 <div class="opt-row">
@@ -379,25 +398,36 @@
                             </mat-icon>
                             <input [(ngModel)]="professional.url" matInput formControlName="url"
                                 [errorStateMatcher]="matcher" placeholder="URL" minlength="3" maxlength="20">
-                            <mat-error >
+                            <mat-error>
                                 A URL do profissional é <strong>obrigatória</strong>!
                             </mat-error>
-                            <mat-error *ngIf="!formProfessionalHasError && (formProfessionalHasError('url', 'minlength') || formProfessionalHasError('url', 'maxlength') )">
+                            <mat-error
+                                *ngIf="!formProfessionalHasError && (formProfessionalHasError('url', 'minlength') || formProfessionalHasError('url', 'maxlength') )">
                                 A URL do profissional deve conter de <strong>3 a 20</strong> caracteres!
                             </mat-error>
-                            
+
                         </mat-form-field>
                     </div>
-                     </div>
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Ramal</mat-label>
+                            <input [(ngModel)]="professional.ramal" matInput formControlName="ramal"
+                                placeholder="Ramal">
+                        </mat-form-field>
+                    </div>
+                </div>
 
 
-                    <div class="opt-row">
+                <div class="opt-row">
+                    <span class="previa">
                         <span class="previa">
                         <p><strong>Prévia:</strong></p>
                         <p>&nbsp;{{getprevia()}}</p>
+                        </span>
                     </span>
-                    </div>
-                    <br>
+                </div>
+
+                <br>
                 <div class="opt-row-to-end">
                     <div class="status-container"
                         [ngClass]="{'status-warning': professional.status === 'AGUARDANDO_APROVAÇÃO', 'status-danger': professional.status === 'NEGADO', 'status-confirm': professional.status === 'APROVADO' }">
@@ -411,7 +441,7 @@
                     </div>
                 </div>
                 <div class="opt-btn-form-container">
-                    <button [disabled]="!professionalFormGroup.valid && !acceptTerms " *ngIf="acceptTerms"
+                    <button [disabled]="!professionalFormGroup.valid && !acceptTerms" *ngIf="acceptTerms"
                         class="opt-btn-form" mat-button type="button" (click)="onSubmit()">Salvar</button>
                 </div>
                 <div class="opt-btn-form-container" *ngIf="!acceptTerms">
@@ -420,9 +450,6 @@
                     <!-- <button (click)="close()" mat-button>Ok</button> -->
                 </div>
             </div>
-            <!-- ------------------------------ -->
-
-
 
             <div *ngIf="isNext">
 

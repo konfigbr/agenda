@@ -29,6 +29,9 @@ export class PatientComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
+  patients: Patient[] = [];
+  patient: Patient = null;
+
   constructor(
     private consultaService: ConsultaService,
     private snackBar: MatSnackBar,
@@ -37,20 +40,30 @@ export class PatientComponent implements OnInit {
     private utilsService: UtilsService,
     private router: Router,
     private authService: AuthService,
+    private patientService: PatientService
   ) { }
 
   ngOnInit(): void {
+    this.dataSource = new MatTableDataSource([]);
     const professionalKey = this.route.snapshot.params.professionalKey
-    if (this.getProfessionalKey() !== professionalKey)
+    if (this.getProfessionalKey() !== professionalKey && ['ROLE_ATENDENTE', 'ROLE_PACIENTE'].includes(this.authService.getAccessType()))
       return this.authService.logoutPatient(this.getProfessionalKey())
     
-    this.getMyAppointment()
+    if (!this.isAtentente)
+      this.getMyAppointment();
+    else
+      this.getPatients();
   }
 
-  getMyAppointment() {
+  getPatients() {
+    this.patientService.getPatients().subscribe(patients => this.patients = patients);
+  }
+
+  getMyAppointment(idPaciente: number = null) {
     this.isLoading = true;
     const obj = this.getProfessionalObj()
-    this.consultaService.getMyAppointments(obj.id).subscribe((consultations: Appointment[]) => {
+
+    this.consultaService.getMyAppointments(obj.id, idPaciente).subscribe((consultations: Appointment[]) => {
       this.dataSource = new MatTableDataSource(consultations)
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -62,7 +75,7 @@ export class PatientComponent implements OnInit {
       this.isLoading = false;
       this.errorTableData = true
 
-    })
+    });
   }
   public formatDate(date: string | Date) {
     return new Date(date).toLocaleDateString();
@@ -108,5 +121,9 @@ export class PatientComponent implements OnInit {
 
   formatDateWithPattern(date: string, pattern: string): string {
     return this.utilsService.formatDate(date, pattern)
+  }
+
+  get isAtentente(): boolean {
+    return this.authService.getAccessType() === 'ROLE_ATENDENTE';
   }
 }

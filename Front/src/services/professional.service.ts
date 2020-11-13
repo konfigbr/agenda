@@ -24,6 +24,12 @@ export class ProfessionalService {
     getProfessionalById(id: string | number): Observable<Professional> {
         return this.http.get<Professional>(`${environment.apiUrl}/professionals/${id}`);
     }
+    getProfessionalByEmpresa(empresaId: string | number): Observable<Professional[]> {
+        return this.http.get<Professional[]>(`${environment.apiUrl}/professionals/empresa/${empresaId}`);
+    }
+    getResponsavelTecnicoByEmpresa(empresaId: string | number): Observable<Professional> {
+            return this.http.get<Professional>(`${environment.apiUrl}/professionals/empresa/${empresaId}/responsavel`);
+        }
     getMe() {
         return this.http.get<Professional>(`${environment.apiUrl}/professionals/me`);
     }

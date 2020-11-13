@@ -102,7 +102,7 @@ class UserController(
     val profissional = medicoService.findById(id).get()
     var ret = exportPdfService.exportTerms(profissional)
 
-    emailService.enviarTermoAceite("andre.dionisio@hdnit.com.br", "André", id, ret)
+    emailService.enviarTermoAceite("andre.dionisio@hdnit.com.br", "André", id, arrayOf(ret))
   }
 
   @DeleteMapping("/administrative-users/{id}")

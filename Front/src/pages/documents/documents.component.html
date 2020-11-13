@@ -1,0 +1,52 @@
+<div class="page-container rooms-container">
+    <div class="header-page-container ">
+        <div>
+            <mat-icon>account_circle</mat-icon>
+            <h1>Documentos Solicitados</h1>
+        </div>
+    </div>
+
+    <div class="page-content opt-form-container">
+        <div class="opt-report-header-container">
+            <p>Da Empresa</p>
+        </div>
+        <br>
+        <div class="opt-row">
+            <div class="opt-form-control opt-form-control-file">
+                <label for="opt-form-constituicao-file">
+                    <div class="opt-file-btn">Constituição da Empresa</div>
+                    <span>{{fileConstituicao ? fileConstituicao.name : 'Nome do arquivo' }}</span>
+                    <input (input)="setFile('CONSTITUICAO', $event)" type="file" id="opt-form-constituicao-file"
+                        accept="image/png, image/jpeg">
+                </label>
+            </div>
+        </div>
+
+        <div class="opt-row">
+            <div class="opt-form-control opt-form-control-file">
+                <label for="opt-form-cnpj-file">
+                    <div class="opt-file-btn">Cartão CNPJ</div>
+                    <span>{{fileCNPJ ? fileCNPJ.name : 'Nome do arquivo' }}</span>
+                    <input (input)="setFile('CNPJ', $event)" type="file" id="opt-form-cnpj-file"
+                        accept="image/png, image/jpeg">
+                </label>
+            </div>
+        </div>
+        
+        <div class="opt-report-header-container">
+            <p>Do Representante Legal</p>
+        </div>
+        <br>
+        <div class="opt-row">
+            <div class="opt-form-control opt-form-control-file">
+                <label for="opt-form-rg-file">
+                    <div class="opt-file-btn">RG</div>
+                    <span>{{fileRG ? fileRG.name : 'Nome do arquivo' }}</span>
+                    <input (input)="setFile('RG', $event)" type="file" id="opt-form-rg-file"
+                        accept="image/png, image/jpeg">
+                </label>
+            </div>
+        </div>
+    </div>
+
+</div>

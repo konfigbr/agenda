@@ -178,10 +178,9 @@ export class ReschedulingComponent implements OnInit {
 
     const params = {
       inicio: startOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0],
-      fim: this.formatDate(endOfWeek(this.viewDate)),
+      fim: endOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0],
       medico: this.selectedProfessional.id
     }
-
     this.loadHorariosOcupados().subscribe(consultas => {
       this.horariosOcupados = consultas
 
@@ -205,7 +204,7 @@ export class ReschedulingComponent implements OnInit {
     this.isLoading = true
 
     const inicio = startOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0]
-    const fim = this.formatDate(endOfWeek(this.viewDate))
+    const fim = endOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0];
 
     return this.consultaService.getBusyTimes(Number(this.selectedProfessional.id), inicio, fim)
   }
@@ -217,13 +216,15 @@ export class ReschedulingComponent implements OnInit {
   loadHorariosDisponiveis() {
     this.isLoading = true
 
-    const inicio = startOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0]
-    const fim = this.formatDate(endOfWeek(this.viewDate))
+    const inicio = startOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0];
+    const fim = endOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0];
 
     this.consultaService.getAvailableTimes(Number(this.selectedProfessional.id), inicio, fim).subscribe(horariosDisponiveis => {
       this.isLoading = false
       this.horariosDisponiveis = horariosDisponiveis
       this.avaliableTimes = horariosDisponiveis
+
+      console.log(horariosDisponiveis);
     }, _ => this.isLoading = false)
   }
 

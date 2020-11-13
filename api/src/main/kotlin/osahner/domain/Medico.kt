@@ -72,6 +72,9 @@ class Medico : PessoaAbstractJpa<Long>() {
   @Column(name = "tipo_documento", nullable = true)
   var tipoDocumento: TipoDocumento? = null
 
+  @Column(name = "categoria", nullable = true)
+  var categoria: String? = null
+
   @Column(name = "date_created", nullable = true)
   var dateCreated: LocalDateTime? = null
 
@@ -79,6 +82,9 @@ class Medico : PessoaAbstractJpa<Long>() {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "especialidade_id", referencedColumnName = "id")
   var refEspecialidadeEntity: Especialidade? = null
+
+  @Column(name = "ramal", nullable = true)
+  var ramal: String? = null
 
   fun toDTO() = MedicoDto(
     id = this.id,
@@ -101,6 +107,7 @@ class Medico : PessoaAbstractJpa<Long>() {
     ativo = this.ativo,
     url = this.url,
     tipoDocumento = this.tipoDocumento,
+    categoria = this.categoria,
     termoUsoPrivacidade = this.termoUsoPrivacidade,
     numero = this.numero,
     logradouro = this.logradouro,
@@ -109,7 +116,8 @@ class Medico : PessoaAbstractJpa<Long>() {
     nacionalidade = this.nacionalidade,
     estadoCivil = this.estadoCivil,
     uf = this.uf,
-    dateCreated = this.dateCreated
+    dateCreated = this.dateCreated,
+    ramal = this.ramal
   )
 
   companion object {
@@ -134,6 +142,7 @@ class Medico : PessoaAbstractJpa<Long>() {
       medico.ativo = dto.ativo
       medico.url = dto.url
       medico.tipoDocumento = dto.tipoDocumento
+      medico.categoria = dto.categoria
       medico.termoUsoPrivacidade = dto.termoUsoPrivacidade
       medico.numero = dto.numero
       medico.logradouro = dto.logradouro
@@ -143,6 +152,7 @@ class Medico : PessoaAbstractJpa<Long>() {
       medico.estadoCivil = dto.estadoCivil
       medico.uf = dto.uf
       medico.dateCreated = dto.dateCreated
+      medico.ramal = dto.ramal
 
       return medico
     }
@@ -168,6 +178,7 @@ class Medico : PessoaAbstractJpa<Long>() {
       medico.ativo = dto.ativo
       medico.url = dto.url
       medico.tipoDocumento = dto.tipoDocumento
+      medico.categoria = dto.categoria
       medico.termoUsoPrivacidade = dto.termoUsoPrivacidade
       medico.numero = dto.numero
       medico.logradouro = dto.logradouro
@@ -177,7 +188,7 @@ class Medico : PessoaAbstractJpa<Long>() {
       medico.estadoCivil = dto.estadoCivil
       medico.uf = dto.uf
       medico.dateCreated = dto.dateCreated
-
+      medico.ramal = dto.ramal
 
       return medico
     }
@@ -206,6 +217,7 @@ class Medico : PessoaAbstractJpa<Long>() {
     ativo = this.ativo,
     url = this.url,
     tipoDocumento = this.tipoDocumento,
+    categoria = this.categoria,
     termoUsoPrivacidade = this.termoUsoPrivacidade,
     numero = this.numero,
     logradouro = this.logradouro,
@@ -215,6 +227,7 @@ class Medico : PessoaAbstractJpa<Long>() {
     estadoCivil = this.estadoCivil,
     uf = this.uf,
     dateCreated = this.dateCreated,
-    hasDescontoVigente = null
+    hasDescontoVigente = null,
+    ramal = this.ramal
   )
 }

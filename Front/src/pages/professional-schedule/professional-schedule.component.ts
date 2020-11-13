@@ -71,20 +71,11 @@ export class ProfessionalScheduleComponent implements OnInit {
   ngOnInit(): void {
     this.getProfessionalSchedule()
   }
-  formatDate(date: any) {
-    const dt = new Date(date).toLocaleDateString().split('/');
-    const dateFormated = `${dt[2]}-${dt[1].length === 2 ? dt[1] : '0' + dt[1]}-${dt[0].length === 2 ? dt[0] : '0' + dt[0]}`;
-    const hourFormated = new Date(date).toLocaleTimeString().length === 8
-      ? new Date(date).toLocaleTimeString()
-      : '0' + new Date(date).toLocaleTimeString();
-
-    return `${dateFormated}T${hourFormated}`
-  }
   getProfessionalSchedule() {
     this.isLoading = true;
     const params = {
       inicio: startOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0],
-      fim: this.formatDate(endOfWeek(this.viewDate)),
+      fim: endOfWeek(this.viewDate).toISOString().split('Z').join().split('.')[0],
       medico: this.authService.getUserId()
     }
     this.schedulingService.getProfessionalSchedule(params).subscribe(schedulings => {

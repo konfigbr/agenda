@@ -43,6 +43,7 @@ export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl):
   styleUrls: ['./professional-form.component.scss'],
 })
 export class ProfessionalFormComponent implements OnInit {
+  path:string;
   professional: Professional = new Professional();
   professionalFormGroup: FormGroup
   matcher = new MyErrorStateMatcher();
@@ -57,14 +58,14 @@ export class ProfessionalFormComponent implements OnInit {
   fileCPF: any;
   fileCRM: any;
   fileEnd: any;
-  filePhoto: any;  
+  filePhoto: any;
   fileTerm: any;
   changed: boolean = false
   personTypes: any[] =
-    [ { key: "CPF", value: "Pessoa Física" }
-    , { key: "CNPJ", value: "Pessoa Jurídica" }
+    [{ key: "CPF", value: "Pessoa Física" }
+      , { key: "CNPJ", value: "Pessoa Jurídica" }
     ];
-    
+
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
@@ -78,12 +79,12 @@ export class ProfessionalFormComponent implements OnInit {
     private router: Router,
     private utilService: UtilsService,
     private cepService: CepService
-    
+
 
   ) {
     this.professionalFormGroup = this.formBuilder.group({
       name: new FormControl({ value: '', validator: [Validators.required] }),
-      cpf: new FormControl('', [Validators.required, Validators.minLength(11),this.cpfValidator]),
+      cpf: new FormControl('', [Validators.required, Validators.minLength(11), this.cpfValidator]),
       rg: new FormControl('', [Validators.required]),
       crm: new FormControl('', [Validators.required]),
       ufcrm: new FormControl('', [Validators.required]),
@@ -93,41 +94,56 @@ export class ProfessionalFormComponent implements OnInit {
       specialty: new FormControl(new Specialty(), [Validators.required]),
       username: new FormControl('', [Validators.required, Validators.email]),
       documentType: new FormControl([Validators.required]),
-      nacionalidade: new FormControl([Validators.required]),
-      estadoCivil: new FormControl([Validators.required]),
+      nacionalidade: new FormControl('',[Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
+      estadoCivil: new FormControl('',[Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
       logradouro: new FormControl([Validators.required]),
       numero: new FormControl([Validators.required]),
       bairro: new FormControl([Validators.required]),
       cidade: new FormControl([Validators.required]),
       uf: new FormControl([Validators.required]),
-      url: new FormControl('',[Validators.required, Validators.minLength(11)]),
+      url: new FormControl('', [Validators.required, Validators.minLength(11)]),
       // password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    //confirmPassword: new FormControl('', [Validators.required, confirmPasswordValidator]),
+      //confirmPassword: new FormControl('', [Validators.required, confirmPasswordValidator]),
     })
   }
 
   ngOnInit(): void {
+    this.path = this.router.url;
     this.professional.tipoDocumento = 'CPF'
     this.getSpecialties()
-      }
+  }
+
+  validarUfCrm() {
+    if (this.professional.ufcrm && this.professional.ufcrm !== 'SP') {
+      this.openSnackBar('Para aprovação do seu cadastro, certifique-se de que seu documento fora avaliado pelo órgão competente do Estado de São Paulo', 'Ok', 15000)
+
+      if (this.professional.especialidade.tipoAceite === 'ODONTOLOGIA') {
+        this.openSnackBar('É obrigatória a inscrição secundária na jurisdição do Conselho Regional de Odontologia no Estado de São Paulo, caso seu exercício profissional se estenda por mais de 90 (noventa) dias, nos termos dos artigos 119, §1º e 134 da Resolução CFO n.º 63/2005.', 'Ok', 15000)
+      } else if (this.professional.especialidade.tipoAceite === 'FONOAUDIOLOGIA') {
+        this.openSnackBar('É obrigatória a inscrição secundária na jurisdição do Conselho Regional de Fonoaudiologia no Estado de São Paulo, caso seu exercício profissional se estenda por mais de 30 (trinta) dias por ano, fora da jurisdição de seu Conselho Regional de origem, nos termos dos artigos 10, 11 § 1, da Resolução do CFFa nº 532/1998.', 'Ok', 15000)
+      } else if (this.professional.especialidade.tipoAceite === 'MEDICINA')
+        this.openSnackBar('É obrigatória a inscrição secundária na jurisdição do Conselho Regional de Medicina no Estado de São Paulo, caso seu exercício profissional se estenda por mais de 90 (noventa) dias, nos termos do artigo 32, § 5º da Resolução CFM n.º 1.541/1998.', 'Ok', 15000)
+    }
+  }
+
   setFile(type: string, event: any) {
     const file = event.target.files[0]
     if (type === 'rg') {
       this.fileRG = file
     } else if (type === 'cpf') {
       this.fileCPF = file
-    }else if (type === 'crm') {
+    } else if (type === 'crm') {
       this.fileCRM = file
-    }else if (type === 'end') {
+    } else if (type === 'end') {
       this.fileEnd = file
-    } else if(type === 'foto'){
+    } else if (type === 'foto') {
       this.filePhoto = file
-    }else {
+    } else {
       this.fileTerm = file
     }
     this.changed = true;
-      
-    }
+
+  }
   getProfessional(id: string | number) {
     this.professionalService.getProfessionalById(id).subscribe((professional: Professional) => {
       this.professional = professional
@@ -135,7 +151,8 @@ export class ProfessionalFormComponent implements OnInit {
       this.professionalFormGroup.removeControl('confirmPassword')
       this.isLoading = false;
       // tslint:disable-next-line:max-line-length
-      this.professional.especialidade = this.professional.especialidade && this.specialties.find(specialty => specialty.id === this.professional.especialidade.id)
+      this.professional.especialidade = this.professional.especialidade && this.specialties.find(specialty => specialty.id === this.professional.especialidade.id);
+      this.validarUfCrm();
     }, error => {
       this.isLoading = false;
       console.log(error)
@@ -184,15 +201,15 @@ export class ProfessionalFormComponent implements OnInit {
           this.fileRG = undefined
           this.professional.imagerg = `/${res.filename}`;
         } else if (type === 'crm') {
-          this.fileCRM= undefined
+          this.fileCRM = undefined
           this.professional.imagecrm = `${res.filename}`;
         } else if (type === 'end') {
           this.fileEnd = undefined
           this.professional.imageComprovante = `${res.filename}`;
-        } else if(type === 'foto'){
+        } else if (type === 'foto') {
           this.filePhoto = undefined;
           this.professional.imageFoto = `${res.filename}`;
-        }else {
+        } else {
           this.fileTerm = undefined;
           this.professional.termoAceite = `${res.filename}`;
         }
@@ -223,87 +240,84 @@ export class ProfessionalFormComponent implements OnInit {
           this.professional.cidade = data.localidade
           this.professional.uf = data.uf
         }
-      }, _ => {})
+      }, _ => { })
     }
   }
 
   onSubmit() {
 
-       const validation = (/^[0-9a-zA-Z-]+$/).test(this.professional.url)
-      if (!validation){
-        const erroMessage = "URL não pode conter espaços, e caracteres especiais"
-        this.openSnackBar(erroMessage, 'Ok', 5000);
-        this.isLoading = false;
-        console.log(erroMessage)
-        return
-      } 
-     
-     
-     
-        this.isLoading = true;
-  
-        if (this.fileRG) {
-  
-          const formData: FormData = new FormData()
-  
-          formData.append('uploadfile', this.fileRG)
-          this.uploadFile(formData, 'rg')
-  
-        } else if (this.fileCPF) {
-          const formData: FormData = new FormData()
-  
-          formData.append('uploadfile', this.fileCPF)
-          setTimeout(() => {
-            this.uploadFile(formData, 'cpf')
-  
-          }, 300)
-  
-        } else if (this.fileCRM) {
-  
-          const formData: FormData = new FormData()
-  
-          formData.append('uploadfile', this.fileCRM)
-          this.uploadFile(formData, 'crm')
-  
-        }else if (this.fileEnd) {
-  
-          const formData: FormData = new FormData()
-  
-          formData.append('uploadfile', this.fileEnd)
-          this.uploadFile(formData, 'end')
-  
-        }else if (this.filePhoto) {
-  
-          const formData: FormData = new FormData()
-  
-          formData.append('uploadfile', this.filePhoto)
-          this.uploadFile(formData, 'photo')
-  
-        }else if (this.fileTerm) {
-  
-          const formData: FormData = new FormData()
-  
-          formData.append('uploadfile', this.fileTerm)
-          this.uploadFile(formData, 'term')
-  
-        } else {
-          this.isEdit ? this.updateProfessional() : this.createProfessional();
-        }
-      
-  
+    const validation = (/^[0-9a-zA-Z-]+$/).test(this.professional.url)
+    if (!validation) {
+      const erroMessage = "URL não pode conter espaços, e caracteres especiais"
+      this.openSnackBar(erroMessage, 'Ok', 5000);
+      this.isLoading = false;
+      console.log(erroMessage)
+      return
     }
-    getprevia() {
-      if (this.professional.url === null)
-        return ''
-  
-      else
-        return window.location.origin + '/#/auth/' + this.professional.url + '/login';
+
+    this.isLoading = true;
+
+    if (this.fileRG) {
+
+      const formData: FormData = new FormData()
+
+      formData.append('uploadfile', this.fileRG)
+      this.uploadFile(formData, 'rg')
+
+    } else if (this.fileCPF) {
+      const formData: FormData = new FormData()
+
+      formData.append('uploadfile', this.fileCPF)
+      setTimeout(() => {
+        this.uploadFile(formData, 'cpf')
+
+      }, 300)
+
+    } else if (this.fileCRM) {
+
+      const formData: FormData = new FormData()
+
+      formData.append('uploadfile', this.fileCRM)
+      this.uploadFile(formData, 'crm')
+
+    } else if (this.fileEnd) {
+
+      const formData: FormData = new FormData()
+
+      formData.append('uploadfile', this.fileEnd)
+      this.uploadFile(formData, 'end')
+
+    } else if (this.filePhoto) {
+
+      const formData: FormData = new FormData()
+
+      formData.append('uploadfile', this.filePhoto)
+      this.uploadFile(formData, 'photo')
+
+    } else if (this.fileTerm) {
+
+      const formData: FormData = new FormData()
+
+      formData.append('uploadfile', this.fileTerm)
+      this.uploadFile(formData, 'term')
+
+    } else {
+      this.isEdit ? this.updateProfessional() : this.createProfessional();
     }
+  }
+  getprevia() {
+    if (this.professional.url === null)
+      return ''
+
+    else
+      return window.location.origin + '/#/auth/' + this.professional.url + '/login';
+  }
+  
   createProfessional() {
-    
+
     const professional = this.professional
     delete professional.confirmPassword
-    this.professional.url = this.professional.nome.replace(" ","-") + this.professional.crm   
+    this.professional.url = this.professional.nome.replace(" ", "-") + this.professional.crm
     this.professionalService.createProfessional(
       { ...professional, especialidade: { id: professional.especialidade.id }, tipoDocumento: professional.tipoDocumento }
     ).subscribe(response => {
@@ -316,8 +330,9 @@ export class ProfessionalFormComponent implements OnInit {
       console.log(error)
     })
   }
+
   updateProfessional() {
-    this.professional.url = this.professional.nome.replace(" ","-") + this.professional.crm   
+    this.professional.url = this.professional.nome.replace(" ", "-") + this.professional.crm
     this.professionalService.updateProfessional(this.professional.id, this.professional).subscribe(response => {
       this.isLoading = false;
       this.openSnackBar('Profissional atualizado com sucesso!', 'Ok', 3000);
@@ -328,7 +343,6 @@ export class ProfessionalFormComponent implements OnInit {
       console.log(error)
     })
   }
-
   openSnackBar(message: string, action: string, timing: number) {
     this.snackBar.open(message, action, {
       duration: timing,
@@ -336,7 +350,6 @@ export class ProfessionalFormComponent implements OnInit {
 
     });
   }
-
 
   reproveProfessional() {
     const dialogRef = this.dialog.open(MessageProfessionalAproveComponent, {
@@ -359,6 +372,7 @@ export class ProfessionalFormComponent implements OnInit {
       }
     })
   }
+
   approveProfessional() {
     const dialogRef = this.dialog.open(MessageProfessionalAproveComponent, {
       width: '400px',
@@ -377,6 +391,7 @@ export class ProfessionalFormComponent implements OnInit {
       }
     })
   }
+
   showDocument(document: string) {
     let title: string;
     let image: string;
@@ -416,55 +431,54 @@ export class ProfessionalFormComponent implements OnInit {
       data: { title, images }
     });
   }
-  changeDocumentType(){
+  
+  changeDocumentType() {
     this.professional.cpf = ""
   }
 
   dowloadTermoAceitePdf() {
     this.professionalService.getDownloadPdfTerms(this.professional.id).subscribe(response => {
-     const blob = new Blob([response],{type: 'application/pdf'});
-     if(window.navigator && window.navigator.msSaveOrOpenBlob){
-       window.navigator.msSaveOrOpenBlob(blob);
-       return
-     }
-     const data = window.URL.createObjectURL(blob)
-     const link = document.createElement('a');
-     link.href = data;
-     link.download = 'termoDeAceite.pdf';
-     link.dispatchEvent( new MouseEvent('click', {bubbles:true, cancelable: true, view: window }))
+      const blob = new Blob([response], { type: 'application/pdf' });
+      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(blob);
+        return
+      }
+      const data = window.URL.createObjectURL(blob)
+      const link = document.createElement('a');
+      link.href = data;
+      link.download = 'termoDeAceite.pdf';
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }))
 
-     setTimeout(function() {
-       window.URL.revokeObjectURL(data);
-       link.remove();
-       
-     }, 100);
-    
-   })
+      setTimeout(function () {
+        window.URL.revokeObjectURL(data);
+        link.remove();
 
-     
- } 
+      }, 100);
 
-
- cpfValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  if (!control.parent || !control) {
-    return null;
-  }
-  const cpf = control.parent.get('cpf').value
-  const cnpj = control.parent.get('cpf').value
-  const tipoPessoa = control.parent.get('documentType').value
-  if(tipoPessoa === 'CPF'){
-    if(this.utilService.validaCPF(cpf)){
-      return null;
-    }
-    return { invalidCpf: true };
-  }else{
-    if(this.utilService.validaCNPJ(cnpj)){
-      return null;
-    }
-    return { invalidCnpj: true };
+    })
 
   }
-  
-   
-};
+
+  cpfValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.parent || !control) {
+      return null;
+    }
+    const cpf = control.parent.get('cpf').value
+    const cnpj = control.parent.get('cpf').value
+    const tipoPessoa = control.parent.get('documentType').value
+    if (tipoPessoa === 'CPF') {
+      if (this.utilService.validaCPF(cpf)) {
+        return null;
+      }
+      return { invalidCpf: true };
+    } else {
+      if (this.utilService.validaCNPJ(cnpj)) {
+        return null;
+      }
+      return { invalidCnpj: true };
+
+    }
+
+
+  };
 }

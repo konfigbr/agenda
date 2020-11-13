@@ -51,7 +51,7 @@ class MedicoController(
 
     val newUser = userService.criarUsuario(user, "ROLE_PROFISSIONAL").toDTO()
 
-    medicoService.createNewProfessional(newUser.id, user.especialidade, user.documento, user.tipoDocumento)
+    medicoService.createNewProfessional(newUser.id, user.especialidade, user.documento, user.tipoDocumento, user.categoria)
 
     return ResponseEntity.status(HttpStatus.CREATED).body(newUser)
   }
@@ -59,6 +59,16 @@ class MedicoController(
   @GetMapping(value = ["", "/"])
   @PreAuthorize("hasAnyAuthority('ROLE_ADMINISTRADOR', 'ROLE_ASSISTENTE', 'ROLE_ATENDENTE')")
   fun list() = medicoService.list().map { it.toCustomDTO() }
+
+  @GetMapping(value = ["/empresa/{empresaId}"])
+  @PreAuthorize("hasAnyAuthority('ROLE_ADMINISTRADOR')")
+  fun listProfissionais(@PathVariable empresaId: Long) = medicoService.findByEmpresa(empresaId).map { it.toCustomDTO() }
+
+  @GetMapping(value = ["/empresa/{empresaId}/responsavel"])
+  @PreAuthorize("hasAnyAuthority('ROLE_ADMINISTRADOR')")
+  fun getResponsavelByEmpresa(@PathVariable empresaId: Long): ResponseEntity<MedicoCustomDto>? = medicoService.findResponsavelByEmpresa(empresaId).map {
+    ResponseEntity.ok(it.toCustomDTO())
+  }.orElse(ResponseEntity.notFound().build())
 
   @GetMapping(value = ["/{id}"])
   @PreAuthorize("hasAnyAuthority('ROLE_ADMINISTRADOR','ROLE_ATENDENTE')")
@@ -74,14 +84,14 @@ class MedicoController(
           @RequestParam salaId: Long?,
           @RequestParam status: StatusConsulta?,
           @RequestParam pacienteId: Long?
-  ): ResponseEntity<MutableList<ConsultaDto>> {
+  ): ResponseEntity<MutableList<ConsultaCustomDto>> {
     val consultas = consultaService.listMyMedicalAppointments(
             LocalDateTime.parse(dataInicio, DateTimeFormatter.ISO_DATE_TIME),
             LocalDateTime.parse(dataFim, DateTimeFormatter.ISO_DATE_TIME),
             salaId,
             status,
             pacienteId
-    ).map { it.toDTO() }.toMutableList()
+    ).map { it.toCustomDTO() }.toMutableList()
 
     return ResponseEntity.ok(consultas)
   }
@@ -89,12 +99,12 @@ class MedicoController(
   @PostMapping(value = ["/{medicoId}/medical-appointments"])
   @PreAuthorize("hasAnyAuthority('ROLE_PACIENTE')")
   fun saveMedicalAppointment(@PathVariable medicoId: Long, @Valid @RequestBody createConsultaDto: CreateConsultaDto) :
-    ResponseEntity<ConsultaDto> {
+    ResponseEntity<ConsultaCustomDto> {
     val currentUser = userService.findByUsername(userService.getCurrentUserEmail()).get()
     val paciente = pacienteService.findByrefUserEntity(currentUser).get()
 
     val consulta = consultaService.saveMedicalAppointment(medicoId, createConsultaDto,paciente)
-    return ResponseEntity.ok(consulta.toDTO())
+    return ResponseEntity.ok(consulta.toCustomDTO())
   }
 
   @GetMapping(value = ["/url/{url}"])
@@ -139,16 +149,18 @@ class MedicoController(
       medicoDto.ativo = "S"
 
       val alteredItem = medicoService.alter(id, medicoDto)
+      val currentUser = userService.findByUsername(userService.getCurrentUserEmail()).get()
 
       if (medico.termoUsoPrivacidade == StatusTermoDeUso.RECUSADO || medico.termoUsoPrivacidade == null) {
         if (alteredItem.termoUsoPrivacidade == StatusTermoDeUso.ACEITO) {
 
           var ret = exportPdfService.exportTerms(alteredItem)
+          var termOfUse = exportPdfService.exportTermsOfUse(alteredItem)
 
-          emailService.enviarTermoAceite(alteredItem.user?.username, alteredItem.user?.nome, alteredItem.id, ret)
+          emailService.enviarTermoAceite(alteredItem.user?.username, alteredItem.user?.nome, alteredItem.id, arrayOf(ret, termOfUse))
+          auditLogService.criarLog(currentUser, LogEnum.EDICAO_PERFIL, "Envio de e-mail de confirmação de Termo de Aceite e Termo de Uso. (idProfissional= ${alteredItem.id})")
         }
       }
-      val currentUser = userService.findByUsername(userService.getCurrentUserEmail()).get()
 
       val descricaoLog = "Atualização de dados do perfil do profissional "+ alteredItem.user?.nome +" (idProfissional="+
               alteredItem.id+")"
@@ -226,7 +238,8 @@ class MedicoController(
     val createUser = CreateUserDto(
       username = createMedicoDto.username,
       password = newPassword,
-      nome = createMedicoDto.nome
+      nome = createMedicoDto.nome,
+      categoria = createMedicoDto.categoria
     )
     val newUser = userService.criarUsuarioEnviarEmail(createUser, "ROLE_PROFISSIONAL").toDTO()
 
@@ -254,6 +267,7 @@ class MedicoController(
       ativo = "S",
       url = createMedicoDto.url,
       tipoDocumento = createMedicoDto.tipoDocumento,
+      categoria = createMedicoDto.categoria,
       termoAceite = createMedicoDto.termoAceite,
       imageComprovante = createMedicoDto.imageComprovante,
       termoUsoPrivacidade = createMedicoDto.termoUsoPrivacidade,
@@ -265,7 +279,8 @@ class MedicoController(
       estadoCivil = createMedicoDto.estadoCivil,
       uf = createMedicoDto.uf,
       dateCreated = now,
-      hasDescontoVigente = null
+      hasDescontoVigente = null,
+      ramal = createMedicoDto.ramal
     )
     val dto = medicoService.save(medicoDto).toDTO()
 

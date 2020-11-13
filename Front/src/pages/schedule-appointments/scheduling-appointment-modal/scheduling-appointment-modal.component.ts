@@ -42,6 +42,8 @@ export class SchedulingAppointmentModalComponent implements OnInit {
   agendamento: Scheduling
   appointment: Appointment = null
 
+  horasDisponiveisSelecao: string[] = [];
+
   isLoading: boolean = false;
   dialogTitle: string
   dataAtual: string
@@ -74,8 +76,8 @@ export class SchedulingAppointmentModalComponent implements OnInit {
     this.appointment = data.appointment
 
     this.eventForm = new FormGroup({
-      horaInicio: new FormControl(this.formatDate(data.dataInicioReserva, 'HHmm'), Validators.required),
-      horaFim: new FormControl(this.formatDate(data.dataFimReserva, 'HHmm'), Validators.required),
+      horaInicio: new FormControl('', Validators.required),
+      horaFim: new FormControl('', Validators.required),
       motivo: new FormControl('', Validators.required),
     });
 
@@ -85,6 +87,30 @@ export class SchedulingAppointmentModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.listarHorariosDisponiveisSelect();
+  }
+
+  listarHorariosDisponiveisSelect() {
+    this.horariosDisponiveis.forEach(h => {
+      let dateTimeInicio = new Date(h.dataInicio);
+      let dateTimeFim = new Date(h.dataFim);
+
+      let horaInicio = dateTimeInicio.getHours();
+      let horaFim = dateTimeFim.getHours();
+
+      this.horasDisponiveisSelecao.push(dateTimeInicio.getHours().toPrecision(2) + ':00');
+
+      for (let index = 0; index < (horaFim - horaInicio) - 1; index++) {
+        dateTimeInicio.setHours(dateTimeInicio.getHours() + 1);
+        this.horasDisponiveisSelecao.push(dateTimeInicio.getHours().toPrecision(2) + ':00');
+      }
+
+    });
+
+    this.eventForm.controls['horaInicio'].valueChanges.subscribe((h: string) => {
+      let hora = h.split(":");
+      this.eventForm.controls['horaFim'].setValue(Number(hora[0]) + 1 + ':00');
+    });
   }
 
   save() {
@@ -104,7 +130,9 @@ export class SchedulingAppointmentModalComponent implements OnInit {
     }
 
     if (this.isReagendamento) {
-      this.consultaService.rescheulingMedicalAppointment(Number(this.appointment?.id), newAppointment).subscribe(consulta => {
+      console.log(this.appointment.id);
+      console.log(newAppointment);
+      this.consultaService.rescheulingMedicalAppointment(Number(this.appointment.id), newAppointment).subscribe(consulta => {
         this.isLoading = false
         this.close(consulta)
       }, error => {
@@ -113,7 +141,7 @@ export class SchedulingAppointmentModalComponent implements OnInit {
       })
 
     } else if (this.patient != null) {
-      
+
       this.consultaService.createMedicalAppointmentWithPatient(Number(this.profissional.id), newAppointment).subscribe(consulta => {
         this.isLoading = false
         this.close(consulta)
@@ -150,9 +178,9 @@ export class SchedulingAppointmentModalComponent implements OnInit {
     if (!formControlName) {
       return
     }
-
-    const hour = Number(this.eventForm.get(formControlName).value.padStart(4, '0').substr(0, 2))
-    const minute = Number(this.eventForm.get(formControlName).value.padStart(4, '0').substr(2, 2))
+    let horasMinutos = this.eventForm.get(formControlName).value.split(':');
+    const hour = Number(horasMinutos[0])
+    const minute = Number(horasMinutos[1])
     const today = new Date(this.dataAtual)
 
     return this.dateService.formatToAPITimezone(new Date(getYear(today), getMonth(today), getDate(today), hour, minute))

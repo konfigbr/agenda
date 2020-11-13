@@ -8,6 +8,7 @@ class CreateUserDto(
   var password: String? = null,
   var nome: String?,
   var especialidade: Long? = null,
+  var categoria: String?,
   var tipoDocumento: TipoDocumento? = null,
   var documento: String? = null
 )

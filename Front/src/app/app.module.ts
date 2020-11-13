@@ -47,6 +47,7 @@ import { EquipmentFormComponent } from '../pages/equipments/equipment-form/equip
 import { EquipmentsComponent } from '../pages/equipments/equipments.component';
 import { InvoicesComponent } from '../pages/invoices/invoices.component';
 import { MyPanelComponent } from '../pages/my-panel/my-panel.component';
+import { EmpresaProfissionaisComponent } from '../pages/empresa-profissionais/professionals.component';
 import { ProfessionalScheduleComponent } from '../pages/professional-schedule/professional-schedule.component';
 import { ProfessionalFormComponent } from '../pages/professionals/professional-form/professional-form.component';
 import { ProfessionalsComponent } from '../pages/professionals/professionals.component';
@@ -103,7 +104,12 @@ import { ReschedulingModalComponent } from '../pages/rescheduling/rescheduling-m
 import { ProfessionalsDiscountModalComponent } from '../pages/professionals/professionals-discount-modal/professionals-discount-modal.component';
 import { ProfessionalsDiscountComponentComponent } from '../pages/professionals/professionals-discount-component/professionals-discount-component.component';
 import { ProfessionalsDiscountListComponentComponent } from '../pages/professionals/professionals-discount-list-component/professionals-discount-list-component.component';
-
+import { RepresentanteLegalComponent } from 'src/pages/representante-legal/representante-legal.component';
+import { CallsComponent } from 'src/pages/calls/calls.component';
+import { DocumentsComponent } from 'src/pages/documents/documents.component';
+import { ResponsavelTecnicoComponent } from 'src/pages/responsavel-tecnico/responsavel-tecnico.component';
+import {MatSortModule } from '@angular/material/sort';
+import {MatTableModule} from '@angular/material/table'
 
 
 
@@ -118,6 +124,7 @@ registerLocaleData(localePt, 'pt');
     EquipmentTypesComponent,
     EquipmentsComponent,
     ProfessionalsComponent,
+    EmpresaProfissionaisComponent,
     AssistantsComponent,
     AssistantScheduleComponent,
     ReportsComponent,
@@ -177,10 +184,12 @@ registerLocaleData(localePt, 'pt');
     ReschedulingModalComponent,
     ProfessionalsDiscountModalComponent,
     ProfessionalsDiscountComponentComponent,
+    ProfessionalsDiscountListComponentComponent,     
+    RepresentanteLegalComponent,
     ProfessionalsDiscountListComponentComponent,
-    
-   
-    
+    CallsComponent,
+    DocumentsComponent,
+    ResponsavelTecnicoComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -197,7 +206,9 @@ registerLocaleData(localePt, 'pt');
     MaterialModule,
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
     NgxMaskModule.forRoot(),
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
+    MatTableModule,
+    MatSortModule
   ],
   entryComponents: [
     MessageModalComponent,

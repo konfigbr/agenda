@@ -1,5 +1,6 @@
 import Patient from './patient.model'
 import Professional from './professional.model'
+import Room from './room/room.model';
 import { AppointmentStatus } from './appointment-Status.model'
 
 export default class Appointment {
@@ -13,6 +14,5 @@ export default class Appointment {
     public motivo?: string
     public justify?: string
     public status?: AppointmentStatus
-
-
+    public sala?: Room
 }

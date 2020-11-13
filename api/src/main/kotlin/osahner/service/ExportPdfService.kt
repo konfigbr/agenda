@@ -5,11 +5,11 @@ import com.itextpdf.text.pdf.PdfWriter
 import org.springframework.stereotype.Component
 import osahner.domain.AgendaAssistente
 import osahner.domain.Medico
+import osahner.domain.TermoDeUso
 import osahner.dto.AgendaAssistenteDto
-import osahner.repository.AgendaAssistenteRepository
-import osahner.repository.EspecialidadeRepository
-import osahner.repository.MedicoRepository
-import osahner.repository.UserRepository
+import osahner.enums.TipoDocumento
+import osahner.enums.TipoTermoDeUso
+import osahner.repository.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
@@ -24,7 +24,8 @@ import java.util.*
 class ExportPdfService(
   private val medicoRepository: MedicoRepository,
   private val especialidadeRepository: EspecialidadeRepository,
-  private val userRepository: UserRepository
+  private val userRepository: UserRepository,
+  private val termoDeUsoRepository: TermoDeUsoRepository
 ) {
 
   fun exportTerms(profissional: Medico): ByteArrayInputStream?{
@@ -45,6 +46,51 @@ class ExportPdfService(
     }else {
       return this.outrosPdfExportTerms(profissional)
     }
+  }
+
+  fun exportTermsOfUse(profissional: Medico): ByteArrayInputStream? {
+    var termoDeUso: TermoDeUso? = null;
+    val especialidade = especialidadeRepository.findById(profissional.refEspecialidadeEntity?.id).get()
+
+    if (especialidade.nome !== "Odontologia" && especialidade.nome !== "Otorrino") {
+      termoDeUso = this.termoDeUsoRepository.findByTipo(TipoTermoDeUso.PF_ODONTO).get()
+    } else if (profissional.tipoDocumento === TipoDocumento.CPF) {
+      if (especialidade.nome === "Odontologia")
+        termoDeUso = this.termoDeUsoRepository.findByTipo(TipoTermoDeUso.PF_ODONTO).get()
+      else if (especialidade.nome === "Otorrino")
+        termoDeUso = this.termoDeUsoRepository.findByTipo(TipoTermoDeUso.PF_MEDICINA).get()
+      else if (especialidade.nome === "Fonoaudiologia")
+        termoDeUso = this.termoDeUsoRepository.findByTipo(TipoTermoDeUso.PF_FONO).get()
+    } else if (profissional.tipoDocumento === TipoDocumento.CNPJ) {
+      if (especialidade.nome === "Odontologia")
+        termoDeUso = this.termoDeUsoRepository.findByTipo(TipoTermoDeUso.PJ_ODONTO).get()
+      else if (especialidade.nome === "Otorrino")
+        termoDeUso = this.termoDeUsoRepository.findByTipo(TipoTermoDeUso.PJ_MEDICINA).get()
+      else if (especialidade.nome === "Fonoaudiologia")
+        termoDeUso = this.termoDeUsoRepository.findByTipo(TipoTermoDeUso.PJ_FONO).get()
+    } else {
+      termoDeUso = this.termoDeUsoRepository.findByTipo(TipoTermoDeUso.PJ_MEDICINA).get()
+    }
+
+    var document: Document? = Document()
+    var out: ByteArrayOutputStream? = ByteArrayOutputStream()
+    var writer: PdfWriter =  PdfWriter.getInstance(document, out)
+    val open = document?.open()
+
+    var font: com.itextpdf.text.Font = FontFactory.getFont("COURIER")
+    var paragraph:Paragraph = Paragraph("TERMO DE USO"+"\n"+
+            "\n" , font)
+    paragraph.setAlignment(Element.ALIGN_CENTER)
+
+    var body: Paragraph = Paragraph(termoDeUso?.texto)
+
+    var footer = Phrase(String.format("Page %d of", writer.getPageNumber()), font)
+    document?.add(paragraph)
+    document?.add(body)
+    document?.add(Chunk.NEWLINE)
+    document?.close()
+
+    return ByteArrayInputStream(out?.toByteArray())
   }
 
   fun dentistCpfPdfExportTerms(profissional:Medico) : ByteArrayInputStream? {

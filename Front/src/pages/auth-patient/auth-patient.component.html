@@ -48,6 +48,8 @@
             <p>Ainda não possui cadastro?</p>
             <a (click)="navigate('cadastro')" class="opt-register-link link">Cadastre-se já</a>
         </form>
+        
+        <h6 style="text-align: right">Versão: {{ appVersion }}</h6>
 
         <p class="opt-title-login" *ngIf="page === 'cadastro'">Cadastrar</p>
         <form [formGroup]="formGroupUserRegister" *ngIf="page === 'cadastro'">

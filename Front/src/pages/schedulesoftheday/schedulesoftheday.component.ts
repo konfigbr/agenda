@@ -38,6 +38,14 @@ export class SchedulesofthedayComponent implements OnInit {
   getScheduling() {
     this.isLoading = true;
     this.schedulingService.getSchegulingDayList().subscribe((agendamentos: any[]) => {
+      agendamentos.map(agendamento =>{
+        agendamento.nomeAssistente = agendamento.assistente.nome
+        agendamento.nomeSala = agendamento.sala.nome
+        agendamento.nomeEspecialidadeUser = agendamento.user.especialidade.nome
+        agendamento.nomeUser = agendamento.user.nome
+      })
+
+      console.log(agendamentos)
       this.dataSource = new MatTableDataSource(agendamentos)     
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -53,9 +61,8 @@ export class SchedulesofthedayComponent implements OnInit {
     return new Date(date).toLocaleDateString();
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  applyFilter(filter: string) {
+    this.dataSource.filter = filter.trim().toLowerCase()
   }
   openAssitantsScheduleModal() {
 

@@ -56,7 +56,8 @@ class AssistenteController(
     val createUser = CreateUserDto(
       username = createAssistenteDto.username,
       password = newPassword,
-      nome = createAssistenteDto.nome
+      nome = createAssistenteDto.nome,
+      categoria = null
     )
     val newUser = userService.criarUsuarioEnviarEmail(createUser, "ROLE_ASSISTENTE").toDTO()
 

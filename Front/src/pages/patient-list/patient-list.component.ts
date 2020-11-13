@@ -35,8 +35,11 @@ export class PatientListComponent implements OnInit {
   getAdministrativeUsers() {
     this.isLoading = true
 
-      this.patientService.getPatients().subscribe(patient => {
-      this.dataSource = new MatTableDataSource(patient)
+    this.patientService.getPatients().subscribe((patients: any[] )=> {
+      patients.map(patient=>{
+        patient.nomeProfissional = patient.profissional?.nome
+      })
+      this.dataSource = new MatTableDataSource(patients)
       this.errorTableData = false
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

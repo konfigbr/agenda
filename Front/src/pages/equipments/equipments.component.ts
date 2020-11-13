@@ -33,7 +33,11 @@ export class EquipmentsComponent implements OnInit {
 
   getEquipments() {
     this.isLoading = true;
-    this.equipmentService.getEquipments().subscribe((equipments: Equipment[]) => {
+    this.equipmentService.getEquipments().subscribe((equipments: any[]) => {
+      equipments.map(equipment=>{
+        equipment.nomeTipoEquipamento = equipment.tipoEquipamento?.nome
+        equipment.valorCobravel = equipment.tipoEquipamento?.valorCobravel
+      })
       this.dataSource = new MatTableDataSource(equipments)
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

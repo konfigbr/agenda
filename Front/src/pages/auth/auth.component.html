@@ -1,5 +1,6 @@
 <div class="login-container">
-    <div class="opt-box-login" [ngClass]="{'opt-box-login-big': page === 'cadastro'|| page === 'empresa' || page === 'pessoa'}">
+    <div class="opt-box-login"
+        [ngClass]="{'opt-box-login-big': page === 'cadastro'|| page === 'empresa' || page === 'pessoa' || page === 'responsavel-tecnico' || page === 'representante-legal' }">
         <div class="opt-logo-container">
             <img src="assets/logo.png" alt="Logo OPT.DOC">
         </div>
@@ -47,10 +48,11 @@
                 senha</a>
             <p>É profissional e ainda não possui cadastro?</p>
             <!-- <a [routerLink]="['/auth/cadastro']" class="opt-register-link" href="#">Cadastre-se já</a> -->
-            <a [routerLink]="['/auth/pessoa']" class="opt-register-link" href="#">Cadastre-se já</a>
-
+            <a [routerLink]="['/auth/pessoa']" class="opt-register-link" href="#">Cadastre-se já</a>            
         </form>
-
+        
+        <h6 style="text-align: right">Versão: {{ appVersion }}</h6>
+        
         <p class="opt-title-login" *ngIf="page === 'cadastro'">Cadastrar Profissional</p>
         <form [formGroup]="formGroupUserRegister" *ngIf="page === 'cadastro'">
 
@@ -83,8 +85,6 @@
                     </mat-form-field>
                 </div>
             </div>
-
-
 
             <div class="opt-row">
                 <div class="opt-form-control">
@@ -137,8 +137,7 @@
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Documento</mat-label>
-                        <input (input)="inputEvent($event)"
-                            [mask]="'000.000.000-00'"
+                        <input (input)="inputEvent($event)" [mask]="'000.000.000-00'"
                             [specialCharacters]="[ '.' ,'-','/' ]" [dropSpecialCharacters]="true"
                             [(ngModel)]="userRegister.documento" matInput formControlName="document"
                             [errorStateMatcher]="matcher" placeholder="CPF">
@@ -158,34 +157,6 @@
                     </mat-form-field>
                 </div>
             </div>
-
-            <!-- <div class="opt-row">
-
-                <div class="opt-form-control">
-                    <mat-form-field appearance="outline">
-                        <mat-label>Documento</mat-label>                        
-                        <input (input)="inputEvent($event)"
-                            [mask]="userRegister.tipoDocumento.key === 'CNPJ' ? '00.000.000/0000-00' : '000.000.000-00'"
-                            [specialCharacters]="[ '.' ,'-','/' ]" [dropSpecialCharacters]="true"
-                            [(ngModel)]="userRegister.documento" matInput formControlName="document"
-                            [errorStateMatcher]="matcher" placeholder="CPF / CNPJ">
-                        <mat-icon matSuffix>subtitles</mat-icon>
-                        <mat-error *ngIf="formRegisterHasError('document', 'required')">
-                            O Documento é <strong>obrigatório</strong>!
-                        </mat-error>
-                        <mat-error *ngIf="formRegisterHasError('document', 'invalidCpf') && userRegister.documento && userRegister.documento.length === 11">
-                            O CPF <strong>é invalido</strong>!
-                        </mat-error>
-                        <mat-error *ngIf="formRegisterHasError('document', 'invalidCnpj') && userRegister.documento && userRegister.documento.length === 14">
-                            O CNPJ <strong>é invalido</strong>!
-                        </mat-error>
-                       
-                    </mat-form-field>
-                </div>
-
-            </div> -->
-
-
 
             <button [disabled]="isLoading || !formGroupUserRegister.valid" class="opt-btn-submit-login" mat-button
                 type="button" (click)="onSubmitRegister()">Cadastrar</button>
@@ -231,13 +202,14 @@
                 <div class="opt-btn-submit-login-container">
                     <button class="opt-btn-submit-login" (click)="selectPessoa('PESSOA')" mat-button
                         type="submit">Profissional</button>
-                  
+
                 </div>
                 <br>
 
                 <div class="opt-btn-submit-login-container">
-                    <button class="opt-btn-submit-login" (click)="selectPessoa('EMPRESA')" mat-button type="submit">Empresa </button>
-                  
+                    <button class="opt-btn-submit-login" (click)="selectPessoa('EMPRESA')" mat-button
+                        type="submit">Empresa </button>
+
                 </div>
             </div>
             <a [routerLink]="['/auth/login']" class="opt-register-link opt-link-back" href="#">Voltar</a>
@@ -254,16 +226,15 @@
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>CNPJ</mat-label>
-                        <input (input)="inputEvent($event)"
-                            [mask]="'00.000.000/0000-00'"
+                        <input (input)="inputEvent($event)" [mask]="'00.000.000/0000-00'"
                             [specialCharacters]="[ '.' ,'-','/' ]" [dropSpecialCharacters]="true"
-                            [(ngModel)]="empresa.cnpj" matInput formControlName="cnpj"
-                            [errorStateMatcher]="matcher" placeholder="CNPJ" (blur)="onCnpjChange()">
+                            [(ngModel)]="empresa.cnpj" matInput formControlName="cnpj" [errorStateMatcher]="matcher"
+                            placeholder="CNPJ" (blur)="onCnpjChange()">
                         <mat-icon matSuffix>subtitles</mat-icon>
                         <mat-error *ngIf="formEmpresaRegisterHasError('cnpj', 'required')">
                             O Documento é <strong>obrigatório</strong>!
                         </mat-error>
-                            <mat-error
+                        <mat-error
                             *ngIf="formEmpresaRegisterHasError('cnpj', 'invalidCnpj') && userRegister.documento && userRegister.documento.length === 14">
                             O CNPJ <strong>é invalido</strong>!
                         </mat-error>
@@ -273,33 +244,32 @@
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Nome Comercial</mat-label>
-                        <input [(ngModel)]="empresa.nome" matInput formControlName="name"
-                            [errorStateMatcher]="matcher" placeholder="Digite seu nome completo">
-                            <mat-icon matSuffix>subtitles</mat-icon>
+                        <input [(ngModel)]="empresa.nome" matInput formControlName="name" [errorStateMatcher]="matcher"
+                            placeholder="Digite seu nome completo">
+                        <mat-icon matSuffix>subtitles</mat-icon>
                         <mat-error *ngIf="formEmpresaRegisterHasError('name', 'required')">
                             O nome é <strong>obrigatório</strong>!
                         </mat-error>
                     </mat-form-field>
                 </div>
 
-                
+
             </div>
-         
-                
+
+
             <div class="opt-row">
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Razão Social</mat-label>
                         <input [(ngModel)]="empresa.razaoSocial" matInput formControlName="razaoSocial"
                             [errorStateMatcher]="matcher" placeholder="Digite a razão social">
-                            <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-icon matSuffix>subtitles</mat-icon>
                         <mat-error *ngIf="formEmpresaRegisterHasError('razaoSocial', 'required')">
                             Razão social é <strong>obrigatório</strong>!
                         </mat-error>
                     </mat-form-field>
                 </div>
-               
-                
+
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Situação No Orgao</mat-label>
@@ -311,7 +281,7 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-               
+
             </div>
             <div class="opt-row">
                 <div class="opt-form-control">
@@ -325,12 +295,12 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-                 <div class="opt-form-control">
+                <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Logradouro</mat-label>
                         <input [(ngModel)]="empresa.logradouro" matInput formControlName="logradouro"
                             [errorStateMatcher]="matcher" placeholder="Logradouro">
-                            <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-icon matSuffix>subtitles</mat-icon>
                         <mat-error *ngIf="formEmpresaRegisterHasError('logradouro', 'required')">
                             O logradouro é <strong>obrigatório</strong>!
                         </mat-error>
@@ -339,12 +309,12 @@
             </div>
 
             <div class="opt-row">
-                 <div class="opt-form-control">
+                <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Numero</mat-label>
                         <input [(ngModel)]="empresa.numero" matInput formControlName="numero"
                             [errorStateMatcher]="matcher" placeholder="numero">
-                            <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-icon matSuffix>subtitles</mat-icon>
                         <mat-error *ngIf="formEmpresaRegisterHasError('numero', 'required')">
                             O numero é <strong>obrigatório</strong>!
                         </mat-error>
@@ -355,20 +325,20 @@
                         <mat-label>Bairro</mat-label>
                         <input [(ngModel)]="empresa.bairro" matInput formControlName="bairro"
                             [errorStateMatcher]="matcher" placeholder="Bairro">
-                            <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-icon matSuffix>subtitles</mat-icon>
                         <mat-error *ngIf="formEmpresaRegisterHasError('bairro', 'required')">
                             O bairro é <strong>obrigatório</strong>!
                         </mat-error>
                     </mat-form-field>
                 </div>
-             </div>
-             <div class="opt-row">
+            </div>
+            <div class="opt-row">
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Municipio</mat-label>
                         <input [(ngModel)]="empresa.municipio" matInput formControlName="municipio"
                             [errorStateMatcher]="matcher" placeholder="municipio">
-                            <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-icon matSuffix>subtitles</mat-icon>
                         <mat-error *ngIf="formEmpresaRegisterHasError('municipio', 'required')">
                             O municipio é <strong>obrigatório</strong>!
                         </mat-error>
@@ -387,14 +357,14 @@
                         </mat-error>
                     </mat-form-field>
                 </div>
-             </div>
+            </div>
 
-             <div class="opt-row">
+            <div class="opt-row">
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Documento Profissional</mat-label>
                         <input [(ngModel)]="empresa.profDocument" matInput formControlName="profDocument"
-                        [errorStateMatcher]="matcher" placeholder="Documento Profissional">
+                            [errorStateMatcher]="matcher" placeholder="Documento Profissional">
                         <mat-icon matSuffix>chrome_reader_mode</mat-icon>
                         <mat-error *ngIf="formEmpresaRegisterHasError('profDocument', 'required')">
                             O Documento Profissional é <strong>obrigatório</strong>!
@@ -405,7 +375,8 @@
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Especialidade</mat-label>
-                        <mat-select [(ngModel)]="empresa.especialidade" formControlName="specialty" (selectionChange)="onEspecilidadeChange()">
+                        <mat-select [(ngModel)]="empresa.especialidade" formControlName="specialty"
+                            (selectionChange)="especialidadeChange()">
                             <mat-option *ngFor="let spec of specialties" [value]="spec">
                                 {{ spec.nome }}
                             </mat-option>
@@ -417,14 +388,55 @@
                 </div>
             </div>
 
-            <button class="opt-btn-submit-login" mat-button type="button" (click)="onSubmitRegisterEmpresa()">Cadastrar</button>
-                                
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>U.F Profissional</mat-label>
+                        <mat-select [errorStateMatcher]="matcher" formControlName="ufProfessional"
+                            [(ngModel)]="empresa.ufProfissional">
+                            <mat-option *ngFor="let state of states" [value]="state">
+                                {{ state }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formEmpresaRegisterHasError('ufProfessional', 'required')">
+                            O uf é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-form-control" *ngIf="isOdontologia">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Categoria Profissional</mat-label>
+                        <mat-select [(ngModel)]="empresa.categoria" formControlName="categoria">
+                            <mat-option value="EPAO">
+                                Entidade Prestadora de Assistência Odontológica
+                            </mat-option>
+                            <mat-option value="LB">
+                                Laboratório de Prótese Dentária
+                            </mat-option>
+                            <mat-option value="EPO">
+                                Empresa de Produtos Odontológicos
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formEmpresaRegisterHasError('categoria', 'required')">
+                            A Categoria Profissional é <strong>obrigatória</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- <button class="opt-btn-submit-login" [disabled]='this.isLoading' mat-button type="button"
+                (click)="onSubmitRegisterEmpresa()">Cadastrar</button> -->
+            <button class="opt-btn-submit-login" [disabled]='this.isLoading' mat-button type='button'
+                (click)="next()">Continuar</button>
+
+            <a [routerLink]="['/auth/pessoa']" class="opt-register-link opt-link-back" href="#">Voltar</a>
         </form>
 
-
+        <app-representante-legal *ngIf="page === 'representante-legal'" [empresa]="empresa" (nextStep)="goToResponsavelTecnico()"></app-representante-legal>
         <!-- Fim Person type empresa -->
 
-
+        <app-responsavel-tecnico [empresa]="empresa" *ngIf="page === 'responsavel-tecnico'"></app-responsavel-tecnico>
 
         <p class="opt-title-login" *ngIf="page === 'alterar-senha'">Alterar senha</p>
         <form *ngIf="page === 'alterar-senha'" [formGroup]="changePasswordFormGroup"

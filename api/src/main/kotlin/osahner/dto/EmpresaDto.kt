@@ -1,6 +1,8 @@
 package osahner.dto
 
+import osahner.domain.Especialidade
 import osahner.domain.Medico
+import osahner.domain.User
 
 data class EmpresaDto (
     var id: Long? = null,
@@ -25,5 +27,12 @@ data class EmpresaDto (
 
     var situacao: String? = null,
 
-    var representanteLegal: Medico? = null
+    var responsavelTecnico: Medico? = null,
+
+    var representanteLegal: User? = null,
+
+    var ufcrm: String? = null,
+    var crm: String? = null,
+    var categoria: String? = null,
+    var refEspecialidadeEntity: Especialidade? = null
 )

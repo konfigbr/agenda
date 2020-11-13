@@ -63,11 +63,11 @@ class ConsultaService(
 
     fun findByStatus(status: StatusConsulta) : MutableList<Consulta> = consultaRepository.findByStatus(status)
 
-    fun findByPatientLoggedAndProfessional(idProfessional: Long): MutableList<Consulta> {
+    fun findByPatientLoggedAndProfessional(idProfessional: Long, idPaciente: Long? = null): MutableList<Consulta> {
         val professional = medicoRepository.findById(idProfessional).get()
 
-        val currentUser = userService.findByUsername(userService.getCurrentUserEmail()).get()
-        val patient = pacienteService.findByrefUserEntity(currentUser).get()
+        //val currentUser = userService.findByUsername(userService.getCurrentUserEmail()).get()
+        val patient = if (idPaciente !== null) pacienteService.findById(idPaciente).get() else pacienteService.findByrefUserEntity(userService.findByUsername(userService.getCurrentUserEmail()).get()).get()
 
         if (patient == null)
             throw RuntimeException("Paciente não encontrado")
@@ -191,6 +191,68 @@ class ConsultaService(
         auditLogService.criarLog(paciente.user!!, LogEnum.NOVA_CONSULTA, descricaoLog)
 
         return consultaCriada
+    }
+
+    @Transactional
+    fun editMedicalAppointment(medicoId: Long, consultaDto: CreateConsultaDto, paciente: Paciente, consultaId: Long): Consulta {
+        val now = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"))
+
+        if (consultaDto.dataInicio!! < now) {
+            throw RuntimeException("A data da consulta não pode ser inferior a data atual")
+        }
+
+        if (consultaDto.dataFim!! <= consultaDto.dataInicio || consultaDto.dataInicio!! >= consultaDto.dataFim) {
+            throw RuntimeException("As datas de início e fim da consulta não são válidas")
+        }
+        val medico = medicoService.findById(medicoId).orElseThrow { RuntimeException("Profissional não encontrado") }
+        val agendamento = agendamentoService.findById(consultaDto.agendamentoId!!)
+                .orElseThrow { RuntimeException("Agendamento não encontrado") }
+
+        if (agendamento.status!! != SolicitacaoStatus.CONFIRMADO || agendamento.medico?.id!! != medico.id!!) {
+            throw  RuntimeException("O agendamento da sala não está mais disponível. Entre em contato com o profissional responsável")
+        }
+
+        // Verifica se a consulta está dentro do horário de agendamento da sala
+        agendamento.agendaSalas?.sortBy { it.fim }
+
+        val inicioAgendamentoSala = agendamento.agendaSalas?.first()?.inicio
+        val fimAgendamentoSala = agendamento.agendaSalas?.last()?.fim
+
+        if (!(consultaDto.dataInicio!! >= inicioAgendamentoSala && consultaDto.dataFim!! <= fimAgendamentoSala)) {
+            throw RuntimeException("A sala não está disponível para este horário")
+        }
+
+        if (!hasHorarioDisponivel(medico, consultaDto.dataInicio!!, consultaDto.dataFim!!)) {
+            throw RuntimeException("O medico ${medico.user!!.nome} não tem agenda disponível para esse horário")
+        }
+
+        val currentUser = userService.findByUsername(userService.getCurrentUserEmail()).get()
+        val profissional = medicoService.findByrefUserEntity(currentUser)
+
+        // Salva a consulta no banco de dados
+        val consultaCriada = consultaDto.toConsulta().apply {
+            id = consultaId
+            version = 1
+            refPacienteEntity = paciente
+            refMedicoEntity = medico
+            refAgendamentoEntity = agendamento
+            status = if (profissional.isPresent) StatusConsulta.REAGENDADA else StatusConsulta.SOLICITADA
+        }.let { consultaRepository.saveAndFlush(it) }
+
+        // Envia e-mail para o profissional
+        val assuntoEmail = "Novo agendamento - ${consultaCriada.dataInicio?.format(DateTimeFormatter.ofPattern("dd/MM HH:mm"))} - ${paciente?.user?.nome}"
+
+        emailService.sendEmail(medico?.user?.username, assuntoEmail, getNovaConsultaEmailBody(consultaCriada))
+
+        // Gera auditoria
+        val descricaoLog = "Consulta agendada para ${consultaCriada.dataInicio?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))} " +
+                "das ${consultaCriada.dataInicio?.format(DateTimeFormatter.ofPattern("HH:mm"))} até as ${consultaCriada.dataFim?.format(DateTimeFormatter.ofPattern("HH:mm"))} " +
+                "com o profissional ${medico.user?.nome}"
+
+        auditLogService.criarLog(paciente.user!!, LogEnum.NOVA_CONSULTA, descricaoLog)
+
+        return consultaCriada
+
     }
 
     private fun hasHorarioDisponivel(medico: Medico, dataInicio: LocalDateTime, dataFim: LocalDateTime): Boolean {
@@ -409,9 +471,8 @@ class ConsultaService(
 
         consulta.status = StatusConsulta.REAGENDADA
 
-        consultaRepository.save(consulta)
 
-        val consultaReagendada = saveMedicalAppointment(consulta.refMedicoEntity?.id!!, consultaDto, consulta.refPacienteEntity!!)
+        val consultaReagendada = editMedicalAppointment(consulta.refMedicoEntity?.id!!, consultaDto, consulta.refPacienteEntity!!, idConsulta)
 
         emailService.reagendamentoConsulta(consulta.refPacienteEntity?.user?.username, consultaReagendada)
 

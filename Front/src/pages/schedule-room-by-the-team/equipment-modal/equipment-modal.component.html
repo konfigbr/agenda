@@ -52,7 +52,7 @@
                     </mat-form-field>
                 </div>
             </div>
-            <button *ngIf="!justCancel" class="opt-btn-form-add" [disabled]="!equipmentAddFormGroup.valid" mat-button
+            <button *ngIf="!justCancel && equipmentAddFormGroup.valid" class=" opt-btn-form-add" mat-button
                 type="submit">Adicionar</button>
             <ul *ngIf="equipmentsAdded.length" class="equipments-added-list">
                 <li class="equipment-added-item" *ngFor="let equipment of equipmentsAdded; let idx = index">

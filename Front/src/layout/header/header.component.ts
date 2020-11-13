@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/services/auth.service';
 import { AssistantService } from 'src/services/assistant.service';
@@ -8,17 +8,26 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DataService } from 'src/services/data.service';
 import { PatientService } from 'src/services/patient.service';
 import { ConsultaService } from 'src/services/consulta.service';
+import { PabxService } from 'src/services/pabx.service';
+import { Subscription } from 'rxjs';
+import { Call } from 'src/models/call-.model';
+import * as uuid from 'uuid';
+import { MatDialog } from '@angular/material/dialog';
+import { CallsComponent } from 'src/pages/calls/calls.component';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
   userName: string;
   badgeCount: number = 0
   badgeCount1: number = 0
+  callsSize: number = 0
+
+  private sseStream: Subscription;
 
   constructor(
     private router: Router,
@@ -29,16 +38,57 @@ export class HeaderComponent implements OnInit {
     private consultaService: ConsultaService,
     private patientService: PatientService,
     public dataService: DataService,
-    private userService: UserService
+    private userService: UserService,
+    private pabxService: PabxService,
+    private matDialog: MatDialog
   ) { }
 
   ngOnInit(): void {
+    if (this.authService.getAccessType() === 'ROLE_ATENDENTE') {
+      this.sseStream = this.pabxService.incomingCall()
+        .subscribe((call: any) => {
+          if (call.url) {
+            this.pabxService.setCall = {
+              uuid: uuid.v4(),
+              professionalKey: call.url,
+              professionalObj: JSON.stringify(call.medico),
+              phone: call.phone,
+              extensionPhone: call.extensionPhone,
+              dateTime: call.dateTime
+            } as Call;
+          } else {
+            localStorage.removeItem('professionalKey');
+            localStorage.removeItem('professionalObj');
+          }
+        });
+    }
+
     this.getProfile();
     if (this.authService.getAccessType() === 'ROLE_ADMINISTRADOR') {
       this.getProfessionals()
     }
+    this.getCalls();
+  }
 
+  getCalls() {
+    this.pabxService.getCalls.subscribe((calls: Map<String, Call>) => {
+      this.callsSize = calls.size;
+    });
+  }
 
+  calls() {
+    this.matDialog.open(CallsComponent, {
+      width: '70%',
+      maxWidth: '100%',
+      maxHeight: '85%',
+      data: {
+      }
+    }).afterClosed().subscribe();
+  }
+
+  ngOnDestroy() {
+    if (this.sseStream)
+      this.sseStream.unsubscribe();
   }
 
   showMenu() {
@@ -96,8 +146,6 @@ export class HeaderComponent implements OnInit {
       console.log(error)
     })
   }
-
-
 
   getAccessType() {
     switch (this.authService.getAccessType()) {

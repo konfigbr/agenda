@@ -1,0 +1,38 @@
+::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.4em 0px !important;
+}
+::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+}
+
+::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+}
+.status-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+    // background: red;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+        0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    display: block;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.status-indicator-warning {
+    background: radial-gradient(circle at 65% 15%, white 1px, #ffec19 3%, #ffc100 60%, #ffec19 100%);
+}
+.status-indicador-danger {
+    background: radial-gradient(circle at 65% 15%, white 1px, #ff0000 3%, #d70000 60%, #ff0000 100%);
+}
+.status-indicator-confirm {
+    background: radial-gradient(circle at 65% 15%, white 1px, #4ae54a 3%, #30cb00 60%, #4ae54a 100%);
+}
+.has-discount {
+    background: #30cb00
+}
+
+

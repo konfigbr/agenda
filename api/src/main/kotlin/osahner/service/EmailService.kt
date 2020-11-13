@@ -79,13 +79,13 @@ class EmailService(
     sendEmail(to, subject, htmlMsg)
   }
 
-  fun enviarTermoAceite(to: String?, name: String?, id: Long?, file: ByteArrayInputStream?) {
+  fun enviarTermoAceite(to: String?, name: String?, id: Long?, files: Array<ByteArrayInputStream?>) {
     val subject = "OPT Gestão - Termo de Aceite"
     val htmlMsg =
             "<p> Olá " + name + " </p>" +
             "<p> Em anexo está o Termo de Aceite que deve ser assinado por você e enviado na área de edição de seus dados no sistema OPT.DOC </p>"
 
-    sendEmailWithAttachment(to, subject, htmlMsg, file, "TermoDeAceite"+ id +".pdf")
+    sendEmailWithAttachment(to, subject, htmlMsg, files, arrayOf("TermoDeAceite"+ id +".pdf", "TermoDeUso" + id + ".pdf"))
   }
 
   fun cancelamentoConsulta(to: String?, consulta: Consulta) {
@@ -113,7 +113,7 @@ class EmailService(
     sendEmail(to, subject, htmlMsg)
   }
 
-  private fun sendEmailWithAttachment(to: String?, subject: String?, htmlMsg: String?, file: ByteArrayInputStream?, fileName: String)  {
+  private fun sendEmailWithAttachment(to: String?, subject: String?, htmlMsg: String?, files: Array<ByteArrayInputStream?>, fileNames: Array<String>)  {
     val message = emailSender?.createMimeMessage()
     val helper = MimeMessageHelper(message, true)
     helper.setTo(to)
@@ -121,14 +121,17 @@ class EmailService(
     helper.setSubject(subject)
     helper.setText(htmlMsg, true)
 
-    val ds = ByteArrayDataSource(file?.readBytes(), "application/octet-stream")
+    for (i in 0..files.size - 1) {
+      val file: ByteArrayInputStream? = files[i]
+      val ds = ByteArrayDataSource(file?.readBytes(), "application/octet-stream")
 
-    val anexoBody = MimeBodyPart()
-    anexoBody.dataHandler = DataHandler(ds)
-    anexoBody.fileName = fileName
-    anexoBody.disposition = Part.ATTACHMENT
+      val anexoBody = MimeBodyPart()
+      anexoBody.dataHandler = DataHandler(ds)
+      anexoBody.fileName = fileNames[i]
+      anexoBody.disposition = Part.ATTACHMENT
 
-    helper.mimeMultipart.addBodyPart(anexoBody)
+      helper.mimeMultipart.addBodyPart(anexoBody)
+    }
 
     emailSender?.send(helper.mimeMessage);
   }

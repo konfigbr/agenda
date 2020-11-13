@@ -22,7 +22,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import MyErrorStateMatcher from 'src/config/error-state-matcher';
 import { MatDialog } from '@angular/material/dialog';
 import { UtilsService } from 'src/services/utils.service';
-
+import { environment } from 'src/environments/environment';
 
 export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   if (!control.parent || !control) {
@@ -48,6 +48,7 @@ export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl):
   styleUrls: ['./auth-patient.component.scss']
 })
 export class AuthPatientComponent implements OnInit {
+  appVersion: String = environment.appVersion;
   userLogin: UserLogin = new UserLogin()
   usernameRecoverPassword$: Observable<string>
   isSubmitted: boolean = false;
@@ -261,7 +262,7 @@ export class AuthPatientComponent implements OnInit {
     if (!this.isLoading && this.formGroupUserRegister.valid) {
 
       const professional = this.getProfessionalObj()
-      
+
       this.patientService.createPatient({ ...this.patient, idProfissional: professional.id }).subscribe(response => {
         this.isRegister = true;
         this.openSnackBar('Perfil de paciente criado com sucesso!', 'Ok', 3000);
@@ -273,7 +274,7 @@ export class AuthPatientComponent implements OnInit {
       })
     }
   }
-  
+
   getCep() {
     const cep = this.patient.cep
 
@@ -282,7 +283,7 @@ export class AuthPatientComponent implements OnInit {
         if (!data.erro) {
           this.patient.endereco = data.logradouro
         }
-      }, _ => {})
+      }, _ => { })
     }
   }
 

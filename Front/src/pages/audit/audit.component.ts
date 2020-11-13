@@ -41,11 +41,12 @@ export class AuditComponent implements OnInit {
   getAll() {
     const dataParaExibir = new Date().toLocaleString()
     this.isLoading = true
-    this.auditService.getAll().subscribe((audits: Audit[]) => {
+    this.auditService.getAll().subscribe((audits: any[]) => {
 
       audits.map(audit => {
         const dataParaExibir = new Date(audit.dateCreated).toLocaleString()
         audit.dataExibir = dataParaExibir
+        audit.userName = audit.user?.nome
       })
       this.dataSource = new MatTableDataSource(audits)
       this.errorTableData = false

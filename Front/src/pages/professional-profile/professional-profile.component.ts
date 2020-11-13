@@ -11,13 +11,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MessageProfessionalAproveComponent } from 'src/components/message-professional-aprove/message-professional-aprove.component';
 import { ShowImagesModalComponent } from 'src/components/show-images-modal/show-images-modal.component';
 import { FileServive } from 'src/services/file.service';
-import { environment } from 'src/environments/environment';
 import TermOfUse from 'src/models/term-of-use.model';
 import UserRegister from 'src/models/auth/user-register.model';
 import { UtilsService } from 'src/services/utils.service';
 import { CepService } from 'src/services/cep.service';
-
-
+import { AuthService } from 'src/services/auth.service';
 
 export const confirmPasswordValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   if (!control.parent || !control) {
@@ -79,6 +77,7 @@ export class ProfessionalProfileComponent implements OnInit {
     private professionalService: ProfessionalService,
     private specialtyService: SpecialtyService,
     public dialog: MatDialog,
+    private authService: AuthService,
     private snackBar: MatSnackBar,
     private snackBarSucess: MatSnackBar,
     private fileService: FileServive,
@@ -97,8 +96,9 @@ export class ProfessionalProfileComponent implements OnInit {
       specialty: new FormControl(new Specialty(), [Validators.required]),
       username: new FormControl('', [Validators.required, Validators.email]),
       documentType: new FormControl([Validators.required]),
-      nacionalidade: new FormControl('', [Validators.required]),
-      estadoCivil: new FormControl('', [Validators.required]),
+      categoria: new FormControl(),
+      nacionalidade: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
+      estadoCivil: new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z ]*$')]),
       logradouro: new FormControl('', [Validators.required]),
       numero: new FormControl('', [Validators.required]),
       bairro: new FormControl('', [Validators.required]),
@@ -106,8 +106,7 @@ export class ProfessionalProfileComponent implements OnInit {
       uf: new FormControl('', [Validators.required]),
       url: new FormControl('', [Validators.maxLength(20), Validators.minLength(3)]),
       acceptTerms: new FormControl(false, [Validators.required]),
-
-
+      ramal: new FormControl(null)
     })
     console.log(this.acceptTerms)
   }
@@ -117,6 +116,23 @@ export class ProfessionalProfileComponent implements OnInit {
     this.getSpecialties()
 
   }
+
+  get isOdontologia() { return this.professional.especialidade?.tipoAceite === "ODONTOLOGIA" };
+
+  verificarObgCategoria() {
+    let control = this.professionalFormGroup.controls['categoria'];
+    if (this.isOdontologia) {
+      if (this.professional.categoria)
+        this.professional.categoria = "TODAS";
+
+      control.setValidators([Validators.required]);
+    }
+    else
+      control.clearValidators();
+
+    control.updateValueAndValidity();
+  }
+
   setFile(type: string, event: any) {
     const file = event.target.files[0]
     if (type === 'rg') {
@@ -172,34 +188,46 @@ export class ProfessionalProfileComponent implements OnInit {
       console.log(error)
     })
   }
+
   changeSpecialtyOrPersonType() {
     const specialty = this.professional.especialidade
     const personType = this.professional.tipoDocumento
-    if (specialty.nome !== "Odontologia" && specialty.nome !== "Otorrino")
-      this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PF_ODONTO")
-    else if (personType === "CPF") {
-      if (specialty.nome === "Odontologia")
-        this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PF_ODONTO")
-      else if (specialty.nome === "Otorrino")
-        this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PF_MEDICINA")
-      else if (specialty.nome === "Fonoaudiologia")
-        this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PF_FONO")
-    } else if (personType === "CNPJ") {
-      if (specialty.nome === "Odontologia")
-        this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PJ_ODONTO")
-      else if (specialty.nome === "Otorrino")
-        this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PJ_MEDICINA")
-      else if (specialty.nome === "Fonoaudiologia")
-        this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PJ_FONO")
-    } else {
-      this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PJ_MEDICINA")
-    }
 
+    this.verificarObgCategoria();
+    if (specialty) {
+      if (specialty.nome !== "Odontologia" && specialty.nome !== "Otorrino")
+        this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PF_ODONTO")
+      else if (personType === "CPF") {
+        if (specialty.nome === "Odontologia")
+          this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PF_ODONTO")
+
+        else if (specialty.nome === "Otorrino")
+          this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PF_MEDICINA")
+        else if (specialty.nome === "Fonoaudiologia")
+          this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PF_FONO")
+      } else if (personType === "CNPJ") {
+        if (specialty.nome === "Odontologia")
+          this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PJ_ODONTO")
+
+        else if (specialty.nome === "Otorrino")
+          this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PJ_MEDICINA")
+        else if (specialty.nome === "Fonoaudiologia")
+          this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PJ_FONO")
+      } else {
+        this.selectedTermOfUse = this.termsOfUse.find(term => term.tipo === "PJ_MEDICINA")
+      }
+
+    }
 
     //  console.log(specialty, personType, this.selectedTermOfUse)
   }
 
+
+
   next() {
+    if (this.professional.url === '') {
+      this.professional.url = null;
+    }
     const validation = (/^[0-9a-zA-Z-]+$/).test(this.professional.url)
     if (!validation) {
       const erroMessage = "URL não pode conter espaços, números e caracteres especiais"
@@ -210,6 +238,7 @@ export class ProfessionalProfileComponent implements OnInit {
     }
     this.isNext = true
   }
+
   back() {
     this.isNext = false
   }
@@ -229,14 +258,9 @@ export class ProfessionalProfileComponent implements OnInit {
     }
   }
 
-
-
-
-
   getMe() {
     this.professionalService.getMe().subscribe((professional: Professional) => {
       this.professional = professional
-      this.isLoading = false;
       if (professional.url !== null) {
         this.professionalFormGroup.controls.url.disable()
       }
@@ -244,7 +268,9 @@ export class ProfessionalProfileComponent implements OnInit {
         this.acceptTerms = true
       }
       this.professional.especialidade =
-        this.professional.especialidade && this.specialties.find(specialty => specialty.id === this.professional.especialidade.id)
+        this.professional.especialidade && this.specialties.find(specialty => specialty.id === this.professional.especialidade.id);
+        
+      this.isLoading = false;
     }, error => {
       this.isLoading = false;
       console.log(error)
@@ -283,6 +309,7 @@ export class ProfessionalProfileComponent implements OnInit {
         !this.professional.telefone || !this.professional.especialidade || !this.professional.cep ||
         !this.professional.nacionalidade || !this.professional.estadoCivil || !this.professional.logradouro || !this.professional.numero ||
         !this.professional.cidade || !this.professional.uf || !this.professional.bairro
+        || !this.professional.categoria
       ) {
         /* this.openSnackBar('Para realizar suas reservas é necessário o preenchimento de todos os dados de seu perfil, juntamente com as imagens dos documentos solicitados para que possamos aprová-lo.', 'Ok', 15000) */
       }
@@ -309,9 +336,11 @@ export class ProfessionalProfileComponent implements OnInit {
 
     })
   }
+
   formProfessionalHasError(control: any, error: string) {
     return this.professionalFormGroup.controls[control].hasError(error);
   }
+
   uploadFile(formData: FormData, type: string) {
     this.fileService.fileUpload(formData).subscribe(res => {
       if (!res.erro) {
@@ -346,8 +375,12 @@ export class ProfessionalProfileComponent implements OnInit {
       this.openSnackBar(error.error.message, 'Ok', 5000);
     })
   }
+
   onSubmit() {
 
+    if (this.professional.url === '') {
+      this.professional.url = null;
+    }
     const validation = (/^[0-9a-zA-Z-]+$/).test(this.professional.url)
     if (!validation) {
       const erroMessage = "URL não pode conter espaços, números e caracteres especiais"
@@ -357,6 +390,7 @@ export class ProfessionalProfileComponent implements OnInit {
       return
     }
 
+    this.professionalFormGroup.markAllAsTouched();
     if (this.professionalFormGroup.valid) {
       this.isLoading = true;
 
@@ -405,16 +439,49 @@ export class ProfessionalProfileComponent implements OnInit {
         this.uploadFile(formData, 'term')
 
       } else {
-        this.updateProfessional()
+        this.validarCRM().then(retorno => {
+          if (retorno)
+            this.updateProfessional();
+        }).catch(err => this.openSnackBar(err.error.message, 'OK', 5000));
       }
     }
-
   }
+
+  async validarCRM(): Promise<boolean> {
+    if (this.isOdontologia) {
+      let retornoCfo: any = await this.authService.getUserCFO(this.professional.crm, this.professional.ufcrm, this.professional.categoria).toPromise();
+      if (retornoCfo.code === 200) {
+        this.isLoading = false;
+        return true;
+      }
+      else {
+        this.isLoading = false;
+        this.openSnackBar("O documento do profissional não foi encontrado", 'OK', 5000);
+        return false;
+      }
+
+    } else if (this.professional.especialidade.tipoAceite === "MEDICINA") {
+      let retornoCfm: any = await this.authService.getUserCFM(this.professional.crm, this.professional.ufcrm).toPromise();
+      if (retornoCfm.code === 200) {
+        this.isLoading = false;
+        return true;
+      }
+      else {
+        this.isLoading = false;
+        this.openSnackBar("O documento do profissional não foi encontrado", 'OK', 5000);
+        return false;
+      }
+
+    } else if (this.professional.especialidade.tipoAceite === "FONOAUDIOLOGIA") {
+      this.isLoading = false;
+      return true;
+    }
+  }
+
   updateProfessional() {
 
-    console.log(this.professional)
-    console.log(this.acceptTerms)
-    console.log(this.professional.especialidade)
+    if (!this.isOdontologia)
+      this.professional.categoria = null;
 
     if (this.professional.ufcrm !== 'SP') {
       this.openSnackBar('Para aprovação do seu cadastro, certifique-se de que seu documento fora avaliado pelo órgão competente do Estado de São Paulo', 'Ok', 15000)

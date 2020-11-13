@@ -24,6 +24,7 @@ data class CreateUserMedicoDto (
   var termoAceite: String?,
   var url: String?,
   var tipoDocumento: TipoDocumento,
+  var categoria: String?,
   var termoUsoPrivacidade: StatusTermoDeUso?,
   var numero: String?,
   var logradouro: String?,
@@ -31,6 +32,6 @@ data class CreateUserMedicoDto (
   var bairro: String?,
   var nacionalidade: String?,
   var estadoCivil: String?,
-  var uf: String?
-
+  var uf: String?,
+  var ramal: String?
 )

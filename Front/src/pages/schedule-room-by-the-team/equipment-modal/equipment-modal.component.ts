@@ -38,13 +38,14 @@ export class EquipmentModalComponent implements OnInit {
     private schedulingService: SchedulingService
   ) {
     this.equipmentAddFormGroup = this.formBuilder.group({
-      equipmentType: new FormControl('', [Validators.nullValidator]),
-      start: new FormControl('', [Validators.nullValidator]),
-      end: new FormControl('', [Validators.nullValidator]),
+      equipmentType: new FormControl('', [Validators.nullValidator, Validators.required]),
+      start: new FormControl('', [Validators.nullValidator, Validators.required]),
+      end: new FormControl('', [Validators.nullValidator, Validators.required]),
     })
   }
 
   ngOnInit(): void {
+    console.log(this.equipmentAddFormGroup.valid)
     this.justCancel = this.data.justCancel
     this.horarios = new Map<number, any[]>()
     this.inicio = new Date(this.data.scheduling.inicio)
@@ -55,6 +56,7 @@ export class EquipmentModalComponent implements OnInit {
     this.getEquipmentTypesAvailable()
   }
   cancelEquipment(id: any) {
+    this.isLoading = true
     const cancelEquipment: any = {
       agendamento: this.data.scheduling.id,
       tiposEquipamentos: [id]
@@ -62,10 +64,12 @@ export class EquipmentModalComponent implements OnInit {
     this.schedulingService.cancelEquipamento(cancelEquipment).subscribe(res => {
       this.openSnackBar('Equipamento cancelado com sucesso!', 'Ok', 3000)
       this.dialogRef.close('equipCancel')
+      this.isLoading = false
     }, error => {
       console.log(error)
       this.openSnackBar(error.error.message, 'Ok', 5000)
       this.dialogRef.close(false)
+      this.isLoading = false
     })
   }
   keyItem() {
@@ -79,8 +83,9 @@ export class EquipmentModalComponent implements OnInit {
     return this.equipmentAddFormGroup.controls[control].hasError(error);
   }
   removeEquipment(id) {
+    this.isLoading = true
     this.equipmentsAdded.splice(this.equipmentsAdded.indexOf(this.equipmentsAdded.find(equipment => equipment.equipmentType.id === id)), 1)
-
+    this.isLoading = false
   }
   // tslint:disable-next-line:member-ordering
   horarios: Map<number, any[]>
@@ -147,6 +152,9 @@ export class EquipmentModalComponent implements OnInit {
         this.isLoading = false;
       }, 300)
     }, 300)
+    this.equipmentAddFormGroup.markAsPristine();
+    this.equipmentAddFormGroup.markAsUntouched();
+    this.equipmentAddFormGroup.updateValueAndValidity();
   }
 
   cancel() {

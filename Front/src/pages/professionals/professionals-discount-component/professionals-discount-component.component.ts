@@ -28,6 +28,7 @@ export class ProfessionalsDiscountComponentComponent implements OnInit {
   @Input() discountEditId: number;
   @Output() stepEvent = new EventEmitter<string>();
   @Output() refreshUsersEvent = new EventEmitter<boolean>();
+  changed: boolean = false;
 
   discountType = new FormControl('', [
     Validators.required
@@ -54,7 +55,7 @@ export class ProfessionalsDiscountComponentComponent implements OnInit {
     this.adapter.setLocale('pt-br');
     this.formGroupDiscountRegister = this.formBuilder.group({
       type: new FormControl('', [Validators.required]),
-      value: new FormControl('', [Validators.required, Validators.min(0), Validators.max(100)]),
+      value: new FormControl('', [Validators.required]),
       startDate: new FormControl('', [Validators.required]),
       endDate: new FormControl('', [Validators.required])
     });
@@ -66,6 +67,10 @@ export class ProfessionalsDiscountComponentComponent implements OnInit {
       this.discountRegister = this.editDiscount;
 
     }
+  }
+
+  inputEvent($event) {
+    this.changed = true;
   }
 
   sendStep(step:string) {

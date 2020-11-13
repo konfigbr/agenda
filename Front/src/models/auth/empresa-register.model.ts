@@ -1,3 +1,6 @@
+import ResponsavelTecnico from './empresa-responsavel-tecnico.model';
+import RepresentanteLegal from './empresa-representante-legal.model';
+
 export default class EmpresaRegister {
     public nome: string = "";
     public especialidade: any = {};
@@ -13,6 +16,10 @@ export default class EmpresaRegister {
     public razaoSocial: string;
     public cnpj: string = null;
     public situacao: String = null;
-    public representanteLegal: any;
-        
+    
+    public representanteLegal: RepresentanteLegal = new RepresentanteLegal();
+    public categoria: any;
+    public responsavelTecnico: ResponsavelTecnico = new ResponsavelTecnico();
+
+    public ufProfissional: string;
 }

@@ -1,0 +1,24 @@
+@import "../../theme/variables";
+
+button {
+    margin-left: auto;
+    display: block;
+    background: $color-primary;
+    color: #fff;
+    height: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    &:disabled {
+        cursor: default;
+        opacity: 0.4;
+    }
+}
+
+mat-icon {
+    cursor: pointer;
+    color: $color-primary;
+}
+
+mat-icon.end {
+    color: $color-danger;
+}

@@ -16,7 +16,25 @@ interface MedicoRepository : JpaRepository<Medico, Long> {
   @Query(value="select * from medico a " +
     " where a.especialidade_id = ?1 "
     , nativeQuery = true)
+
   fun findByEspecialidadeEntity(especialidade: Long?): MutableList<Medico>
+
+  @Query(value="select a.* from medico a" +
+          " inner join user u on u.id = a.user_id" +
+          " inner join empresa_medico em on em.medico_id = a.id" +
+          " where a.ativo = 'S'" +
+          " and em.empresa_id = ?1" +
+          " order by u.nome"
+          , nativeQuery = true)
+  fun findByEmpresa(empresaId: Long?): MutableList<Medico>
+
+  @Query(value="select a.* from medico a" +
+          " inner join user u on u.id = a.user_id" +
+          " inner join empresa e on e.responsavel_id = a.id" +
+          " where a.ativo = 'S'" +
+          " and e.id = ?1"
+          , nativeQuery = true)
+  fun findResponsavelByEmpresa(empresaId: Long?): Optional<Medico>
 
   fun findByStatus(status: StatusMedico): Collection<Medico>
 
@@ -38,4 +56,6 @@ interface MedicoRepository : JpaRepository<Medico, Long> {
   fun existsByCrm(crm: String?): Boolean
 
   fun existsByUrl(url: String?): Boolean
+
+  fun findByRamal(ramal: String): Optional<Medico>
 }

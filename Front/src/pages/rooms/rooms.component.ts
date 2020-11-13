@@ -38,7 +38,13 @@ export class RoomsComponent implements OnInit {
   getRooms() {
     this.isLoading = true
     this.dataSource = new MatTableDataSource([])
-    this.roomService.getRooms().subscribe((rooms: Room[]) => {
+    this.roomService.getRooms().subscribe((rooms: any[]) => {
+      console.log(rooms)
+
+      rooms.map(room=>{
+        room.especialidadeNome = room.especialidade.nome
+        room.localNome = room.local.nome
+      })
       this.dataSource = new MatTableDataSource(rooms)
       this.errorTableData = false
       this.dataSource.paginator = this.paginator;

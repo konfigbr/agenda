@@ -1,13 +1,14 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, LOCALE_ID } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ReservaEventModel } from './reserva-event.model';
-import { DateAdapter } from 'angular-calendar';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS } from '@angular/material-moment-adapter';
-import { MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
+import { DateAdapter,MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { addHours } from 'date-fns';
 import * as moment from 'moment';
 import { AlertModalComponent } from 'src/app/alert-modal/alert-modal.component';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
 
 export enum DiasSemana {
 
@@ -19,7 +20,6 @@ export enum DiasSemana {
   SABADO = 'SÁBADO',
 
 }
-
 @Component({
   selector: 'app-scheduling-modal',
   templateUrl: './scheduling-modal.component.html',
@@ -30,7 +30,7 @@ export enum DiasSemana {
       useClass: MomentDateAdapter,
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
     },
-    { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },
+    { provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS },    
   ]
 })
 export class SchedulingModalComponent implements OnInit {
@@ -47,12 +47,15 @@ export class SchedulingModalComponent implements OnInit {
   inicio: any;
   rangeStart: string;
   rangeEnd: string
+  dataInicio: any;
 
   constructor(
     public dialogRef: MatDialogRef<SchedulingModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private matDialog: MatDialog,
+    private adapter: DateAdapter<any>,
   ) {
+    this.adapter.setLocale('pt-br');
     this.event = data;
     this.event = new ReservaEventModel({
       sala: data.sala,
@@ -62,6 +65,7 @@ export class SchedulingModalComponent implements OnInit {
     this.diasSemana = [DiasSemana.SEGUNDA, DiasSemana.TERCA, DiasSemana.QUARTA, DiasSemana.QUINTA, DiasSemana.SEXTA, DiasSemana.SABADO]
 
     const dataInicio: any = this.event.horaInicio
+    this.dataInicio = dataInicio;
     this.eventForm = new FormGroup({
       sala: new FormControl(this.event.sala, Validators.required),
       dataInicio: new FormControl(dataInicio, Validators.required),
@@ -114,12 +118,22 @@ export class SchedulingModalComponent implements OnInit {
       this.showAlert('Não é possivel agendar 3 horas')
       return false
     }
+    if(inicio >= fim){
+      this.showAlert('Agendamentos precisam ter a hora inicial antes da hora final')
+      this.eventForm.controls.horaInicio.setValue(this.event.horaInicio)
+      this.eventForm.controls.horaFim.setValue(this.event.horaFim)
+      return false
+    }
     return true
   }
   changeHour(event) {
     this.validaIntevaloAgenda(this.eventForm.controls.horaInicio.value.getHours(), this.eventForm.controls.horaFim.value.getHours())
   }
   save() {
+    if(!this.eventForm.controls.diasSemana.value.includes(this.data.dataInicioReserva.getDay())){
+      this.showAlert("O dia que foi selecionado precisa estar incluso na área de 'repetir'")
+      return false
+    }
     if (this.validaIntevaloAgenda(this.eventForm.controls.horaInicio.value.getHours(), this.eventForm.controls.horaFim.value.getHours())) {
       this.dialogRef.close(this.eventForm)
     }
@@ -171,6 +185,10 @@ export class SchedulingModalComponent implements OnInit {
       this.eventForm.controls.dataFim.disable()
       this.eventForm.controls.maximoAgendamentos.clearValidators()
       this.eventForm.controls.maximoAgendamentos.disable()
+
+      this.eventForm.controls.dataFim.setValue('')
+      this.eventForm.controls.maximoAgendamentos.setValue('')
+      this.eventForm.controls.diasSemana.setValue([this.dataInicio.getDay()]);
     }
   }
 

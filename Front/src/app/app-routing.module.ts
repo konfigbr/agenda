@@ -13,6 +13,7 @@ import { EquipmentFormComponent } from 'src/pages/equipments/equipment-form/equi
 import { EquipmentsComponent } from 'src/pages/equipments/equipments.component';
 import { ProfessionalFormComponent } from 'src/pages/professionals/professional-form/professional-form.component';
 import { ProfessionalsComponent } from 'src/pages/professionals/professionals.component';
+import { EmpresaProfissionaisComponent } from 'src/pages/empresa-profissionais/professionals.component';
 import { ReportsComponent } from 'src/pages/reports/reports.component';
 import { RoomsSchedulingComponent } from 'src/pages/rooms-scheduling/rooms-scheduling.component';
 import { RoomFormComponent } from 'src/pages/rooms/room-form/room-form.component';
@@ -44,6 +45,7 @@ import { AuditComponent } from 'src/pages/audit/audit.component';
 import { ScheduleAppointmentsComponent } from 'src/pages/schedule-appointments/schedule-appointments.component';
 import { AppointmentAdministrativeComponent } from 'src/pages/appointment-administrative/appointment-administrative.component';
 import { ReschedulingComponent } from 'src/pages/rescheduling/rescheduling.component';
+import { CallsComponent } from 'src/pages/calls/calls.component';
 
 
 
@@ -77,17 +79,23 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       {
+        path: 'calls',
+        component: CallsComponent,
+        canActivate: [AuthGuard],
+        data: { canAccess: ['ROLE_ATENDENTE'] }
+      },
+      {
         path: ':professionalKey/minhas-consultas',
         component: PatientComponent,
         canActivate: [AuthGuard],
-        data: { canAccess: ['ROLE_PACIENTE'] }
+        data: { canAccess: ['ROLE_PACIENTE', 'ROLE_ATENDENTE'] }
       },
       {
 
         path: ':professionalKey/agendar-consultas',
         component: ScheduleAppointmentsComponent,
         canActivate: [AuthGuard],
-        data: { canAccess: ['ROLE_PACIENTE'] }
+        data: { canAccess: ['ROLE_PACIENTE', 'ROLE_ATENDENTE'] }
       },
       {
 
@@ -167,6 +175,12 @@ const routes: Routes = [
         component: EquipmentTypeFormComponent,
         canActivate: [AuthGuard],
         data: { canAccess: ['ROLE_ADMINISTRADOR'] }
+      },
+      {
+              path: 'empresa/:id/profissionais',
+              component: EmpresaProfissionaisComponent,
+              canActivate: [AuthGuard],
+              data: { canAccess: ['ROLE_ADMINISTRADOR'] }
       },
       {
         path: 'profissionais',

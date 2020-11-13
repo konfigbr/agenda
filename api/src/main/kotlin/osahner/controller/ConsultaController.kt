@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import osahner.domain.Consulta
 import osahner.domain.Medico
 import osahner.dto.ConsultaDto
+import osahner.dto.ConsultaCustomDto
 import osahner.dto.CreateConsultaDto
 import osahner.dto.TrocaStatusConsultaDto
 import osahner.enums.StatusConsulta
@@ -50,11 +51,11 @@ class ConsultaController (
     @GetMapping(value = ["/{id}"])
     @PreAuthorize("hasAuthority('ROLE_PACIENTE')")
     fun getById(@PathVariable id: Long): ResponseEntity<ConsultaDto?> = ResponseEntity.ok(consultaService.findById(id)?.toDTO())
-
+                                                                                                    
     @GetMapping(value = ["/professional/{idProfessional}"])
-    @PreAuthorize("hasAuthority('ROLE_PACIENTE')")
-    fun getByPacientLoggedAndProfessional(@PathVariable idProfessional: Long): ResponseEntity<Collection<ConsultaDto>> =
-            ResponseEntity.ok(consultaService.findByPatientLoggedAndProfessional(idProfessional).map { it.toDTO() })
+    @PreAuthorize("hasAnyAuthority('ROLE_PACIENTE', 'ROLE_ATENDENTE')")
+    fun getByPacientLoggedAndProfessional(@PathVariable idProfessional: Long, @RequestParam(required = false) idPaciente: Long?): ResponseEntity<Collection<ConsultaDto>> =
+            ResponseEntity.ok(consultaService.findByPatientLoggedAndProfessional(idProfessional, idPaciente).map { it.toDTO() })
 
     @DeleteMapping(value = ["/cancelAppointment/{idAppointment}"])
     @PreAuthorize("hasAnyAuthority('ROLE_PACIENTE','ROLE_PROFISSIONAL','ROLE_ATENDENTE','ROLE_ADMINISTRADOR')")
@@ -87,13 +88,13 @@ class ConsultaController (
 
     @GetMapping(value = ["/with-limit"])
     @PreAuthorize("hasAnyAuthority('ROLE_ADMINISTRADOR', 'ROLE_ATENDENTE')")
-    fun findWithLimite(): ResponseEntity<Collection<ConsultaDto>> =
-            ResponseEntity.ok(consultaService.findWithLimite()?.map { it.toDTO() })
+    fun findWithLimite(): ResponseEntity<Collection<ConsultaCustomDto>> =
+            ResponseEntity.ok(consultaService.findWithLimite()?.map { it.toCustomDTO() })
 
     @GetMapping(value = ["/with-limit/professional"])
     @PreAuthorize("hasAnyAuthority('ROLE_PROFISSIONAL')")
-    fun findWithLimiteByProfissional(): ResponseEntity<Collection<ConsultaDto>> =
-            ResponseEntity.ok(consultaService.findWithLimiteByProfissional()?.map { it.toDTO() })
+    fun findWithLimiteByProfissional(): ResponseEntity<Collection<ConsultaCustomDto>> =
+            ResponseEntity.ok(consultaService.findWithLimiteByProfissional()?.map { it.toCustomDTO() })
 
     @GetMapping(value = ["/statusRequested"])
     @PreAuthorize("hasAnyAuthority('ROLE_ADMINISTRADOR','ROLE_ATENDENTE')")

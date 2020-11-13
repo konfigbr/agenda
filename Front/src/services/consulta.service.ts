@@ -1,5 +1,5 @@
 import { CreateAppointmentModel } from './../models/create-appointment.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -34,8 +34,13 @@ export class ConsultaService {
         return this.http.put<any>(`${environment.apiUrl}/medical-appointments/changeStatus/${id}`, status);
     }
 
-    getMyAppointments(id: string | number): Observable<Appointment[]> {
-        return this.http.get<Appointment[]>(`${environment.apiUrl}/medical-appointments/professional/${id}`);
+    getMyAppointments(id: string | number, idPaciente: string | number = null): Observable<Appointment[]> {
+        let params = new HttpParams();
+
+        if (idPaciente)
+            params = params.append('idPaciente', idPaciente.toString());
+
+        return this.http.get<Appointment[]>(`${environment.apiUrl}/medical-appointments/professional/${id}`, { params });
     }
 
     getStatusRequestedProfessional(): Observable<Appointment[]> {

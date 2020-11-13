@@ -42,9 +42,12 @@ export class ProfessionalsComponent implements OnInit {
   getProfessionals() {
     this.isLoading = true
     this.dataSource = new MatTableDataSource([])
-    this.professionalService.getProfessionalsWithDiscountAttribute().subscribe((professionals: Professional[]) => {
+    this.professionalService.getProfessionalsWithDiscountAttribute().subscribe((professionals: any[]) => {
+      professionals.map(professional =>{
+        professional.nomeEspecialidade = professional.especialidade?.nome
+      })
       this.dataService.badgeCount = professionals.filter(professional => professional.status === 'AGUARDANDO_APROVAÇÃO').length
-      this.dataSource = new MatTableDataSource(professionals)
+      this.dataSource = new MatTableDataSource<Professional>(professionals)
       this.errorTableData = false
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -55,9 +58,8 @@ export class ProfessionalsComponent implements OnInit {
       console.log(error)
     })
   }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  applyFilter(filter: string) {
+    this.dataSource.filter = filter.trim().toLowerCase();
   }
   deleteElement(professional: any): void {
     const dialogRef = this.dialog.open(MessageModalComponent, {

@@ -46,13 +46,17 @@
           <div class="opt-form-control opt-form-inline">
             <mat-form-field appearance="outline">
               <mat-label>Início</mat-label>
-              <input matInput formControlName="horaInicio" mask="Hh:m0" [dropSpecialCharacters]="true">
+              <mat-select formControlName="horaInicio">
+                <mat-option *ngFor="let h of horasDisponiveisSelecao" [value]="h">
+                  {{ h }}
+                </mat-option>
+              </mat-select>
             </mat-form-field>
           </div>
           <div class="opt-form-control opt-form-inline">
             <mat-form-field appearance="outline">
-              <mat-label>Início</mat-label>
-              <input matInput formControlName="horaFim" mask="Hh:m0" [dropSpecialCharacters]="true">
+              <mat-label>Fim</mat-label>
+              <input matInput formControlName="horaFim" [readonly]="true">
             </mat-form-field>
           </div>
         </div>

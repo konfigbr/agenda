@@ -1,5 +1,5 @@
 import EmpresaRegister from 'src/models/auth/empresa-register.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -80,5 +80,13 @@ export class AuthService {
 
   companyRegister(company): Observable<any> {
     return this.http.post(`${environment.apiUrl}/company`, company)
+  }
+
+  getUserCFO(professionalDocument: string, uf: string, category: string){
+    return this.http.get(`${environment.apiUrl}/professionals/findByCfo?inscricao=${professionalDocument}&uf=${uf}&categoria=${category}`);
+  }
+
+  getUserCFM(professionalDocument: string, uf: string){
+    return this.http.get(`${environment.apiUrl}/professionals/findByCfm?inscricao=${professionalDocument}&uf=${uf}`);
   }
 }

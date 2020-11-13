@@ -54,12 +54,12 @@
 
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
-                        <mat-label>Telefone</mat-label>
+                        <mat-label>Celular</mat-label>
                         <input mask="(00) 00000-0000" [specialCharacters]="[ '(' , ' ' ,  ')' , '-' ]"
                             [dropSpecialCharacters]="true" [(ngModel)]="professional.telefone" matInput
-                            formControlName="phone" [errorStateMatcher]="matcher" placeholder="Telefone">
+                            formControlName="phone" [errorStateMatcher]="matcher" placeholder="Celular">
                         <mat-error *ngIf="formProfessionalHasError('phone', 'required')">
-                            O telefone é <strong>obrigatório</strong>!
+                            O Celular é <strong>obrigatório</strong>!
                         </mat-error>
                     </mat-form-field>
                 </div>
@@ -73,10 +73,13 @@
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Nacionalidade</mat-label>
-                        <input [(ngModel)]="professional.nacionalidade" matInput formControlName="nacionalidade"
+                        <input [(ngModel)]="professional.nacionalidade" type="text" matInput formControlName="nacionalidade"
                             [errorStateMatcher]="matcher" placeholder="Nacionalidade">
                         <mat-error *ngIf="formProfessionalHasError('nacionalidade', 'required')">
                             A nacionalidade é <strong>obrigatório</strong>!
+                        </mat-error>
+                        <mat-error *ngIf="formProfessionalHasError('nacionalidade', 'pattern')">
+                            A nacionalidade só aceita <strong>letras</strong>!
                         </mat-error>
                     </mat-form-field>
 
@@ -84,10 +87,13 @@
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>Estado Civil</mat-label>
-                        <input [(ngModel)]="professional.estadoCivil" matInput formControlName="estadoCivil"
+                        <input [(ngModel)]="professional.estadoCivil" type="text" matInput formControlName="estadoCivil"
                             [errorStateMatcher]="matcher" placeholder="Estado Civil">
                         <mat-error *ngIf="formProfessionalHasError('estadoCivil', 'required')">
                             O estado civil é <strong>obrigatório</strong>!
+                        </mat-error>
+                        <mat-error *ngIf="formProfessionalHasError('estadoCivil', 'pattern')">
+                            O estado civil só aceita <strong>letras</strong>!
                         </mat-error>
                     </mat-form-field>
 
@@ -228,8 +234,8 @@
                 <div class="opt-form-control">
                     <mat-form-field appearance="outline">
                         <mat-label>CEP</mat-label>
-                        <input (input)="inputEvent($event)" (blur)="getCep()" mask="00.000-000"
-                            [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true"
+                        <input (input)="inputEvent($event)" (blur)="getCep()" mask="00000-000"
+                            [specialCharacters]="['-' ]" [dropSpecialCharacters]="true"
                             [(ngModel)]="professional.cep" matInput formControlName="cep" [errorStateMatcher]="matcher"
                             placeholder="CEP">
                         <mat-error *ngIf="formProfessionalHasError('cep', 'required')">
@@ -355,7 +361,7 @@
             <div class="opt-row">
                 <div class="opt-form-control opt-form-control-file">
                     <div class="opt-btn-form-containers">
-                        <button class="opt-btn-form" mat-button type="button" (click)="dowloadTermoAceitePdf()">Download
+                        <button *ngIf="path !== '/profissional/new'" class="opt-btn-form" mat-button type="button" (click)="dowloadTermoAceitePdf()">Download
                             Termo</button>
                     </div>
                 </div>

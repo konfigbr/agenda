@@ -37,7 +37,7 @@ class MedicoService(
   fun listAprovacao(): Collection<Medico> = medicoRepository.findByStatus(status = StatusMedico.AGUARDANDO_APROVAÇÃO)
 
   @Transactional
-  fun createNewProfessional(idUser: Long?, idEspecialidade: Long?, documento: String?, tipoDocumento: TipoDocumento?): Medico {
+  fun createNewProfessional(idUser: Long?, idEspecialidade: Long?, documento: String?, tipoDocumento: TipoDocumento?, categoria: String?): Medico {
     val user = userRepository.findById(idUser).get()
 
     var especialidade: Especialidade? = null
@@ -55,6 +55,7 @@ class MedicoService(
     professional.tipoDocumento = tipoDocumento
     professional.cpf = documento
     professional.dateCreated = now
+    professional.categoria = categoria
 
     return medicoRepository.saveAndFlush(professional)
   }
@@ -72,7 +73,7 @@ class MedicoService(
       throw RuntimeException("CNPJ Inválido")
 
     val alteredUser =  userRepository.saveAndFlush(user)
-
+    
     var medico = Medico.fromCustomDTO(dto)
     medico.refEspecialidadeEntity = especialidade
     medico.user = alteredUser
@@ -172,6 +173,12 @@ class MedicoService(
   fun findByrefUserEntity(user: User): Optional<Medico> = medicoRepository.findByUser(user)
 
   fun findByRefEspecialidadeEntity(especialidade: Especialidade): Collection<Medico> = medicoRepository.findByRefEspecialidadeEntity(especialidade)
+
+  fun findByRamal(ramal: String): Optional<Medico> = medicoRepository.findByRamal(ramal)
+
+  fun findByEmpresa(empresaId: Long): Collection<Medico> = medicoRepository.findByEmpresa(empresaId)
+
+  fun findResponsavelByEmpresa(empresaId: Long): Optional<Medico> = medicoRepository.findResponsavelByEmpresa(empresaId)
 
   /*fun toWorkbook(especialidadeId: String?): Workbook {
     var dtos: MutableList<AddressDto> = mutableListOf()

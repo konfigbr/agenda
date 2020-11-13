@@ -1,0 +1,235 @@
+<p class="opt-title-login">Cadastrar Representante Legal</p>
+
+<form [formGroup]="formGroupRepresentante">
+    <mat-card-actions>
+        <div class="opt-form-control">
+            <div class="accept-terms-container">
+                <mat-checkbox (change)="checkChange($event.checked)">
+                </mat-checkbox><span>É responsável técnico</span>
+            </div>
+        </div>
+    </mat-card-actions>
+    <div class="opt-row">
+        <div class="opt-form-control">
+            <mat-form-field appearance="outline">
+                <mat-label>U.F Documento Profissional</mat-label>
+                <mat-select formControlName="ufCrm" [(ngModel)]="empresa.representanteLegal.ufCrm">
+                    <mat-option *ngFor="let state of states" [value]="state">
+                        {{ state }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="validarCampoForm('ufCrm')">
+                    A U.F do Documento Profissional é <strong>obrigatória</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="opt-form-control">
+            <mat-form-field appearance="outline">
+                <mat-label>Documento Profissional</mat-label>
+                <input matInput placeholder="Documento Profissional" formControlName="documentoProfissional"
+                    [(ngModel)]="empresa.representanteLegal.crm">
+                <mat-error *ngIf="validarCampoForm('documentoProfissional')">
+                    O Documento Profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-row">
+        <div class="opt-form-control">
+            <mat-form-field appearance="outline">
+                <mat-label>Especialidade</mat-label>
+                <mat-select (selectionChange)="especialidadeChange" formControlName="especialidade"
+                    [(ngModel)]="empresa.representanteLegal.especialidade">
+                    <mat-option *ngFor="let specialty of specialties" [value]="specialty">
+                        {{ specialty.nome }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="validarCampoForm('especialidade')">
+                    A especialidade da sala é <strong>obrigatória</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="opt-form-control" *ngIf="isOdontologia">
+            <mat-form-field appearance="outline">
+                <mat-label>Categoria Profissional</mat-label>
+                <mat-select [(ngModel)]="empresa.representanteLegal.categoria" formControlName="categoria">
+                    <mat-option value="TODAS">
+                        Todas
+                    </mat-option>
+                    <mat-option value="CD">
+                        Cirurgião Dentista
+                    </mat-option>
+                    <mat-option value="EPAO">
+                        Entidade Prestadora de Assistência Odontológica
+                    </mat-option>
+                    <mat-option value="TPD">
+                        Técnico em Prótese Dentária
+                    </mat-option>
+                    <mat-option value="LB">
+                        Laboratório de Prótese Dentária
+                    </mat-option>
+                    <mat-option value="TSB">
+                        Técnico em Saúde Bucal
+                    </mat-option>
+                    <mat-option value="ASB">
+                        Auxiliar em Saúde Bucal
+                    </mat-option>
+                    <mat-option value="APD">
+                        Auxiliar em Prótese Dentária
+                    </mat-option>
+                    <mat-option value="EPO">
+                        Empresa de Produtos Odontológicos
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="validarCampoForm('categoria')">
+                    A Categoria Profissional é <strong>obrigatória</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-row">
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput formControlName="nomeRepresentante" [(ngModel)]="empresa.representanteLegal.nome">
+                <mat-error *ngIf="validarCampoForm('nomeRepresentante')">
+                    O nome do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>Estado civil</mat-label>
+                <input matInput formControlName="estadoCivil" [(ngModel)]="empresa.representanteLegal.estadoCivil">
+                <mat-error *ngIf="validarCampoForm('estadoCivil')">
+                    O estado civil do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-row">
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>RG</mat-label>
+                <input matInput formControlName="rg" [(ngModel)]="empresa.representanteLegal.rg">
+                <mat-error *ngIf="validarCampoForm('rg')">
+                    O rg do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>CPF</mat-label>
+                <input matInput formControlName="cpf" [(ngModel)]="empresa.representanteLegal.cpf" [mask]="'000.000.000-00'"
+                [specialCharacters]="[ '.' ,'-','/' ]" [dropSpecialCharacters]="true">
+                <mat-error *ngIf="validarCampoForm('cpf')">
+                    O cpf do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-row">
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>CEP</mat-label>
+                <input mask="00.000-000" (blur)="getCep()" [errorStateMatcher]="matcher"
+                    [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true" matInput formControlName="cep"
+                    [(ngModel)]="empresa.representanteLegal.cep">
+                <mat-error *ngIf="validarCampoForm('cep')">
+                    O cep do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>Endereço</mat-label>
+                <input matInput formControlName="endereco" [(ngModel)]="empresa.representanteLegal.endereco"
+                    [readonly]="true">
+                <mat-error *ngIf="validarCampoForm('endereco')">
+                    O endereco do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-row">
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>Número</mat-label>
+                <input matInput formControlName="numero" [(ngModel)]="empresa.representanteLegal.numero">
+                <mat-error *ngIf="validarCampoForm('numero')">
+                    O numero é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>Bairro</mat-label>
+                <input matInput formControlName="bairro" [(ngModel)]="empresa.representanteLegal.bairro"
+                    [readonly]="true">
+                <mat-error *ngIf="validarCampoForm('bairro')">
+                    O bairro do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-row">
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>Município</mat-label>
+                <input matInput formControlName="municipio" [(ngModel)]="empresa.representanteLegal.municipio"
+                    [readonly]="true">
+                <mat-error *ngIf="validarCampoForm('municipio')">
+                    O município do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>UF</mat-label>
+                <input matInput formControlName="uf" [(ngModel)]="empresa.representanteLegal.uf" [readonly]="true">
+                <mat-error *ngIf="validarCampoForm('uf')">
+                    A U.F do profissional é <strong>obrigatória</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-row">
+        <div class="opt-form-control ">
+            <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput [(ngModel)]="empresa.representanteLegal.email" formControlName="email">
+                <mat-error *ngIf="validarCampoForm('email')">
+                    O email do profissional é <strong>obrigatório</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="opt-form-control">
+            <mat-form-field appearance="outline">
+                <mat-label>Senha</mat-label>
+                <input matInput [(ngModel)]="empresa.representanteLegal.senha" formControlName="senha" type="password">
+                <mat-error *ngIf="!validarCampoForm('senha') && empresa.representanteLegal?.senha?.length < 6">
+                    A senha deve conter no mínimo 6 dígitos!
+                </mat-error>
+                <mat-error *ngIf="validarCampoForm('senha')">
+                    A senha é <strong>obrigatória</strong>!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-row">
+        <div class="opt-form-control">
+            <mat-form-field appearance="outline">
+                <mat-label>Confirmação de senha</mat-label>
+                <input matInput formControlName="confSenha" type="password">
+                <mat-error *ngIf="validarCampoForm('confSenha')">
+                    Favor confirmar a senha!
+                </mat-error>
+                <mat-error *ngIf="validarCampoForm('confSenha', 'passwordsNotMatching')">
+                    A senha deve ser igual à sua confirmação!
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <button class="opt-btn-submit-login" mat-button type="button" (click)="next()">Continuar</button>
+    <a [routerLink]="['/auth/login']" class="opt-register-link" href="#">Voltar</a>
+</form>

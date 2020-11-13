@@ -1,0 +1,58 @@
+@import "../../theme//variables";
+
+.opt-title-login {
+    font-size: 20px;
+    margin: 16px 0 32px 0;
+    text-transform: uppercase;
+}
+
+.accept-terms-container {
+    padding-top: 14px;
+    padding-bottom: 32px;
+    width: 100%;
+    text-align: left;
+
+    span {
+        padding-left: 16px;
+    }
+
+    a {
+        display: inline !important;
+        cursor: pointer;
+    }
+}
+
+.opt-btn-submit-login {
+    display: block;
+    background-color: $color-primary;
+    width: 100%;
+    color: #fff;
+    text-transform: uppercase;
+    position: relative;
+
+    &:disabled {
+        opacity: 0.4;
+    }
+}
+
+a {
+    color: $color-primary !important;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    display: block;
+    filter: brightness(130%);
+
+    &.opt-recover-password-link {
+        padding: 24px 16px;
+    }
+
+    &.opt-register-link {
+        padding: 8px 16px;
+    }
+}
+
+.opt-link-back {
+    display: block;
+    padding-top: 16px !important;
+}

@@ -16,4 +16,10 @@ interface PacienteRepository: JpaRepository<Paciente, Long> {
     , nativeQuery = true)
   override fun findById(id: Long?): Optional<Paciente>
 
+  @Query(value="select a.* from paciente a"+
+          " where a.ativo = 'S'" +
+          " order by a.nome asc"
+  , nativeQuery = true)
+  override fun findAll(): MutableList<Paciente>
+
 }

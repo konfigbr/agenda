@@ -45,18 +45,21 @@ export class AppointmentAdministrativeComponent implements OnInit {
   status: string = ''
   startDate: Date = null
   endDate: Date = null
+  today = new Date().getTime();
 
-  displayedColumns: string[] = ['status', 'paciente', 'telpaciente', 'profissional', 'telprofissional', 'data', 'inicio', 'fim', 'actions'];
+  displayedColumns: string[] = ['status', 'paciente', 'telpaciente', 'profissional', 'sala' ,'telprofissional', 'data', 'inicio', 'fim', 'actions'];
   dataSource: any;
   isLoading: boolean = false;
   errorTableData: boolean = false;
 
   statusList = [
-    { label: 'Solicitada', value: 'SOLICITADA' },
+    
     { label: 'Aprovada', value: 'APROVADA' },
     { label: 'Confirmada', value: 'CONFIRMADA' },
-    { label: 'Não confirmada', value: 'NAO_CONFIRMADA' },
     { label: 'Cancelada', value: 'CANCELADA' },
+    { label: 'Não confirmada', value: 'NAO_CONFIRMADA' },
+    { label: 'Reagendada', value: 'REAGENDADA' },
+    { label: 'Solicitada', value: 'SOLICITADA' },
   ]
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -112,7 +115,8 @@ export class AppointmentAdministrativeComponent implements OnInit {
   }
 
   onSubmit() {
-    if(this.startDate !== null && this.endDate !== null){
+    if((this.startDate !== null && this.endDate !== null) && this.startDate <= this.endDate){
+      this.isLoading = true
       const accessType = this.authService.getAccessType()
 
       const start: any =  this.startDate
@@ -120,18 +124,22 @@ export class AppointmentAdministrativeComponent implements OnInit {
 
       const params = {
         medicoId: this.professional?.id || '',
-        dataInicio: this.formatDate(startOfDay(start._d)),
-        dataFim: this.formatDate(endOfDay(end._d)),
+        dataInicio: startOfDay(start._d).toISOString().split('Z').join().split('.')[0],
+        dataFim: endOfDay(end._d).toISOString().split('Z').join().split('.')[0],
         salaId: this.room?.id || '',
         status: this.status || '',
        pacienteId: this.patient?.id || ''
       }
 
       if (accessType === 'ROLE_ADMINISTRADOR' || accessType === 'ROLE_ATENDENTE') {
-       this.consultaService.getAppointments(params).subscribe((consultas: Appointment[]) => this.loadTable(consultas))
+        this.consultaService.getAppointments(params).subscribe((consultas: Appointment[]) => this.loadTable(consultas))
       } else {
         this.professionalService.getMyAppointments(params).subscribe((consultas: Appointment[]) => this.loadTable(consultas))
       }
+    }else{
+      this.openSnackBar("Existe algum erro com as datas inseridas, favor checar", 'Ok', 3000);
+      this.appointmentAdministrativeFormGroup.controls.startDate.setValue(null);
+      this.appointmentAdministrativeFormGroup.controls.endDate.setValue(null);
     }
   }
 
@@ -150,7 +158,6 @@ export class AppointmentAdministrativeComponent implements OnInit {
     } else if (this.authService.getAccessType() === 'ROLE_ADMINISTRADOR' || this.authService.getAccessType() === 'ROLE_ATENDENTE') {
 
       this.consultaService.getWithLimit().subscribe((consultations: Appointment[]) => {
-
         this.loadTable(consultations)
       }, error => {
         this.isLoading = false;
@@ -160,12 +167,23 @@ export class AppointmentAdministrativeComponent implements OnInit {
     }
   }
 
-  private loadTable(data: Appointment[]): void {
+  private loadTable(data: any[]): void {
+    data.map(dt =>{
+      let time = new Date(dt.dataInicio).getTime()
+      dt.today = time
+
+      dt.nomePaciente = dt.paciente.nome
+      dt.nomeMedico = dt.medico.nome
+      dt.nomeSala = dt.sala?.nome
+
+    });
+
     this.dataSource = new MatTableDataSource(data)
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.isLoading = false;
     this.errorTableData = false
+    this.isLoading = false
   }
 
   applyFilter(event: Event) {
@@ -225,8 +243,21 @@ export class AppointmentAdministrativeComponent implements OnInit {
 
     if (this.authService.getAccessType() !== 'ROLE_PROFISSIONAL') {
       this.professionalService.getProfessionals().subscribe(professionals => {
-        this.professionals = professionals
-
+        this.professionals = professionals.sort((a,b)=>{
+          let comparision = 0
+  
+          const nameA = a.nome.toUpperCase()
+          const nameB = b.nome.toUpperCase()
+  
+          if(nameA > nameB){
+            comparision = 1
+          }else if(nameB < nameA){
+            comparision = -1
+          }
+  
+          return comparision
+        })
+        
         if (this.dataService.appointmentFilters) {
           this.professional = this.professionals.find(x => x.id == this.dataService.appointmentFilters?.profissional.id)
           this.dataService.appointmentFilters.profissional = null
@@ -250,8 +281,20 @@ export class AppointmentAdministrativeComponent implements OnInit {
 
   getPatients() {
     this.patientService.getPatients().subscribe(patients => {
-      this.patients = patients
+      this.patients = patients.sort((a,b)=>{
+        let comparision = 0
 
+        const nameA = a.nome.toUpperCase()
+        const nameB = b.nome.toUpperCase()
+
+        if(nameA > nameB){
+          comparision = 1
+        }else if(nameB < nameA){
+          comparision = -1
+        }
+
+        return comparision
+      })
       if (this.dataService.appointmentFilters) {
         this.patient = this.patients.find(x => x.id == this.dataService.appointmentFilters?.paciente.id)
         this.dataService.appointmentFilters.paciente = null
@@ -266,7 +309,6 @@ export class AppointmentAdministrativeComponent implements OnInit {
   getRooms() {
     this.roomService.getRooms().subscribe(rooms => {
       this.rooms = rooms
-
       if (this.dataService.appointmentFilters != null && this.startDate != null && this.endDate != null) {
         this.room = this.rooms.find(x => x.id == this.dataService.appointmentFilters?.sala?.id)
         this.dataService.appointmentFilters.sala = null
@@ -303,6 +345,8 @@ export class AppointmentAdministrativeComponent implements OnInit {
     this.dataService.patientParam = appointment.paciente
     this.dataService.isReagendamento = true
 
+    console.log(appointment);
+    
     if (this.startDate != null && this.endDate != null) {
       const filters: AppointmentFilters = {
         profissional: this.professional,
