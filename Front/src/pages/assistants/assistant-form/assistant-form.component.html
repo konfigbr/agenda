@@ -1,0 +1,173 @@
+<div class="page-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>assignment_ind</mat-icon>
+            <h1 *ngIf="!isLoading">{{ assistant.id ? 'Editar' : 'Novo(a)' }} Assistente</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="assistantFormGroup" (submit)="onSubmit()">
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome do(a) Assistente</mat-label>
+                        <input [(ngModel)]="assistant.nome" matInput formControlName="name"
+                            [errorStateMatcher]="matcher" placeholder="Nome do(a) Assistente">
+                        <mat-error *ngIf="formAssistantHasError('name', 'required')">
+                            O nome do(a) assistente é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+
+                </div>
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>E-mail</mat-label>
+                        <input type="email" [(ngModel)]="assistant.username" matInput formControlName="username"
+                            [errorStateMatcher]="matcher" placeholder="E-mail do Profissional">
+                        <mat-error
+                            *ngIf="formAssistantHasError('username', 'email') && !formAssistantHasError('username', 'required')">
+                            Por favor entre com um e-mail válido!
+                        </mat-error>
+                        <mat-error *ngIf="formAssistantHasError('username', 'required')">
+                            O e-mail do(a) assistente é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <!-- <div class="opt-row" *ngIf="!assistant.id">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Senha</mat-label>
+                        <input type="password" [(ngModel)]="assistant.password" matInput formControlName="password"
+                            [errorStateMatcher]="matcher" placeholder="Senha">
+                        <mat-error *ngIf="formAssistantHasError('password', 'required')">
+                            A senha é <strong>obrigatória</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Confirmar Senha</mat-label>
+                        <input type="password" [(ngModel)]="assistant.confirmPassword" matInput
+                            formControlName="confirmPassword" [errorStateMatcher]="matcher"
+                            placeholder="Confirmar senha">
+                        <mat-error *ngIf="formAssistantHasError('confirmPassword', 'required')">
+                            A Confirmação de senha é <strong>obrigatória</strong>!
+                        </mat-error>
+                        <mat-error
+                            *ngIf="formAssistantHasError('confirmPassword', 'passwordsNotMatching') && formAssistantHasError('confirmPassword', 'required')">
+                            A senha deve ser igual a sua confirmação!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div> -->
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CPF</mat-label>
+                        <input mask="000.000.000-00" [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true"
+                            [(ngModel)]="assistant.cpf" matInput formControlName="cpf" [errorStateMatcher]="matcher"
+                            placeholder="CPF">
+                        <mat-error *ngIf="formAssistantHasError('cpf', 'required')">
+                            O CPF é <strong>obrigatório</strong>!
+                        </mat-error>
+                        <mat-error *ngIf="formAssistantHasError('cpf', 'invalidCpf') && assistant.cpf && assistant.cpf.length === 11">
+                            O CPF <strong>é invalido</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Identidade (RG)</mat-label>
+                        <input [(ngModel)]="assistant.rg" matInput formControlName="rg" [errorStateMatcher]="matcher"
+                            placeholder="Identidade (RG)">
+                        <mat-error *ngIf="formAssistantHasError('rg', 'required')">
+                            O RG é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-row">
+
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CEP</mat-label>
+                        <input mask="00.000-000" (blur)="getCep()" [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true"
+                            [(ngModel)]="assistant.cep" matInput formControlName="cep" [errorStateMatcher]="matcher"
+                            placeholder="CEP">
+                        <mat-error *ngIf="formAssistantHasError('cep', 'required')">
+                            O CEP é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Endereço</mat-label>
+                        <input [(ngModel)]="assistant.endereco" matInput formControlName="address"
+                            [errorStateMatcher]="matcher" placeholder="Endereço">
+                        <mat-error *ngIf="formAssistantHasError('address', 'required')">
+                            O endereço é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Telefone</mat-label>
+                        <input mask="(00) 00000-0000" [specialCharacters]="[ '(' , ' ' ,  ')' , '-' ]"
+                            [dropSpecialCharacters]="true" [(ngModel)]="assistant.telefone" matInput
+                            formControlName="phone" [errorStateMatcher]="matcher" placeholder="Telefone">
+                        <mat-error *ngIf="formAssistantHasError('phone', 'required')">
+                            O nome do profissional é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome do curso</mat-label>
+                        <input [(ngModel)]="assistant.nomeDoCurso" matInput formControlName="courseName"
+                            [errorStateMatcher]="matcher" placeholder="Nome do curso">
+                        <mat-error *ngIf="formAssistantHasError('courseName', 'required')">
+                            O nome do curso é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Faculdade</mat-label>
+                        <input [(ngModel)]="assistant.faculdade" matInput formControlName="college"
+                            [errorStateMatcher]="matcher" placeholder="Faculdade">
+                        <mat-error *ngIf="formAssistantHasError('college', 'required')">
+                            O nome da faculdade é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Ano de conclusão do curso</mat-label>
+                        <input mask="0000" [(ngModel)]="assistant.anoConclusao" matInput formControlName="conclusionYear"
+                            [errorStateMatcher]="matcher" placeholder="Ano de conclusão">
+                        <mat-error *ngIf="formAssistantHasError('conclusionYear', 'required')">
+                            O ano é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-btn-form-container">
+                <button class="opt-btn-form-back" mat-button type="button"
+                    [routerLink]="['/assistentes']">Voltar</button>
+
+                <button [disabled]="!assistantFormGroup.valid" class="opt-btn-form" mat-button
+                    type="submit">{{ isEdit ? 'Salvar' : 'Cadastrar' }}</button>
+            </div>
+        </form>
+
+    </div>
+</div>

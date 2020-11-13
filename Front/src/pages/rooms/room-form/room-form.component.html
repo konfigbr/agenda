@@ -1,0 +1,88 @@
+<div class="page-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>apps</mat-icon>
+            <h1 *ngIf="!isLoading">{{ room.id ? 'Editar' : 'Nova'}} Sala</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="roomFormGroup" (submit)="onSubmit()">
+
+            <div class="opt-form-control opt-form-inline">
+                <mat-form-field appearance="outline">
+                    <mat-label>Nome da sala</mat-label>
+                    <input [(ngModel)]="room.nome" matInput formControlName="name" [errorStateMatcher]="matcher"
+                        placeholder="Nome da sala">
+                    <mat-error *ngIf="formRoomHasError('name', 'required')">
+                        O nome da sala é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control opt-form-inline">
+                <mat-form-field appearance="outline">
+                    <mat-label>Status</mat-label>
+                    <mat-select [errorStateMatcher]="matcher" formControlName="status" [(ngModel)]="room.status">
+                        <mat-option *ngFor="let status of statusTypes" [value]="status">
+                            {{ status }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="formRoomHasError('status', 'required')">
+                        O status da sala é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control opt-form-inline">
+                <mat-form-field appearance="outline">
+                    <mat-label>Local</mat-label>
+                    <mat-select [errorStateMatcher]="matcher" [(ngModel)]="room.local" formControlName="local">
+                        <mat-option *ngFor="let local of locals" [value]="local">
+                            {{ local.nome }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="formRoomHasError('local', 'required')">
+                        O local da sala é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control opt-form-inline">
+                <mat-form-field appearance="outline">
+                    <mat-label>Especialidade</mat-label>
+                    <mat-select [(ngModel)]="room.especialidade" formControlName="specialty">
+                        <mat-option *ngFor="let specialty of specialties" [value]="specialty">
+                            {{ specialty.nome }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="formRoomHasError('specialty', 'required')">
+                        A especialidade da sala é <strong>obrigatória</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control opt-form-inline">
+                <mat-form-field appearance="outline">
+                    <mat-label>É uma Sala Reserva?</mat-label>
+                    <mat-select [(ngModel)]="room.reserva" formControlName="reserva">
+                        <mat-option [value]="1">
+                            Sim
+                        </mat-option>
+                        <mat-option [value]="0">
+                            Não
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="formRoomHasError('specialty', 'required')">
+                        A especialidade da sala é <strong>obrigatória</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-btn-form-container opt-btn-inline">
+                <button class="opt-btn-form-back" mat-button type="button" [routerLink]="['/salas']">Voltar</button>
+                <button class="opt-btn-form" mat-button type="submit">{{ isEdit ? 'Salvar' : 'Cadastrar' }}</button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="page-container opt-specialty-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>enhanced_encryption</mat-icon>
+            <h1 *ngIf="!isLoading">{{ specialty.id ? 'Editar' : 'Nova'}} Especialidade</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="specialtyFormGroup" (submit)="onSubmit()">
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Especialidade</mat-label>
+                        <input [(ngModel)]="specialty.nome" matInput formControlName="name"
+                            [errorStateMatcher]="matcher" placeholder="Especialidade">
+                        <mat-error *ngIf="formSpecialtyHasError('name', 'required')">
+                            O nome da especialidade é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                 <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Tipo de Aceite</mat-label>
+                        <mat-select [errorStateMatcher]="matcher" formControlName="aceite"
+                            [(ngModel)]="specialty.tipoAceite">
+                            <mat-option *ngFor="let aceite of tipoAceite" [value]="aceite.value">
+                                {{aceite.value}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div> 
+
+            </div>
+            <div class="opt-row">
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Categoria de Preços</mat-label>
+                        <mat-select [errorStateMatcher]="matcher" formControlName="prices"
+                            [(ngModel)]="specialty.tabelaPreco">
+                            <mat-option *ngFor="let categoryPrice of categoryPricesList" [value]="categoryPrice">
+                                {{categoryPrice?.nome}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+            </div>
+            <div class="opt-form-control opt-form-control-radio">
+                <mat-label>Exibir no cadastro de profissional?</mat-label>
+                <mat-radio-group [(ngModel)]="specialty.exibirCadastroProfissional"
+                    formControlName="showInProfessionalRegister">
+                    <mat-radio-button [value]="true">
+                        Sim
+                    </mat-radio-button>
+                    <mat-radio-button [value]="false">
+                        Não
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+
+            <div class="opt-btn-form-container">
+                <button class="opt-btn-form-back" mat-button type="button"
+                    [routerLink]="['/especialidades']">Voltar</button>
+                <button [disabled]="!specialtyFormGroup.valid" class="opt-btn-form" mat-button
+                    type="submit">{{ isEdit ? 'Salvar' : 'Cadastrar' }}</button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<div class="page-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>attach_money</mat-icon>
+            <h1 *ngIf="!isLoading">{{ price.id ? 'Editar' : 'Nova'}} Tabela de Preços</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="priceFormGroup" (submit)="onSubmit()">
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome da tabela</mat-label>
+                        <input matInput formControlName="name" [errorStateMatcher]="matcher"
+                            placeholder="Nome da tabela">
+                        <mat-error *ngIf="formPricesError('name', 'required')">
+                            O nome da tabela é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div *ngFor="let item of hours " class="opt-row">
+                <div *ngFor="let hour of item.hours" class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Valor até {{ hour }} hora(s)</mat-label>
+                        <input currencyMask type="text" matInput [formControlName]="'faixaPrecoHora_' + hour" [errorStateMatcher]="matcher">
+                        <mat-error *ngIf="formPricesError('faixaPrecoHora_' + hour, 'required')">
+                            O Valor para {{ hour }} hora(s) é <strong>obrigatório</strong>!
+                        </mat-error>
+                        <mat-error *ngIf="formPricesError('faixaPrecoHora_' + hour, 'min')">
+                            O valor precisa ser <strong>superior</strong> a <strong>R$ 0,01</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-btn-form-container">
+                <button class="opt-btn-form-back" mat-button type="button" [routerLink]="['/tabelas-de-precos']">Voltar
+                </button>
+                <button [disabled]="!priceFormGroup.valid" class="opt-btn-form" mat-button
+                    type="submit">{{ isEdit ? 'Salvar' : 'Cadastrar' }}</button>
+            </div>
+        </form>
+    </div>
+</div>

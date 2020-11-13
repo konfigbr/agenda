@@ -1,0 +1,12 @@
+<div class="opt-modal-message-container">
+    <p>{{ data.message }}</p>
+    <div class="opt-modal-message-btn-container">
+        <button class="opt-cancel-btn-modal" mat-button (click)="close(false)">
+            {{ data.cancelText || 'Cancelar' }}
+        </button>
+
+        <button class="opt-confirm-btn-modal" mat-button  (click)="close(true)">
+            {{ data.apagarText || 'Apagar' }}
+        </button>
+    </div>
+</div>

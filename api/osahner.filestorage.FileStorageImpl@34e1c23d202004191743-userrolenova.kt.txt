@@ -1,0 +1,40 @@
+package osahner.domain
+
+import osahner.dto.UserRoleDto
+import javax.persistence.*
+
+@Entity
+@Table(name = "user_role", uniqueConstraints = [
+  UniqueConstraint(columnNames = ["user_id", "role_id"])])
+open class UserRole {
+    @Id
+    @Column(name = "id", nullable = false, insertable = false, updatable = false)
+    @GeneratedValue
+    var id: Long? = null
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    var refUserEntity: User? = null
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    var refRoleEntity: Role? = null
+
+  override fun hashCode(): Int = 42
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as UserRole
+
+    if (id != other.id) return false
+    if (refUserEntity != other.refUserEntity) return false
+    if (refRoleEntity != other.refRoleEntity) return false
+
+    return true
+  }
+  override fun toString(): String {
+    return "UserRole(id=$id, user=$refUserEntity, role=$refRoleEntity)"
+  }
+
+
+}

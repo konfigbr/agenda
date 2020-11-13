@@ -1,0 +1,39 @@
+<div class="opt-modal-message-container">
+    <p>{{ data.message }}</p>
+    <form [formGroup]="apointmentAdministrativeFormGroup">
+            <div class="opt-row">
+                <div class="opt-form-control mat-opt-consulta opt-edit-gneric">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Status</mat-label>
+                        <mat-select [(ngModel)]="statusSelected"formControlName="statusSelected"  >
+                            <mat-option *ngFor="let option of statusDisponiveis" [value]="option.value">
+                                {{option.label}}  
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-row" >
+                <div class="opt-form-control mat-opt-consulta opt-edit-gneric">
+                    <mat-form-field appearance="outline" *ngIf="statusSelected === 'NAO_APROVADA'">
+                        <mat-label>Justificativa</mat-label>
+                        <textarea rows="5" formControlName="observacao" [(ngModel)]="observacao"
+                        [matTextareaAutosize]="true" matInput
+                        placeholder="Justificativa"></textarea>
+                      </mat-form-field>
+                </div>
+                
+            </div>
+
+        <div class="opt-modal-message-btn-container">
+        
+        <button class="opt-cancel-btn-modal" mat-button (click)="close(false)">
+            {{ data.cancelText || 'Cancelar' }}
+        </button>
+
+        <button class="opt-confirm-btn-modal" mat-button (click)="onSubmit()">
+                        {{ data.editarText || 'Editar' }}
+        </button>
+    </div>
+</form>
+</div>

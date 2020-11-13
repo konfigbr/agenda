@@ -1,0 +1,43 @@
+<div class="opt-modal-container">
+    <div class="opt-modal-header">
+        Aumentar Período do Agendamento
+    </div>
+    <div class="opt-modal-body">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="increaseSchedulingPeriodFormGroup" (submit)="onSubmit()">
+
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Número de horas</mat-label>
+                    <mat-select [errorStateMatcher]="matcher" formControlName="hours"
+                        [(ngModel)]="increaseSchedulingPeriod.horas">
+                        <mat-option [value]="1">
+                            1 hora
+                        </mat-option>
+                        <mat-option [value]="2">
+                            2 horas
+                        </mat-option>
+                        <mat-option [value]="3">
+                            3 horas
+                        </mat-option>
+                        <mat-option [value]="4">
+                            4 horas
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="formIncreaseSchedulingPeriodHasError('hours', 'required')">
+                        O número de horas é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-btn-form-container">
+                <button class="opt-btn-form-back" mat-button type="button" (click)="cancel()">Cancelar</button>
+                <button [disabled]="!increaseSchedulingPeriodFormGroup.valid" class="opt-btn-form opt-btn-checkin"
+                    mat-button type="submit">Aumentar Período</button>
+
+            </div>
+
+        </form>
+    </div>
+</div>

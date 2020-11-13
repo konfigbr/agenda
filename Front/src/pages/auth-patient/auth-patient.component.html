@@ -1,0 +1,220 @@
+<div class="login-container">
+    <div class="opt-box-login" [ngClass]="{'opt-box-login-big': page === 'cadastro'}">
+        <div class="opt-logo-container">
+            <img src="assets/logo.png" alt="Logo OPT.DOC">
+        </div>
+        <p class="opt-title-login" *ngIf="page === 'login'">Login Paciente</p>
+        <form *ngIf="page === 'login'" (submit)="onSubmit()">
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>E-mail</mat-label>
+                    <input matInput [(ngModel)]="userLogin.username" [formControl]="emailFormControl"
+                        [errorStateMatcher]="matcher" placeholder="Digite seu e-mail">
+                    <mat-icon matSuffix>mail</mat-icon>
+                    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                        Por favor entre com um e-mail válido!
+                    </mat-error>
+                    <mat-error *ngIf="emailFormControl.hasError('required')">
+                        O e-mail é <strong>obrigatório</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Senha</mat-label>
+                    <input type="password" matInput [formControl]="passwordFormControl" [errorStateMatcher]="matcher"
+                        [(ngModel)]="userLogin.password" placeholder="Digite sua senha">
+                    <mat-icon matSuffix>vpn_key</mat-icon>
+                    <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                        A senha deve ter no mínimo 6 caracteres!
+                    </mat-error> -->
+                    <mat-error *ngIf="passwordFormControl.hasError('required')">
+                        A senha é <strong>obrigatória</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="opt-btn-submit-login-container">
+                <button [disabled]="isLoading || !emailFormControl.valid || !passwordFormControl.valid"
+                    class="opt-btn-submit-login" mat-button type="submit">Entrar</button>
+                <div *ngIf="isLoading" class="opt-btn-loading-container">
+                    <mat-spinner color="light" diameter="25"></mat-spinner>
+                </div>
+            </div>
+
+
+            <a (click)="navigate('recuperar-senha')" class="opt-recover-password-link link">Esqueci minha
+                senha</a>
+            <p>Ainda não possui cadastro?</p>
+            <a (click)="navigate('cadastro')" class="opt-register-link link">Cadastre-se já</a>
+        </form>
+
+        <p class="opt-title-login" *ngIf="page === 'cadastro'">Cadastrar</p>
+        <form [formGroup]="formGroupUserRegister" *ngIf="page === 'cadastro'">
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome</mat-label>
+                        <input [(ngModel)]="patient.nome" matInput formControlName="name" [errorStateMatcher]="matcher"
+                            placeholder="Digite seu nome completo">
+                        <mat-icon matSuffix>account_circle</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('name', 'required')">
+                            O nome é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>E-mail</mat-label>
+                        <input [(ngModel)]="patient.username" matInput formControlName="email"
+                            [errorStateMatcher]="matcher" type="email" placeholder="Digite seu e-mail">
+                        <mat-icon matSuffix>mail</mat-icon>
+                        <mat-error
+                            *ngIf="formRegisterHasError('email', 'email') && !formRegisterHasError('email', 'required')">
+                            Por favor entre com um e-mail válido!
+                        </mat-error>
+                        <mat-error *ngIf="formRegisterHasError('email', 'required')">
+                            O e-mail é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-row">
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CPF</mat-label>
+                        <input [(ngModel)]="patient.cpf" mask='000.000.000-00' matInput formControlName="document"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu CPF">
+                        <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('document', 'required')">
+                            O CPF é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>RG</mat-label>
+                        <input [(ngModel)]="patient.rg" matInput formControlName="rg" [errorStateMatcher]="matcher"
+                            placeholder="Digite seu RG">
+                        <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('rg', 'required')">
+                            O RG é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-row">
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CEP</mat-label>
+                        <input (blur)="getCep()" [(ngModel)]="patient.cep" matInput formControlName="cep"
+                            mask="00.000-000" [specialCharacters]="['.','-']" [dropSpecialCharacters]="true"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu CEP">
+                        <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('cep', 'required')">
+                            O CEP é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Endereço</mat-label>
+                        <input [(ngModel)]="patient.endereco" matInput formControlName="endereco"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu Endereco">
+                        <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('endereco', 'required')">
+                            O endereço é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                
+            </div>
+
+
+            <button [disabled]="isLoading || !formGroupUserRegister.valid" class="opt-btn-submit-login" mat-button
+                type="button" (click)="onSubmitRegister()">Cadastrar</button>
+            <p class="opt-text-register">Já possui cadastro?</p>
+            <a (click)="navigate('login')" class="opt-register-link link">Entrar</a>
+        </form>
+        <p class="opt-title-login" *ngIf="page === 'recuperar-senha'">Recuperar senha</p>
+        <form *ngIf="page === 'recuperar-senha'" (submit)="onSubmitRevocerPassword()">
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>E-mail</mat-label>
+                    <input (input)="inputAtributeUsername({username: $event.target.value})" matInput
+                        [value]="(usernameRecoverPassword$ | async)" [formControl]="usernameRecoverPasswordFormControl"
+                        [errorStateMatcher]="matcher" placeholder="Digite seu e-mail">
+                    <mat-icon matSuffix>mail</mat-icon>
+                    <mat-error
+                        *ngIf="usernameRecoverPasswordFormControl.hasError('email') && !usernameRecoverPasswordFormControl.hasError('required')">
+                        Por favor entre com um e-mail válido!
+                    </mat-error>
+                    <mat-error *ngIf="usernameRecoverPasswordFormControl.hasError('required')">
+                        O e-mail é <strong>obrigatório</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-btn-submit-login-container">
+                <button [disabled]="isLoading || usernameRecoverPasswordFormControl.errors" class="opt-btn-submit-login"
+                    mat-button type="submit">Enviar </button>
+                <div *ngIf="isLoading" class="opt-btn-loading-container">
+                    <mat-spinner color="light" diameter="25"></mat-spinner>
+                </div>
+            </div>
+
+            <!-- <p>Lembrou de sua senha?</p> -->
+            <a (click)="navigate('login')" class="opt-register-link opt-link-back link">Voltar</a>
+        </form>
+
+
+
+        <p class="opt-title-login" *ngIf="page === 'alterar-senha'">Alterar senha</p>
+        <form *ngIf="page === 'alterar-senha'" [formGroup]="changePasswordFormGroup"
+            (submit)="onSubmitChangePassword()">
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Nova senha</mat-label>
+                    <input type="password" [(ngModel)]="changePassword.newPassword" matInput
+                        formControlName="newPassword" [errorStateMatcher]="matcher" placeholder="Nova senha">
+                    <mat-error *ngIf="formChangePasswordHasError('newPassword', 'required')">
+                        A nova senha é <strong>obrigatória</strong>!
+                    </mat-error>
+                    <mat-error *ngIf="formChangePasswordHasError('newPassword', 'minlength')">
+                        Minimo <strong>6 caracteres</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Confirmar nova senha</mat-label>
+                    <input type="password" [(ngModel)]="confirmPassword" matInput formControlName="confirmPassword"
+                        [errorStateMatcher]="matcher" placeholder="Senha do usuário">
+                    <mat-error *ngIf="formChangePasswordHasError('confirmPassword', 'required')">
+                        A confirmação é <strong>obrigatória</strong>!
+                    </mat-error>
+                    <mat-error
+                        *ngIf="formChangePasswordHasError('confirmPassword', 'passwordsNotMatching') && !formChangePasswordHasError('confirmPassword', 'required')">
+                        Confirmação está <strong>diferente</strong> da senha!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-btn-submit-login-container">
+                <button [disabled]="isLoading || !changePasswordFormGroup.valid" class="opt-btn-submit-login" mat-button
+                    type="submit">Alterar Senha</button>
+                <div *ngIf="isLoading" class="opt-btn-loading-container">
+                    <mat-spinner color="light" diameter="25"></mat-spinner>
+                </div>
+            </div>
+
+            <!-- <p>Lembrou de sua senha?</p> -->
+            <a (click)="navigate('login')" class="opt-register-link opt-link-back link">Voltar</a>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,182 @@
+<div class="page-container">
+    <div class="header-page-container">
+        <div>
+            <mat-icon>event_note</mat-icon>
+            <h1>Meu Painel</h1>
+        </div>
+    </div>
+
+    <div class="opt-inco-cards-container">
+
+        <div class="opt-info-card next-schedule-card">
+            <div class="opt-info-card-header">
+                Próximo Agendamento
+                <span class="opt-item-value" *ngIf="currentScheduling"
+                    [ngClass]="{'opt-status-confirm': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'ok', 'opt-status-warning': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'nao_iniciado', 'opt-status-danger': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'liberado'}">
+                    {{ currentScheduling?.agendamentoStatusAtual === 'OK' ? 'INICIADO' : currentScheduling?.agendamentoStatusAtual === 'NAO_INICIADO' ? 'NÃO INICIADO' : 'FINALIZADO' }}
+                </span>
+            </div>
+            <div class="opt-info-card-body">
+                <div *ngIf="isLoading" class="opt-loading-page-container">
+                    <mat-spinner color="light" diameter="75"></mat-spinner>
+                </div>
+                <div *ngIf="!isLoading">
+                    <p *ngIf="!currentScheduling">
+                        Nenhum agendamento programado para hoje
+                    </p>
+                    <div *ngIf="currentScheduling">
+                        <div class="opt-row-panel">
+                            <p class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Sala: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.sala?.nome }}</span>
+                            </p>
+                            <p class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Período agendado: </span>
+                                <span class="opt-item-value">
+                                    {{ currentScheduling?.inicio | date: 'HH:mm' }} às
+                                    {{ currentScheduling?.fim | date: 'HH:mm' }}
+                                </span>
+
+                            </p>
+                            <p *ngIf="accessType === 'ROLE_PROFISSIONAL'" class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Nome do(a) assistente: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.assistente?.nome }}</span>
+                            </p>
+                            <p *ngIf="accessType === 'ROLE_ASSISTENTE'" class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Nome do(a) profissional: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.user?.nome }}</span>
+                            </p>
+                        </div>
+
+
+                        <p class="opt-current-scheduling-item">
+                            <span class="opt-item-title">Adicionais: </span>
+                            <span class="opt-item-value" *ngIf="currentScheduling.tiposEquipamentos.length">
+                                <span *ngFor="let equipment of currentScheduling.tiposEquipamentos; let idx = index">
+                                    {{ equipment?.nomeTipoEquipamento + ' (' +  (equipment.inicio | date : 'HH: mm') + ' - ' + (equipment.fim | date: 'HH:mm')  + ')' }}
+                                    {{ idx !== (currentScheduling.tiposEquipamentos.length - 1) ? ',' : '' }}
+                                </span>
+                            </span>
+                            <span class="opt-item-value" *ngIf="!currentScheduling.tiposEquipamentos.length">
+                                Nenhum Equipamento Solicitado
+                            </span>
+                        </p>
+                        <!-- <p class="opt-current-scheduling-item">
+                            <span class="opt-item-title">Status do Agendamento: </span>
+                            <span class="opt-item-value"
+                                [ngClass]="{'opt-status-confirm': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'ok', 'opt-status-warning': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'nao_iniciado', 'opt-status-accent': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'liberado'}">
+                                {{ currentScheduling?.agendamentoStatusAtual === 'OK' ? 'INICIADO' : currentScheduling?.agendamentoStatusAtual === 'NAO_INICIADO' ? 'NÃO INICIADO' : 'FINALIZADO' }}
+                            </span>
+                        </p> -->
+
+                        <!-- <div class="opt-current-scheduling-item">
+                            <p class="opt-item-title">Status da Sala: </p>
+                            <div class="opt-btn-action-container">
+                                <button class="opt-btn-rom-checkin" mat-button type="button">Sala Pronta Para
+                                    Uso</button>
+                                <button class="opt-btn-rom-checkout" mat-button type="button">Sala Liberada</button>
+                            </div>
+                        </div> -->
+                        <div>
+                            <p class="opt-current-scheduling-item">Check-in / Check-out do Agendamento: </p>
+                            <p class="opt-current-scheduling-item" *ngIf="currentScheduling.assistantCheckinHour">
+                                {{ accessType === 'ROLE_ASSISTENTE' ? 'Meu Check-in' : 'Check-in do(a) Assistente' }}:
+                                <span
+                                    class="opt-item-value">{{ currentScheduling?.assistantCheckinHour | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </p>
+
+                            <p class="opt-current-scheduling-item" *ngIf="currentScheduling.professionalCheckinHour">
+                                {{ accessType === 'ROLE_ASSISTENTE' ? 'Check-in do(a) Profissional' : 'Meu Check-in'}}:
+                                <span
+                                    class="opt-item-value">{{ currentScheduling.professionalCheckinHour | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </p>
+
+                            <p class="opt-current-scheduling-item" *ngIf="currentScheduling.assistantCheckoutHour">
+
+                                {{accessType === 'ROLE_ASSISTENTE' ? 'Meu Check-out' : 'Check-out do(a) Assistente'}}:
+                                <span
+                                    class="opt-item-value">{{ currentScheduling.assistantCheckoutHour | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </p>
+
+                            <p class="opt-current-scheduling-item" *ngIf="currentScheduling.professionalCheckoutHour">
+                                {{ accessType === 'ROLE_ASSISTENTE' ? 'Check-out do(a) Profissional' : 'Meu Check-out' }}:
+                                <span class="opt-item-value">
+                                    {{ currentScheduling.professionalCheckoutHour | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </p>
+
+                            <div class="opt-form-control"
+                                *ngIf="currentScheduling.agendamentoStatusAtual !== 'LIBERADO'">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Observações</mat-label>
+                                    <textarea rows="5" [(ngModel)]="observation" [matTextareaAutosize]="false" matInput
+                                        placeholder="Observações"></textarea>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="opt-btn-action-container">
+                                <button class="opt-btn-rom-checkin"
+                                    *ngIf="currentScheduling.agendamentoStatusAtual === 'NAO_INICIADO'"
+                                    (click)="submitChecking()"
+                                    [disabled]="(accessType === 'ROLE_PROFISSIONAL' && !currentScheduling.assistantCheckinHour) || (accessType === 'ROLE_PROFISSIONAL' && currentScheduling.professionalCheckinHour) || (accessType === 'ROLE_ASSISTENTE' && currentScheduling.assistantCheckinHour)"
+                                    mat-button type="button">Fazer
+                                    {{ accessType === 'ROLE_ASSISTENTE' ? 'meu' : '' }} check-in</button>
+
+                                <button class="opt-btn-rom-checkin"
+                                    *ngIf="(currentScheduling.agendamentoStatusAtual === 'OK') && ((currentScheduling.professionalCheckoutHour === null && accessType === 'ROLE_PROFISSIONAL')  || (currentScheduling.assistantCheckoutHour === null && accessType === 'ROLE_ASSISTENTE'))"
+                                    (click)="submitCheckout()" mat-button type="button">Fazer
+                                    {{ accessType === 'ROLE_ASSISTENTE' ? 'meu' : '' }}
+                                    check-out</button>
+
+                                <button class="opt-btn-rom-checkout"
+                                    [disabled]="currentScheduling.professionalCheckinHour !== null || currentScheduling.assistantCheckinHour === null"
+                                    *ngIf="currentScheduling.agendamentoStatusAtual === 'NAO_INICIADO' && accessType === 'ROLE_ASSISTENTE'"
+                                    (click)="goToCheckingAuth()" mat-button type="button">
+                                    Fazer check-in do profissional
+                                </button>
+
+                                <button class="opt-btn-rom-checkout"
+                                    *ngIf="currentScheduling.agendamentoStatusAtual === 'OK' && accessType === 'ROLE_ASSISTENTE' && !currentScheduling.professionalCheckoutHour"
+                                    [disabled]="!currentScheduling.assistantCheckinHour" (click)="goToCheckoutAuth()"
+                                    mat-button type="button">
+                                    Fazer check-out do profissional
+                                </button>
+                                <button *ngIf="accessType === 'ROLE_ASSISTENTE' && currentScheduling.agendamentoStatusAtual !== 'LIBERADO' && currentScheduling.assistantCheckoutHour === null && currentScheduling.professionalCheckoutHour === null" (click)="increaseSchedulingPeriod()"
+                                    class="opt-btn-more-time" mat-button type="button">Aumentar Período de
+                                    Agendamento</button>
+
+                            </div>
+                            <!-- <div class="opt-form-control">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Tipo do equipamento</mat-label>
+                                    <mat-select [value]="numHours" [(ngModel)]="numHours">
+                                        <mat-option *ngFor="let hours of hoursList" [value]="hours">
+                                            {{ hours }}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="formEquipmentHasError('type', 'required')">
+                                        O Tipo é <strong>obrigatório</strong>!
+                                    </mat-error>
+                                </mat-form-field>
+                            </div> -->
+                        </div>
+
+                        <!-- <div class="opt-current-scheduling-item">
+                            <button class="opt-btn-rom-checkout opt-btn-observation" mat-button
+                                type="button">Salvar</button>
+                        </div> -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- <div class="opt-info-card messages-card">
+            <div class="opt-info-card-header">
+                Mensagens importantes
+            </div>
+            <div class="opt-info-card-body">
+                Nenhuma mensagem importante registrada.
+            </div>
+        </div> -->
+    </div>
+
+</div>

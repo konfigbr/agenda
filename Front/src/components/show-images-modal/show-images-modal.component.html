@@ -1,0 +1,17 @@
+<div class="opt-modal-images-container">
+    <div class="opt-modal-title-container">
+        {{ data?.title }}
+    </div>
+    <div class="opt-modal-body-container">
+        <p *ngIf="data.images[0] === null">Nenhuma imagems encontrada</p>
+        <div class="opt-images-container" *ngIf="data.images[0] !== null">
+            <div *ngFor="let imgUrl of data.images" class="opt-img-content">
+                <img [src]="imgUrl" alt="Imagem do documento">
+            </div>
+        </div>
+        <div class="opt-modal-images-btn-container">
+            <button mat-button (click)="close()">Fechar</button>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,28 @@
+@keyframes open-menu {
+    0% {
+        opacity: 0.5;
+        left: -240px;
+    }
+    100% {
+        opacity: 1;
+        left: 0;
+    }
+}
+@keyframes close-menu {
+    0% {
+        opacity: 1;
+        left: 0;
+    }
+    100% {
+        opacity: 0.5;
+        left: -240;
+    }
+}
+@keyframes blur {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

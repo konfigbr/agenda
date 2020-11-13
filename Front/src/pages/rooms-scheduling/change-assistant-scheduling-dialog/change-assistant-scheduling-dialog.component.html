@@ -1,0 +1,29 @@
+<div class="opt-modal-container">
+    <div class="opt-header-modal">
+        Agendar Assistente
+        <mat-icon (click)="close()">close</mat-icon>
+    </div>
+    <div class="opt-body-modal" *ngIf="isSchedule === true" >
+        <div class="opt-form-control" *ngIf="!isLoading">
+            <mat-form-field appearance="outline">
+                <mat-label>Assistente</mat-label>
+                <mat-select [(ngModel)]="assistantSelected">
+                    <mat-option *ngFor="let assistant of assistants" [value]="assistant">
+                        {{ assistant.nome }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+    </div>
+    <div class="opt-footer-modal" *ngIf="isSchedule === true">
+        <button [disabled]="!assistantSelected" (click)="goBack()" mat-button>Voltar</button>
+        <button [disabled]="!assistantSelected" (click)="submitAssistantSelected()" mat-button>Salvar</button>
+    </div>    
+    <div class="opt-modal-btn-container" *ngIf="isHidden === false">      
+        <button  (click)="scheduleAssistant()" mat-button>Agendar Assistente</button>    
+        <button  (click)="scheduleMaintenance()" mat-button>Manutenção</button>    
+    </div>
+</div>

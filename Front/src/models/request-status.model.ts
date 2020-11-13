@@ -1,0 +1,5 @@
+export enum RequestStatus {
+
+    PENDENTE, CONFIRMADO, CANCELAMENTO_PENDENTE, CANCELADO
+
+}

@@ -1,0 +1,48 @@
+<div class="page-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>category</mat-icon>
+            <h1 *ngIf="!isLoading">{{ equipmentType.id ? 'Editar' : 'Novo'}} Tipo de Equipamento</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="equipmentTypeFormGroup" (submit)="onSubmit()">
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Tipo de equipamento</mat-label>
+                        <input [(ngModel)]="equipmentType.nome" matInput formControlName="name"
+                            [errorStateMatcher]="matcher" placeholder="Tipo equipamento">
+                        <mat-error *ngIf="formEquipmentTypeHasError('name', 'required')">
+                            O Tipo de equipamento é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Valor Cobrável</mat-label>
+                        <input currencyMask type="text" [(ngModel)]="equipmentType.valorCobravel" matInput
+                            formControlName="chargeableAmount" [errorStateMatcher]="matcher"
+                            placeholder="Valor Cobrável">
+                        <mat-error *ngIf="formEquipmentTypeHasError('chargeableAmount', 'required')">
+                            O Valor Cobrável é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-btn-form-container">
+                <button class="opt-btn-form-back" mat-button type="button"
+                    [routerLink]="['/tipos-de-equipamentos']">Voltar</button>
+                <button [disabled]="!equipmentTypeFormGroup.valid" class="opt-btn-form" mat-button
+                    type="submit">{{ isEdit ? 'Salvar' : 'Cadastrar' }}</button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>

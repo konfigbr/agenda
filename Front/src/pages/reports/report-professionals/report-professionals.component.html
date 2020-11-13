@@ -1,0 +1,69 @@
+<form *ngIf="!isLoading" [formGroup]="reportProfessionalsFormGroup" (submit)="onSubmit()">
+    <div class="opt-row">
+        <div class="opt-form-control">
+            <mat-form-field appearance="outline">
+                <mat-label>Especialidade</mat-label>
+                <mat-select formControlName="speciality" [(ngModel)]="report.speciality">
+                    <mat-option [value]="{id: 0}">
+                        Todas
+                    </mat-option>
+                    <mat-option *ngFor="let speciality of specialities" [value]="speciality">
+                        {{ speciality.nome }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="opt-btn-form-container">
+        <button [disabled]="!reportProfessionalsFormGroup.valid || isLoading" class="opt-btn-form" mat-button
+            type="submit">Pesquisar</button>
+    </div>
+</form>
+<div class="opt-report-header-container">
+    <p>Profissionais</p>
+    <button [disabled]="!reportProfessionalsFormGroup.valid  || isLoading" (click)="dowloadReport()"
+        class="opt-btn-form" mat-button type="button">Exportar</button>
+</div>
+<div class="opt-table-report-container">
+
+    <table *ngIf="!isLoading" mat-table [dataSource]="dataSource" matSort class="opt-list-items">
+
+        <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.nome }} </td>
+        </ng-container>
+        <ng-container matColumnDef="rg">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> RG </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.rg }} </td>
+        </ng-container>
+        <ng-container matColumnDef="cpf">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> CPF </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.cpf }} </td>
+        </ng-container>
+        <ng-container matColumnDef="especialidade">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Especialidade </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.especialidade }} </td>
+        </ng-container>
+        <ng-container matColumnDef="documentoProfissional">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Documento Profissional</th>
+            <td mat-cell *matCellDef="let element"> {{ element?.documentoProfissional }} </td>
+        </ng-container>
+        <ng-container matColumnDef="telefone">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Telefone </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.telefone }} </td>
+        </ng-container>
+        <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> E-mail </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.email }} </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <p class="opt-message-empty-table" *ngIf="!isLoading && !errorTableData && !dataSource.data.length">Nenhum
+        profissional encontrado.</p>
+    <p class="opt-message-error-table-data" *ngIf="!isLoading && errorTableData">Erro ao carregar dados.</p>
+    <div *ngIf="isLoading" class="opt-loading-page-container">
+        <mat-spinner color="light" diameter="75"></mat-spinner>
+    </div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>

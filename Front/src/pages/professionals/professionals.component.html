@@ -1,0 +1,116 @@
+<div class="page-container professionals-container">
+    <div class="header-page-container">
+        <div>
+            <mat-icon>assignment_ind</mat-icon>
+            <h1>Profissionais</h1>
+        </div>
+        <div>
+            <div class="opt-form-control opt-filter-list-container">
+                <mat-form-field appearance="outline">
+                    <mat-label>Pesquisar</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium">
+                </mat-form-field>
+            </div>
+            <button matTooltip="Cadastrar novo(a) profissional" mat-button type="submit" 
+          
+                [routerLink]="['/profissional/new']">
+                Adicionar
+                <mat-icon>add</mat-icon>
+            </button>
+
+        </div>
+    </div>
+    <button [routerLink]="['/profissional/new']" id="opt-fab-btn-add" class="opt-fab-btn-add" mat-fab>
+        <mat-icon>add</mat-icon>
+    </button>
+
+    <div class="page-content">
+
+
+
+        <table mat-table [dataSource]="dataSource" matSort class="opt-list-items">
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+                <td mat-cell *matCellDef="let element">
+
+                    <div class="status-indicator"
+                        [matTooltip]="element.status === 'AGUARDANDO_APROVAÇÃO' ? 'Aguardando Aprovação' : element.status === 'NEGADO' ? 'Negado' : 'Aprovado'"
+                        [ngClass]="{'status-indicator-warning': element.status === 'AGUARDANDO_APROVAÇÃO', 'status-indicador-danger': element.status === 'NEGADO', 'status-indicator-confirm': element.status === 'APROVADO' }">
+                    </div>
+
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="nome">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+                <td mat-cell *matCellDef="let element"> {{element?.nome || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> E-mail </th>
+                <td mat-cell *matCellDef="let element"> {{element?.username || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="tipoDocumento">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo Documento </th>
+                <td mat-cell *matCellDef="let element"> {{element?.tipoDocumento || '-'}}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="cpf">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Documento </th>
+                <td mat-cell *matCellDef="let element">
+                    {{ element.cpf 
+                        ? (element?.tipoDocumento === "CNPJ" 
+                            ? (element?.cpf | mask: '00.000.000/0000-00')
+                            : (element?.cpf | mask: '000.000.000-00') )
+                        : '-'}}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="rg">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> RG </th>
+                <td mat-cell *matCellDef="let element"> {{element?.rg || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="especialidade">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Especialidade </th>
+                <td mat-cell *matCellDef="let element"> {{element?.especialidade?.nome || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="crm">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Documento Profissional </th>
+                <td mat-cell *matCellDef="let element"> {{element?.crm || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="telefone">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Telefone </th>
+                <td mat-cell *matCellDef="let element">
+                    {{element.telefone ? (element.telefone | mask: '(00) 00000-0000') : '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>
+                    <p> Ações </p>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                   
+                    <div *ngIf="preView()">
+                        <mat-icon matTooltip="Editar" [routerLink]="['/profissional/', element.id]">edit
+                        </mat-icon>
+                    </div>
+                    <div *ngIf="canDelete()">
+                        <mat-icon (click)="discountProfessional(element)"
+                        [ngClass]="{'has-discount': element.hasDescontoVigente}"       
+                        matTooltip="Desconto">attach_money</mat-icon>
+                        
+                        <mat-icon matTooltip="Editar" [routerLink]="['/profissional/', element.id]">edit</mat-icon>
+                        <mat-icon (click)="deleteElement(element)">delete</mat-icon>
+                    </div>
+
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <p class="opt-message-empty-table" *ngIf="!isLoading && !errorTableData && !dataSource.data.length">Nenhum
+            profissional.</p>
+        <p class="opt-message-error-table-data" *ngIf="!isLoading && errorTableData">Erro ao carregar dados.</p>
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <mat-paginator [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons></mat-paginator>
+    </div>
+</div>

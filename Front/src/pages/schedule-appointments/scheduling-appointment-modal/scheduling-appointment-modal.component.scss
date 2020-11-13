@@ -1,0 +1,103 @@
+@import "../../../theme/variables";
+
+.opt-modal-container {
+    .opt-header-modal {
+        background: $color-primary;
+        color: #fff;
+        font-weight: bold;
+        position: relative;
+        font-size: 24px;
+        padding: 24px;
+        padding-right: 72px;
+
+        mat-icon {
+            position: absolute;
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+            right: 24px;
+            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+        }
+    }
+
+    .opt-body-modal {
+        padding: 24px;
+
+        .opt-table-container {
+            margin-top: 30px;
+            margin-bottom: 30px;
+
+            table {
+                width: 100%;
+            }
+        }
+    }
+
+    .opt-footer-modal {
+        padding: 0 24px 24px;
+
+        button {
+            float: right;
+            margin: 12px;
+            background: $color-primary;
+            color: #fff;
+            height: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            &:disabled {
+                cursor: default;
+                opacity: 0.4;
+            }
+        }
+    }
+}
+
+.opt-form-control {
+    fieldset {
+        border: 1.5px solid #00000012;
+        border-radius: 4px;
+        padding: 16px;
+        display: flex;
+        justify-content: center;
+        > div {
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        legend {
+            color: $color-primary;
+            font-size: 12px;
+        }
+        button {
+            margin-right: 4px;
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .opt-modal-container {
+        .opt-header-modal {
+            font-size: 16px;
+            padding: 16px;
+            padding-right: 48px;
+
+            mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                right: 16px;
+            }
+        }
+        .opt-body-modal {
+            padding: 16px;
+        }
+        .opt-footer-modal {
+            padding: 0 16px 16px;
+        }
+    }
+}

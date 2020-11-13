@@ -1,0 +1,93 @@
+<div class="page-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>supervisor_account</mat-icon>
+            <h1 *ngIf="!isLoading">{{ administrativeUser.id ? 'Editar' : 'Novo'}} Usuário Administrativo</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="administrativeUserFormGroup" (submit)="onSubmit()">
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome</mat-label>
+                        <input [(ngModel)]="administrativeUser.nome" matInput formControlName="name"
+                            [errorStateMatcher]="matcher" placeholder="Nome do usuário">
+                        <mat-error *ngIf="formAdministrativeUserHasError('name', 'required')">
+                            O nome do usuário é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>E-mail</mat-label>
+                        <input [(ngModel)]="administrativeUser.username" matInput formControlName="username"
+                            [errorStateMatcher]="matcher" placeholder="E-mail do usuário">
+                        <mat-error *ngIf="formAdministrativeUserHasError('username', 'required')">
+                            O e-mail é <strong>obrigatório</strong>!
+                        </mat-error>
+                        <mat-error
+                            *ngIf="!formAdministrativeUserHasError('username', 'required') && formAdministrativeUserHasError('username', 'email')">
+                            E-mail <strong>inválido</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <!-- <div class="opt-row" *ngIf="!isEdit">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Senha</mat-label>
+                        <input type="password" [(ngModel)]="administrativeUser.password" matInput formControlName="password"
+                            [errorStateMatcher]="matcher" placeholder="Senha do usuário">
+                        <mat-error *ngIf="formAdministrativeUserHasError('password', 'required')">
+                            A senha é <strong>obrigatória</strong>!
+                        </mat-error>
+                        <mat-error *ngIf="formAdministrativeUserHasError('password', 'minlength')">
+                            Minimo <strong>6 caracteres</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Confirmar senha</mat-label>
+                        <input type="password" [(ngModel)]="confirmPassword" matInput formControlName="confirmPassword"
+                            [errorStateMatcher]="matcher" placeholder="Senha do usuário">
+                        <mat-error *ngIf="formAdministrativeUserHasError('confirmPassword', 'required')">
+                            A senha é <strong>obrigatória</strong>!
+                        </mat-error>
+                        <mat-error
+                            *ngIf="formAdministrativeUserHasError('confirmPassword', 'passwordsNotMatching') && !formAdministrativeUserHasError('confirmPassword', 'required')">
+                            Confirmação está <strong>diferente</strong> da senha!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div> -->
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Tipo de acesso</mat-label>
+                    <mat-select [errorStateMatcher]="matcher" formControlName="accessType"
+                        [value]="administrativeUser.accessType" [(ngModel)]="administrativeUser.accessType">
+                        <mat-option value="ROLE_ATENDENTE">
+                            Atendente
+                        </mat-option>
+                        <mat-option value="ROLE_ADMINISTRADOR">
+                            Administrador
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="formAdministrativeUserHasError('accessType', 'required')">
+                        O tipo de acesso é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-btn-form-container">
+                <button class="opt-btn-form-back" mat-button type="button"
+                    [routerLink]="['/usuarios-administrativos']">Voltar</button>
+                <button [disabled]="!administrativeUserFormGroup.valid" class="opt-btn-form" mat-button
+                    type="submit">{{ isEdit ? 'Salvar' : 'Cadastrar' }}</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,615 @@
+<header>
+    <div class="opt-brand-container">
+        <span *ngIf="getAccessType() === 'paciente'"
+            class="opt-header-username-patient">{{ getProfessionalObj().nome || '' }} </span>
+        <img src="assets/logo-icon.png" alt="">
+        <img src="assets/logo-text.png" alt="">
+        <span class="opt-header-username">{{ userName || getAccessType() }} </span>
+        <div [matBadge]="dataService.badgeCount" *ngIf="dataService.badgeCount !== 0" id="opt-toggle-menu"
+            class="opt-toggle-menu" (click)="showMenu()">
+            <mat-icon>menu</mat-icon>
+        </div>
+        <div *ngIf="dataService.badgeCount === 0" id="opt-toggle-menu" class="opt-toggle-menu" (click)="showMenu()">
+            <mat-icon>menu</mat-icon>
+        </div>
+    </div>
+    <div (click)="closeMenu()" id="opt-backdrop-menu" class="opt-backdrop-menu"></div>
+
+    <nav *ngIf="getAccessType() === 'profissional'" class="opt-header-menu">
+        <ul class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/meu-painel']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>event_note</mat-icon>
+                    Meu Painel
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/meus-agendamentos']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>event_available</mat-icon>
+                    Meus Agendamentos
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/agendar-salas']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>today</mat-icon>
+                    Agendar Salas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/consultas']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>airline_seat_flat</mat-icon>
+                    <span [matBadge]="dataService.badgeCount1"
+                        [hidden]="dataService.badgeCount1 === 0">Consultas</span>
+                    <span [hidden]="dataService.badgeCount1 !== 0">Consultas</span>  
+                    
+                       
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/faturas']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>receipt</mat-icon>
+                    Faturas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/meu-perfil']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>account_circle </mat-icon>
+                    Meu Perfil
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                </a>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <a mat-menu-item (click)="logout()">
+                        <mat-icon>exit_to_app</mat-icon>
+                        Sair
+                    </a>
+                </mat-menu>
+            </li>
+        </ul>
+    </nav>
+
+    <nav *ngIf="getAccessType() === 'atendente'" class="opt-header-menu">
+        <ul class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/agendamentos-do-dia']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>event_available</mat-icon>
+                    Agendamentos do Dia
+                </a>
+            </li>
+            <!-- <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/enviar-mensagem']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>message</mat-icon>
+                    Enviar Mensagem
+                </a>
+            </li> -->
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/painel-de-agendamentos']"
+                    routerLinkActive="opt-active-link-page">
+                    <mat-icon>event_note</mat-icon>
+                    Painel de Agendamentos
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/agendar-salas']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>today</mat-icon>
+                    Agendar Salas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/consultas']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>airline_seat_flat</mat-icon>
+                    <span [matBadge]="dataService.badgeCount1"
+                        [hidden]="dataService.badgeCount1 === 0">Consultas</span>
+                    <span [hidden]="dataService.badgeCount1 !== 0">Consultas</span>  
+                    
+                        
+                </a>
+            </li>
+            
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/profissionais']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>assignment_ind </mat-icon>
+                    <span>Profissionais</span>
+
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                </a>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <a mat-menu-item (click)="logout()">
+                        <mat-icon>exit_to_app</mat-icon>
+                        Sair
+                    </a>
+                </mat-menu>
+            </li>
+        </ul>
+    </nav>
+
+
+    <nav *ngIf="getAccessType() === 'assistente'" class="opt-header-menu">
+        <ul class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/meu-painel']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>event_note</mat-icon>
+                    Meu Painel
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/minha-agenda']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>today</mat-icon>
+                    Minha Agenda
+                </a>
+            </li>
+
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                </a>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <a mat-menu-item (click)="logout()">
+                        <mat-icon>exit_to_app</mat-icon>
+                        Sair
+                    </a>
+                </mat-menu>
+            </li>
+        </ul>
+    </nav>
+
+    <nav *ngIf="getAccessType() === 'paciente'" class="opt-header-menu">
+        <ul class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="navigate('minhas-consultas')" routerLinkActive="opt-active-link-page">
+                    <mat-icon>today</mat-icon>
+                    Minhas Consultas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="navigate('agendar-consultas')"
+                    routerLinkActive="opt-active-link-page">
+                    <mat-icon>event_notele</mat-icon>
+                    Agendar Consultas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="navigate('meu-perfil-paciente')"
+                    routerLinkActive="opt-active-link-page">
+                    <mat-icon>account_circle </mat-icon>
+                    Meu Perfil
+                </a>
+            </li>
+
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                </a>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <a mat-menu-item (click)="logoutPatient()">
+                        <mat-icon>exit_to_app</mat-icon>
+                        Sair
+                    </a>
+                </mat-menu>
+            </li>
+        </ul>
+    </nav>
+
+    <nav *ngIf="getAccessType() === 'administrador'" class="opt-header-menu">
+        <ul class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/agendamento-de-salas']"
+                    routerLinkActive="opt-active-link-page">
+                    <mat-icon>today</mat-icon>
+                    Agenda de Salas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="specialitys"
+                    [ngClass]="{'opt-active-link-page': activeRoute('/salas') || activeRoute('/especialidades')}">
+                    <mat-icon>apps</mat-icon>
+                    Salas
+                    <mat-icon>arrow_drop_down </mat-icon>
+                </a>
+                <mat-menu #specialitys="matMenu" xPosition="before">
+                    <a mat-menu-item [routerLink]="['/salas']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>format_list_bulleted</mat-icon>
+                        Salas
+                    </a>
+                    <a mat-menu-item [routerLink]="['/especialidades']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>enhanced_encryption</mat-icon>
+                        Especialidades
+                    </a>
+                    <a mat-menu-item [routerLink]="['/tabelas-de-precos']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>attach_money</mat-icon>
+                        Tabelas de Preços
+                    </a>
+                </mat-menu>
+            </li>
+
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="equipments"
+                    [ngClass]="{'opt-active-link-page': activeRoute('/equipamentos') || activeRoute('/tipos-de-equipamentos')}">
+                    <mat-icon>widgets</mat-icon>
+                    Equipamentos
+                    <mat-icon>arrow_drop_down </mat-icon>
+                </a>
+                <mat-menu #equipments="matMenu" xPosition="before">
+                    <a mat-menu-item [routerLink]="['/equipamentos']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>format_list_bulleted</mat-icon>
+                        Lista de Equipamentos
+                    </a>
+                    <a mat-menu-item [routerLink]="['/tipos-de-equipamentos']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>category</mat-icon>
+                        Tipos de Equipamentos
+                    </a>
+                </mat-menu>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/profissionais']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>assignment_ind </mat-icon>
+                    <span [matBadge]="dataService.badgeCount"
+                        [hidden]="dataService.badgeCount === 0">Profissionais</span>
+                    <span [hidden]="dataService.badgeCount !== 0">Profissionais</span>
+                </a>
+            </li>
+            <li class="opt-menu-item opt-menu-item-lg">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="assistants"
+                    [ngClass]="{'opt-active-link-page': activeRoute('/assistentes') || activeRoute('/agenda-de-assistentes')}">
+                    <mat-icon>contacts</mat-icon>
+                    Assistentes
+                    <mat-icon>arrow_drop_down </mat-icon>
+                </a>
+                <mat-menu #assistants="matMenu" xPosition="before">
+                    <a mat-menu-item [routerLink]="['/assistentes']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>format_list_numbered</mat-icon>
+                        Lista de Assistentes
+                    </a>
+                    <a mat-menu-item [routerLink]="['/agenda-de-assistentes']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>date_range</mat-icon>
+                        Agenda de Assistentes
+                    </a>
+                </mat-menu>
+            </li>
+            <li class="opt-menu-item opt-menu-item-xd">
+                <a class="opt-menu-link" [routerLink]="['/relatorios']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>assignment</mat-icon>
+                    Relatórios
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                </a>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <a mat-menu-item class="opt-menu-link op-menu-dropdown opt-menu-item-show-lg"
+                        [matMenuTriggerFor]="assistants"
+                        [ngClass]="{'opt-active-link-page': activeRoute('/assistentes') || activeRoute('/agenda-de-assistentes')}">
+                        <mat-icon>contacts</mat-icon>
+                        Assistentes
+                    </a>
+                    <mat-menu #assistants="matMenu" xPosition="before">
+                        <a mat-menu-item [routerLink]="['/assistentes']" routerLinkActive="opt-active-link-page">
+                            <mat-icon>format_list_numbered</mat-icon>
+                            Lista de Assistentes
+                        </a>
+                        <a mat-menu-item [routerLink]="['/agenda-de-assistentes']"
+                            routerLinkActive="opt-active-link-page">
+                            <mat-icon>date_range</mat-icon>
+                            Agenda de Assistentes
+                        </a>
+                    </mat-menu>
+                    <a mat-menu-item class="opt-menu-item-show-xd" [routerLink]="['/relatorios']"
+                        routerLinkActive="opt-active-link-page">
+                        <mat-icon>assignment</mat-icon>
+                        Relatórios
+                    </a>
+                    <a mat-menu-item [routerLink]="['/usuarios-administrativos']"
+                        routerLinkActive="opt-active-link-page">
+                        <mat-icon>supervisor_account</mat-icon>
+                        Usuários Administrativos
+                    </a>
+                    <a mat-menu-item [routerLink]="['/pacientes']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>face</mat-icon>
+                        Pacientes
+                    </a>
+                    <a mat-menu-item [routerLink]="['/consultas']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>airline_seat_flat</mat-icon>
+                        <span [matBadge]="dataService.badgeCount1"
+                            [hidden]="dataService.badgeCount1 === 0">Consultas</span>
+                        <span [hidden]="dataService.badgeCount1 !== 0">Consultas</span>
+                                                                </a>
+                    <a mat-menu-item [routerLink]="['/auditoria']" routerLinkActive="opt-active-link-page">
+                        <mat-icon>list_alt</mat-icon>
+                        Auditoria
+                    </a>
+                    <a mat-menu-item (click)="logout()">
+                        <mat-icon>exit_to_app</mat-icon>
+                        Sair
+                    </a>
+                </mat-menu>
+            </li>
+            <!-- [matMenuTriggerFor]="menu" -->
+        </ul>
+
+    </nav>
+
+    <nav id="opt-side-menu" class="opt-side-menu">
+        <span class="opt-role-indicator">
+            {{ getAccessType() }}
+        </span>
+
+        <ul *ngIf="getAccessType() === 'administrador'" class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/agendamento-de-salas']"
+                    routerLinkActive="opt-active-link-page" (click)="closeMenu()">
+                    <mat-icon>today</mat-icon>
+                    Agenda de Salas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/salas']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>apps</mat-icon>
+                    Salas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="equipments"
+                    [ngClass]="{'opt-active-link-page': activeRoute('/equipamentos') || activeRoute('/tipos-de-equipamentos')}">
+                    <mat-icon>widgets</mat-icon>
+                    Equipamentos
+                    <mat-icon>arrow_drop_down </mat-icon>
+                </a>
+                <mat-menu #equipments="matMenu" xPosition="before">
+                    <a mat-menu-item [routerLink]="['/equipamentos']" routerLinkActive="opt-active-link-page"
+                        (click)="closeMenu()">
+                        <mat-icon>format_list_bulleted</mat-icon>
+                        Lista de Equipamentos
+                    </a>
+                    <a mat-menu-item [routerLink]="['/tipos-de-equipamentos']" routerLinkActive="opt-active-link-page"
+                        (click)="closeMenu()">
+                        <mat-icon>category</mat-icon>
+                        Tipos de Equipamentos
+                    </a>
+                </mat-menu>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/profissionais']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>assignment_ind </mat-icon>
+                    <span [matBadge]="dataService.badgeCount"
+                        [hidden]="dataService.badgeCount === 0">Profissionais</span>
+                    <span [hidden]="dataService.badgeCount !== 0">Profissionais</span>
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link op-menu-dropdown" [matMenuTriggerFor]="assistants"
+                    [ngClass]="{'opt-active-link-page': activeRoute('/assistentes') || activeRoute('/agenda-de-assistentes')}">
+                    <mat-icon>contacts</mat-icon>
+                    Assistentes
+                    <mat-icon>arrow_drop_down </mat-icon>
+                </a>
+                <mat-menu #assistants="matMenu" xPosition="after">
+                    <a mat-menu-item [routerLink]="['/assistentes']" routerLinkActive="opt-active-link-page"
+                        (click)="closeMenu()">
+                        <mat-icon>format_list_numbered</mat-icon>
+
+                        Lista de Assistentes
+                    </a>
+                    <a mat-menu-item [routerLink]="['/agenda-de-assistentes']" routerLinkActive="opt-active-link-page"
+                        (click)="closeMenu()">
+                        <mat-icon>date_range</mat-icon>
+                        Agenda de Assistentes
+                    </a>
+                </mat-menu>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link"  [routerLink]="['/usuarios-administrativos']"
+                routerLinkActive="opt-active-link-page">
+                <mat-icon>supervisor_account</mat-icon>
+                Usuários Administrativos
+            </a>
+            </li>
+            
+            <li class="opt-menu-item">
+                <a class="opt-menu-link"  [routerLink]="['/pacientes']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>face</mat-icon>
+                    Pacientes
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/consultas']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>airline_seat_flat</mat-icon>
+                    <span [matBadge]="dataService.badgeCount1"
+                        [hidden]="dataService.badgeCount1 === 0">Consultas</span>
+                    <span [hidden]="dataService.badgeCount1 !== 0">Consultas</span>
+                                                            </a>
+            </li>
+            
+            <li class="opt-menu-item">
+                <a class="opt-menu-link"  [routerLink]="['/auditoria']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>list_alt</mat-icon>
+                    Auditoria
+                </a>
+            </li>
+                                   
+                    
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/relatorios']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>assignment</mat-icon>
+                    Relatórios
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    Sair
+                </a>
+            </li>
+        </ul>
+
+        <ul *ngIf="getAccessType() === 'profissional'" class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/meu-painel']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>event_note</mat-icon>
+                    Meu Painel
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/meus-agendamentos']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>event_available</mat-icon>
+                    Meus Agendamentos
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/agendar-salas']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>today</mat-icon>
+                    Agendar Salas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/consultas']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>airline_seat_flat</mat-icon>
+                    <span [matBadge]="dataService.badgeCount1"
+                        [hidden]="dataService.badgeCount1 === 0">Consultas</span>
+                    <span [hidden]="dataService.badgeCount1 !== 0">Consultas</span>  
+                                     
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/faturas']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>receipt</mat-icon>
+                    Faturas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/meu-perfil']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>account_circle</mat-icon>
+                    Meu Perfil
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    Sair
+                </a>
+            </li>
+        </ul>
+
+        <ul *ngIf="getAccessType() === 'atendente'" class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/agendamentos-do-dia']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>event_available</mat-icon>
+                    Agendamentos do Dia
+                </a>
+            </li>
+            <!-- <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/enviar-mensagem']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>message</mat-icon>
+                    Enviar Mensagem
+                </a>
+            </li> -->
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/painel-de-agendamentos']"
+                    routerLinkActive="opt-active-link-page" (click)="closeMenu()">
+                    <mat-icon>event_note</mat-icon>
+                    Painel de Agendamentos
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/agendar-salas']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>today</mat-icon>
+                    Agendar Salas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/consultas']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>airline_seat_flat</mat-icon>
+                    <span [matBadge]="dataService.badgeCount1"
+                        [hidden]="dataService.badgeCount1 === 0">Consultas</span>
+                    <span [hidden]="dataService.badgeCount1 !== 0">Consultas</span>                        
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/profissionais']" routerLinkActive="opt-active-link-page">
+                    <mat-icon>assignment_ind </mat-icon>
+                    <span>Profissionais</span>
+
+                </a>
+            </li>
+
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    Sair
+                </a>
+            </li>
+        </ul>
+
+        <ul *ngIf="getAccessType() === 'assistente'" class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/meu-painel']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>event_note</mat-icon>
+                    Meu Painel
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" [routerLink]="['/minha-agenda']" routerLinkActive="opt-active-link-page"
+                    (click)="closeMenu()">
+                    <mat-icon>today</mat-icon>
+                    Minha Agenda
+                </a>
+            </li>
+
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    Sair
+                </a>
+            </li>
+        </ul>
+        <ul *ngIf="getAccessType() === 'paciente'" class="opt-menu">
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="navigate('minhas-consultas')" routerLinkActive="opt-active-link-page">
+                    <mat-icon>today</mat-icon>
+                    Minhas Consultas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="navigate('agendar-consultas')"
+                    routerLinkActive="opt-active-link-page">
+                    <mat-icon>event_notele</mat-icon>
+                    Agendar Consultas
+                </a>
+            </li>
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="navigate('meu-perfil-paciente')"
+                    routerLinkActive="opt-active-link-page">
+                    <mat-icon>account_circle </mat-icon>
+                    Meu Perfil
+                </a>
+            </li>
+
+            <li class="opt-menu-item">
+                <a class="opt-menu-link" (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    Sair
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>

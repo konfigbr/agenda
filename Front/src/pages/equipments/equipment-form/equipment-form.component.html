@@ -1,0 +1,117 @@
+<div class="page-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>widgets</mat-icon>
+            <h1 *ngIf="!isLoading">{{ equipment?.id ? 'Editar' : 'Novo'}} Equipamento</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="equipmentFormGroup" (submit)="onSubmit()">
+
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Data de Entrada</mat-label>
+                        <input formControlName="entryDate" [(ngModel)]="equipment.dataEntrada" style="color: #000;"
+                            matInput [matDatepicker]="dp3" disabled>
+                        <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                        <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                        <mat-error *ngIf="formEquipmentHasError('entryDate', 'required')">
+                            A data de entrada é <strong>obrigatória</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome do equipamento</mat-label>
+                        <input [(ngModel)]="equipment.nome" matInput formControlName="name"
+                            [errorStateMatcher]="matcher" placeholder="Nome do equipamento">
+                        <mat-error *ngIf="formEquipmentHasError('name', 'required')">
+                            O nome do equipamento é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Tipo do equipamento</mat-label>
+                        <mat-select [errorStateMatcher]="matcher" formControlName="type"
+                            [value]="equipment.tipoEquipamento" [(ngModel)]="equipment.tipoEquipamento">
+                            <mat-option *ngFor="let type of equipmentTypes" [value]="type">
+                                {{ type.nome }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formEquipmentHasError('type', 'required')">
+                            O Tipo é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Custo</mat-label>
+                        <input currencyMask [(ngModel)]="equipment.custo" matInput formControlName="cost"
+                            [errorStateMatcher]="matcher" placeholder="Custo do equipamento">
+                        <mat-error *ngIf="formEquipmentHasError('cost', 'required')">
+                            O Custo do equipamento é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-row opt-pb-5">
+                <div class="opt-form-control opt-form-control-radio">
+                    <mat-label>Cobrável</mat-label>
+                    <mat-radio-group [(ngModel)]="equipment.cobravel" formControlName="billable">
+                        <mat-radio-button [value]="true">
+                            Sim
+                        </mat-radio-button>
+                        <mat-radio-button [value]="false">
+                            Não
+                        </mat-radio-button>
+                    </mat-radio-group>
+
+
+                </div>
+
+            </div>
+
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Valor Resibual</mat-label>
+                        <input currencyMask [(ngModel)]="equipment.valorResidual" matInput
+                            formControlName="residualValue" [errorStateMatcher]="matcher"
+                            placeholder="Valor Residual">
+                        <mat-error *ngIf="formEquipmentHasError('residualValue', 'required')">
+                            O Valor Residual é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Depreciação</mat-label>
+                        <input type="number" [(ngModel)]="equipment.depreciacao" matInput formControlName="depreciation"
+                            [errorStateMatcher]="matcher" placeholder="Depreciação do equipamento">
+                        <mat-error *ngIf="formEquipmentHasError('depreciation', 'required')">
+                            A Depreciação é <strong>obrigatória</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-btn-form-container">
+                <button class="opt-btn-form-back" mat-button type="button"
+                    [routerLink]="['/equipamentos']">Voltar</button>
+                <button [disabled]="!equipmentFormGroup.valid" class="opt-btn-form" mat-button
+                    type="submit">{{ isEdit ? 'Salvar' : 'Cadastrar' }}</button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>

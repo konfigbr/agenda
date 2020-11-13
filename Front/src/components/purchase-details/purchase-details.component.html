@@ -1,0 +1,54 @@
+<section class="opt-section-sale-details"
+    *ngIf="dataSourceSaleDetail.data.length && (indexDetail ||  this.indexDetail === 0)">
+    <table mat-table [dataSource]="dataSourceSaleDetail" #saleDetail="matSort" matSort
+        class="opt-mt-5 opt-list-items opt-list-sale-details">
+        <ng-container matColumnDef="index">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+            <td mat-cell *matCellDef="let element; let index = index"> {{ index + 1 }} </td>
+            <td mat-footer-cell *matFooterCellDef><strong> Total</strong> </td>
+        </ng-container>
+        <ng-container matColumnDef="sala">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Sala </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.sala?.nome }} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+
+        </ng-container>
+        <ng-container matColumnDef="data">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Data </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.data && (element?.data | date: 'dd/MM/yyyy') }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+        <ng-container matColumnDef="horaInicio">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Início </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.horaInicio }} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+        <ng-container matColumnDef="horaFim">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Fim </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.horaFim }} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+        <ng-container matColumnDef="custo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor/Hr </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.custo && (element.custo | currency: 'BRL') }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+        <ng-container matColumnDef="equipamentos">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Val. Equipamentos </th>
+            <td mat-cell *matCellDef="let element">
+                {{ (element?.custoEquipamentos || 0) | currency: 'BRL' }} </td>
+            <td mat-footer-cell *matFooterCellDef> </td>
+        </ng-container>
+        <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Total </th>
+            <td mat-cell *matCellDef="let element"> {{ element?.total && (element.total | currency: 'BRL') }}
+            </td>
+            <td mat-footer-cell *matFooterCellDef><strong>{{ total | currency: 'BRL'}}</strong></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsSaleDetail"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsSaleDetail;"></tr>
+        <tr mat-footer-row *matFooterRowDef="displayedColumnsSaleDetail; sticky: true"></tr>
+    </table>
+</section>

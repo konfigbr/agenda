@@ -1,0 +1,14 @@
+<div class="opt-modal-container">
+    <div class="opt-header-modal">
+        {{ data.title }}
+        <mat-icon (click)="close()">close</mat-icon>
+    </div>
+    <div class="opt-body-modal">
+        <p>
+            {{data.message}}
+        </p>
+    </div>
+    <div class="opt-footer-modal">
+        <button (click)="close()" mat-button>Ok</button>
+    </div>
+</div>

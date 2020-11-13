@@ -1,0 +1,108 @@
+<div class="page-container">
+    <div class="header-page-container opt-inco-cards-container">
+        <div>
+            <mat-icon>event_note</mat-icon>
+            <h1>Detalhes do Agendamento</h1>
+        </div>
+    </div>
+
+    <div class="opt-inco-cards-container">
+
+        <div class="opt-info-card next-schedule-card">
+            <div class="opt-info-card-header">
+                Detalhes
+                <span class="opt-item-value" *ngIf="currentScheduling"
+                    [ngClass]="{'opt-status-confirm': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'ok', 'opt-status-warning': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'nao_iniciado', 'opt-status-danger': currentScheduling.agendamentoStatusAtual.toLowerCase() === 'liberado'}">
+                    {{ currentScheduling?.agendamentoStatusAtual === 'OK' ? 'INICIADO' : currentScheduling?.agendamentoStatusAtual === 'NAO_INICIADO' ? 'NÃO INICIADO' : 'FINALIZADO' }}
+                </span>
+            </div>
+            <div class="opt-info-card-body">
+                <div *ngIf="isLoading" class="opt-loading-page-container">
+                    <mat-spinner color="light" diameter="75"></mat-spinner>
+                </div>
+                <div *ngIf="!isLoading">
+                    <p *ngIf="!currentScheduling">
+                        Nenhum agendamento programado para hoje
+                    </p>                  
+                        <div class="opt-row-panel">
+                            <p class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Sala: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.sala?.nome }}</span>
+                            </p>
+                            <p class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Período agendado: </span>
+                                <span class="opt-item-value">
+                                    {{ currentScheduling?.inicio | date: 'HH:mm' }} às
+                                    {{ currentScheduling?.fim | date: 'HH:mm' }}
+                                </span>
+
+                            </p>
+                            
+                        </div>
+
+                        <div class="opt-row-panel">
+                            <p class="opt-current-scheduling-item">
+                            <span class="opt-item-title">Adicionais: </span>
+                            <span class="opt-item-value" *ngIf="currentScheduling.tiposEquipamentos.length">
+                                <span *ngFor="let equipment of currentScheduling.tiposEquipamentos; let idx = index">
+                                    {{ equipment?.nomeTipoEquipamento + ' (' +  (equipment.inicio | date : 'HH: mm') + ' - ' + (equipment.fim | date: 'HH:mm')  + ')' }}
+                                    {{ idx !== (currentScheduling.tiposEquipamentos.length - 1) ? ',' : '' }}
+                                </span>
+                            </span>
+                            <span class="opt-item-value" *ngIf="!currentScheduling.tiposEquipamentos.length">
+                                Nenhum Equipamento Solicitado
+                            </span>   
+                            </p>                         
+                        </div>
+
+                        <div class="opt-row-panel">
+                            <p  class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Nome do(a) assistente: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.assistente?.nome }}</span>
+                            </p>
+                            <p  class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Contato do(a) assistente: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.assistente?.telefone }}</span>
+                            </p>
+                        </div>
+                        <div class="opt-row-panel">  
+                            <p  class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Nome do(a) profissional: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.user?.nome }}</span>
+                            </p>
+                            <p  class="opt-current-scheduling-item">
+                                <span class="opt-item-title">Contato do(a) profissional: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.user?.telefone }}</span>
+                            </p>
+                        </div>
+
+                        <div class="opt-row-panel">
+                            <p  class="opt-current-scheduling-item" *ngIf="currentScheduling.assistantCheckinHour !== null">
+                                <span class="opt-item-title">Horario do Check-in do assistente: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.assistantCheckinHour }}</span>
+                            </p>
+                            <p  class="opt-current-scheduling-item" *ngIf="currentScheduling.assistantCheckoutHour !== null">
+                                <span class="opt-item-title">Horario do Check-out do assistente: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.assistantCheckoutHour }}</span>
+                            </p>                       
+                        </div>
+
+                        <div class="opt-row-panel">
+                            <p  class="opt-current-scheduling-item" *ngIf="currentScheduling.professionalCheckinHour !== null">
+                                <span class="opt-item-title">Horario do Check-in do profissional: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.professionalCheckinHour }}</span>
+                            </p>
+                            <p  class="opt-current-scheduling-item" *ngIf="currentScheduling.professionalCheckoutHour !== null">
+                                <span class="opt-item-title">Horario do Check-out do profissional: </span>
+                                <span class="opt-item-value">{{ currentScheduling?.professionalCheckoutHour }}</span>
+                            </p>                       
+                        </div>
+                     
+                </div>
+
+            </div>
+        </div>
+       
+    </div>
+
+</div>

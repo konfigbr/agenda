@@ -1,0 +1,62 @@
+@import "../../../theme/variables";
+
+.opt-modal-message-container {
+    
+    .observations-card{
+        width: 100%;
+        margin: 0;
+        background-color: #0e346a;
+        border-radius: 2px;
+        color: #fff;
+        height: 3em;
+        font-size: 2em;
+        
+        display: flex;
+        align-items: center;
+
+        span{
+            margin-left: 15px;
+        }
+    }
+
+    .opt-card-content{
+        padding: 15px;
+        p {
+            color: $color-primary;
+            filter: brightness(130%);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .opt-modal-message-btn-container {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 32px;
+            button {
+                height: 40px;
+                text-transform: uppercase;
+            }
+            .opt-cancel-btn-modal {
+                background: $color-primary;
+                color: #fff;
+            }
+            .opt-confirm-btn-modal {
+                background: #f00;
+                color: #fff;
+            }
+        }
+        .opt-edit-gneric{
+            margin-top: 40px;
+            width: 100%;
+        align-items: center;
+            
+        
+        }
+        .opt-row{
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+}
+

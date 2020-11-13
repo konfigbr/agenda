@@ -1,0 +1,24 @@
+.opt-layout-container {
+    overflow: hidden;
+    .opt-body-container {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: calc(100vh - 144px);
+        width: 100vw;
+    }
+}
+
+@media (max-width: 720px) {
+    .opt-layout-container {
+        .opt-body-container {
+            height: calc(100vh - 80px);
+        }
+    }
+}
+@media (max-width: 576px) {
+    .opt-layout-container {
+        .opt-body-container {
+            height: calc(100vh - 56px);
+        }
+    }
+}

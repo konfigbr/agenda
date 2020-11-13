@@ -1,0 +1,24 @@
+<div class="opt-header-modal">
+    Horários dos Assistentes
+    <mat-icon (click)="close()">close</mat-icon>
+</div>
+<div class="opt-card observations-card">
+    <div class="opt-card-header"></div>
+    <div class="opt-card-body">
+
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <ul *ngIf="!isLoading">
+
+            <li *ngFor="let reserva of events" value="reserva">
+                <p><b>Nome:</b>{{" "}}{{reserva.assistente}}</p>
+                <p><b>Dia:</b>{{" "}}{{getLabelDay(reserva.dia)}}</p>
+                <b>Inicio:</b>{{" "}}{{reserva.inicio}}{{" "}}<b>Fim:</b>{{" "}}{{reserva.fim}}
+            </li>
+
+        </ul>
+    </div>
+</div>
+
+

@@ -1,0 +1,81 @@
+<div class="equipment-modal-container">
+    <div class="equipment-modal-header">
+        Equipamentos do Agendamento
+    </div>
+    <div class="equipment-modal-body">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="equipmentAddFormGroup" (submit)="onSubmit()">
+
+
+            <div *ngIf="!justCancel" class="opt-form-control opt-form-inline">
+                <mat-form-field appearance="outline">
+                    <mat-label>Equipamento</mat-label>
+                    <mat-select [errorStateMatcher]="matcher" formControlName="equipmentType"
+                        [(ngModel)]="equipmentAdd.equipmentType">
+                        <mat-option *ngFor="let equipmentType of equipmentTypesAvailable" [value]="equipmentType">
+                            {{ equipmentType?.nome }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="formRoomHasError('equipmentType', 'required')">
+                        O equipamento é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div *ngIf="!justCancel" class="opt-row">
+                <div class="opt-form-control opt-form-inline">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Início</mat-label>
+                        <mat-select [errorStateMatcher]="matcher" formControlName="start"
+                            [(ngModel)]="equipmentAdd.start">
+                            <mat-option *ngFor="let hora of getHorarios(keyItem())" [value]="hora">
+                                {{ hora | date:'HH:mm'}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formRoomHasError('start', 'required')">
+                            A data de início é <strong>obrigatória</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control opt-form-inline">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fim</mat-label>
+                        <mat-select [errorStateMatcher]="matcher" formControlName="end" [(ngModel)]="equipmentAdd.end">
+                            <mat-option *ngFor="let hora of getHorariosFinais(keyItem())" [value]="hora">
+                                {{ hora | date:'HH:mm'}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formRoomHasError('end', 'required')">
+                            A data de fim é <strong>obrigatória</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <button *ngIf="!justCancel" class="opt-btn-form-add" [disabled]="!equipmentAddFormGroup.valid" mat-button
+                type="submit">Adicionar</button>
+            <ul *ngIf="equipmentsAdded.length" class="equipments-added-list">
+                <li class="equipment-added-item" *ngFor="let equipment of equipmentsAdded; let idx = index">
+                    {{ equipment?.equipmentType?.nome }}<mat-icon (click)="removeEquipment(equipment.equipmentType.id)">
+                        delete</mat-icon>
+                </li>
+            </ul>
+            <ul *ngIf="equipmentsAddedToCancel.length" class="equipments-added-list">
+                <li class="equipment-added-item" *ngFor="let equipment of equipmentsAddedToCancel; let idx = index">
+                    {{ equipment?.nomeTipoEquipamento + ' - ' + (equipment?.inicio | date: 'HH:mm' ) + ' às ' + (equipment?.fim  | date: 'HH:mm') }}
+                    <mat-icon (click)="cancelEquipment(equipment.tipoEquipamentoId)">delete</mat-icon>
+                </li>
+            </ul>
+            <p *ngIf="isRemove && !equipmentsAddedToCancel.length && !equipmentsAdded.length">Nenhum equipamento
+                adicionado</p>
+            <div class="opt-btn-form-container opt-btn-inline">
+                <button mat-button type="button" (click)="cancel()">Cancelar</button>
+                <button class="opt-btn-form" [disabled]="!equipmentsAdded.length" mat-button type="button"
+                    (click)="save()">Salvar</button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>

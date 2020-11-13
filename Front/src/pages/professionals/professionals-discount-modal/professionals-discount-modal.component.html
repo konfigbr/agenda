@@ -1,0 +1,60 @@
+<div class="opt-modal-message-container _ngcontent-lhs-c204">
+
+    <div class="opt-card observations-card">
+        <span>{{ data.message }}</span>
+    </div>
+    
+    <div class="opt-card-content">
+        <div *ngIf="step === 'CREATE'">
+            <app-professionals-discount-component (refreshUsersEvent)="receiveRefreshUsers($event)" (stepEvent)="receiveStep($event)" [selectedFunction]="functionSelected"></app-professionals-discount-component>
+        </div>
+
+        <div *ngIf="step === 'EDIT'">
+            <app-professionals-discount-list-component (refreshUsersEvent)="receiveRefreshUsers($event)" (stepEvent)="receiveStep($event)" [selectedFunction]="functionSelected"></app-professionals-discount-list-component>
+        </div>
+
+        <div *ngIf="step === 'LIST'">
+            <app-professionals-discount-list-component (stepEvent)="receiveStep($event)" [selectedFunction]="functionSelected"></app-professionals-discount-list-component>
+        </div>
+
+        <form [formGroup]="discountFormGroup" *ngIf="step === 'SELECTION'">
+            <div class="opt-row">
+                <div class="opt-modal-message-btn-container ">
+
+                    <button class="opt-cancel-btn-modal" mat-button (click)="goToStep('CREATE')">
+                        {{ data.criarNovo || 'Criar novo desconto' }}
+                    </button>
+
+                </div>
+            </div>
+            <div class="opt-row">
+                <div class="opt-modal-message-btn-container">
+
+                    <button class="opt-cancel-btn-modal" mat-button (click)="goToStep('LIST')">
+                        {{ data.listarDescontos || 'Listar descontos' }}
+                    </button>
+
+
+                </div>
+            </div>
+            <div class="opt-row">
+                <div class="opt-modal-message-btn-container">
+
+                    <button class="opt-cancel-btn-modal" mat-button (click)="goToStep('EDIT')">
+                        {{ data.editarExcluir || 'Editar / Excluir desconto' }}
+
+                    </button>
+                </div>
+            </div>
+
+            
+
+            <div class="opt-modal-message-btn-container">
+                <button class="opt-cancel-btn-modal" mat-button (click)="close(refreshUsers)">
+                    {{ data.cancelText || 'Cancelar' }}
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>

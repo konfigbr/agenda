@@ -1,0 +1,74 @@
+<div class="opt-modal-container">
+    <div class="opt-header-modal">
+      {{dialogTitle}}
+      <mat-icon (click)="close()">close</mat-icon>
+    </div>
+    <div class="opt-body-modal">
+      <div *ngIf="isLoading" class="opt-loading-page-container">
+        <mat-spinner color="light" diameter="75"></mat-spinner>
+      </div>
+  
+      <div *ngIf="!isLoading">
+        <div class="opt-row">
+          <strong>Dia {{formatDate(dataAtual, 'dd')}} de {{formatDate(dataAtual, 'MMMM')}}</strong>
+        </div>
+        <div class="opt-row">
+          <strong>(entre {{formatDate(agendamento.inicio, 'HH:mm')}} às {{formatDate(agendamento.fim, 'HH:mm')}}
+            )</strong>
+        </div>
+  
+        <div class="opt-table-container">
+          <div *ngIf="horariosDisponiveis.length" class="opt-row">
+            <strong>Disponível</strong>
+          </div>
+          <div *ngIf="!horariosDisponiveis.length" class="opt-row">
+            <strong>Nenhum horário ocupado na data de hoje!</strong>
+          </div>
+  
+          <div *ngIf="horariosDisponiveis.length" class="page-content">
+            <table mat-table [dataSource]="dataSourceHorariosDisponiveis" class="opt-list-items">
+              <ng-container matColumnDef="dataInicio">
+                <th mat-header-cell *matHeaderCellDef>Das</th>
+                <td mat-cell *matCellDef="let element"> {{ formatDate(element?.dataInicio, 'HH:mm') }} </td>
+              </ng-container>
+              <ng-container matColumnDef="dataFim">
+                <th mat-header-cell *matHeaderCellDef>Às</th>
+                <td mat-cell *matCellDef="let element"> {{ formatDate(element?.dataFim, 'HH:mm') }} </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+          </div>
+        </div>
+  
+        <form name="eventForm" [formGroup]="eventForm">
+          <div class="opt-row">
+            <div class="opt-form-control opt-form-inline">
+              <mat-form-field appearance="outline">
+                <mat-label>Início</mat-label>
+                <input matInput formControlName="horaInicio" mask="Hh:m0" [dropSpecialCharacters]="true">
+              </mat-form-field>
+            </div>
+            <div class="opt-form-control opt-form-inline">
+              <mat-form-field appearance="outline">
+                <mat-label>Início</mat-label>
+                <input matInput formControlName="horaFim" mask="Hh:m0" [dropSpecialCharacters]="true">
+              </mat-form-field>
+            </div>
+          </div>
+  
+          <div class="opt-form-control">
+            <mat-form-field appearance="outline">
+              <mat-label>Motivo da consulta</mat-label>
+              <textarea rows="5" formControlName="motivo" [matTextareaAutosize]="true" matInput
+                placeholder="Motivo da consulta"></textarea>
+            </mat-form-field>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div *ngIf="!isLoading" class="opt-footer-modal">
+      <button (click)="save()" [disabled]="eventForm.invalid" mat-button>Solicitar</button>
+      <button (click)="close()" mat-button>Cancelar</button>
+    </div>
+  </div>

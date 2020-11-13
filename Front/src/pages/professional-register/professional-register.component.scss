@@ -1,0 +1,203 @@
+@import "../../theme//variables";
+
+::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.4em 0px !important;
+}
+::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+}
+
+::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+}
+
+.opt-box-login {
+    width: 720px;
+    max-width: 720px;
+    padding: 32px;
+    text-align: center;
+    border-radius: 4px;
+    box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2), 0px 16px 24px 2px rgba(0, 0, 0, 0.14),
+        0px 6px 30px 5px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s ease;
+    background: #fff;
+
+    &-big {
+        width: 720px;
+        max-width: 100%;    
+    }
+
+    mat-icon {
+        color: $color-primary !important;
+    }
+    .opt-logo-container {
+        img {
+            width: 208px;
+        }
+    }
+    .opt-title-login {
+        font-size: 20px;
+        margin: 16px 0 32px 0;
+        text-transform: uppercase;
+    }
+}
+.accept-terms-container {
+    padding-top: 14px;
+    padding-bottom: 32px;
+    width: 100%;
+
+    span {
+        padding-left: 16px;
+    }
+    a {
+        display: inline !important;
+        cursor: pointer;
+    }
+}
+.login-container {
+    display: flex;
+    overflow: auto;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    height: 100%;
+    transition: all 0.3s ease;
+    ::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+        padding: 0.4em 0px !important;
+    }
+    ::ng-deep .mat-form-field-label-wrapper {
+        top: -1.5em;
+    }
+
+    ::ng-deep
+        .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+        .mat-form-field-label {
+        transform: translateY(-1.1em) scale(0.75);
+        width: 133.33333%;
+    }
+
+    .opt-btn-submit-login {
+        display: block;
+        background-color: $color-primary;
+        width: 100%;
+        color: #fff;
+        text-transform: uppercase;
+        position: relative;
+        &:disabled {
+            opacity: 0.4;
+        }
+    }
+    .opt-btn-submit-login-container {
+        position: relative;
+        .opt-btn-loading-container {
+            position: absolute;
+            right: 40px;
+            top: 6px;
+        }
+    }
+
+    a {
+        color: $color-primary !important;
+        font-weight: 500;
+        font-size: 14px;
+        text-decoration: none;
+        display: block;
+        filter: brightness(130%);
+
+        &.opt-recover-password-link {
+            padding: 24px 16px;
+        }
+        &.opt-register-link {
+            padding: 8px 16px;
+        }
+    }
+}
+.opt-text-register {
+    padding-top: 16px;
+}
+.opt-link-back {
+    display: block;
+    padding-top: 16px !important;
+}
+
+@media (max-width: 576px) {
+    .opt-box-login {
+        width: 100%;
+        padding: 16px;
+    }
+    .login-container {
+        overflow: auto;
+    }
+}
+@media (max-width: 480px) {
+    .opt-box-login {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        overflow: auto;
+    }
+    .login-container {
+        padding: 0;
+        overflow: hidden;
+    }
+}
+@media (max-height: 600px) {
+    .login-container {
+        align-items: flex-start;
+    }
+}
+
+.opt-form-control-file {
+    input {
+        opacity: 0;
+        z-index: -1;
+        margin-left: -200vw;
+    }
+    label {
+        display: flex;
+        height: 32px;
+        margin-bottom: 16px;
+        .opt-file-btn {
+            padding: 0 8px !important;
+
+            border: 1.5px solid $color-primary;
+            background: #fff;
+            color: $color-primary;
+            // transition: all 0.3s ease;
+            height: 32px;
+            font-weight: bold;
+            line-height: 16px;
+            width: 120px;
+            filter: brightness(130%);
+            border-radius: 4px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background: $color-primary;
+                color: #fff;
+                cursor: pointer;
+            }
+        }
+        > span {
+            display: block;
+            line-height: 30px;
+            font-size: 14px;
+            width: calc(100% - 116px);
+            border-top: 1px solid rgba($color: $color-primary, $alpha: 0.4);
+            border-right: 1px solid rgba($color: $color-primary, $alpha: 0.4);
+            border-bottom: 1px solid rgba($color: $color-primary, $alpha: 0.4);
+            margin-left: -4px;
+            padding-left: 16px;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}

@@ -1,0 +1,62 @@
+<div class="page-container">
+    <p *ngIf="selectedFunction === 'EDIT_DISCOUNT'">Editar desconto</p>
+    <p *ngIf="selectedFunction === 'CREATE'">Novo desconto</p>
+    <form [formGroup]="formGroupDiscountRegister" (submit)=" selectedFunction === 'CREATE' ? onSubmitRegisterDiscount() : onSubmitEditDiscount()" >
+        <div class="opt-row">
+            <div class="opt-form-control" >
+                <mat-form-field appearance="outline">
+                    <mat-label>Tipo Desconto</mat-label>
+                    <mat-select formControlName="type" [(ngModel)]="discountRegister.tipo">
+                        <mat-option value="PERIODO">
+                            Periodo
+                        </mat-option>
+                        <mat-option value="HORA_AVULSA">
+                            Hora avulsa
+                        </mat-option>
+                    </mat-select>
+                    <mat-error>
+                        O Tipo de desconto é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control" >
+                <mat-form-field appearance="outline">
+                    <mat-label>Valor do desconto</mat-label>
+                    <input [(ngModel)]="discountRegister.percentual" type="number" min="0" max="100" matInput formControlName="value"
+                        placeholder="Valor Cobrável">
+                    <mat-error>
+                        O Valor do desconto é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+   
+        <div class="opt-row">
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline" style="margin-right: 20px;">
+                    <mat-label>Início </mat-label>
+                    <input [(ngModel)]="discountRegister.dataInicio" formControlName="startDate"  style="color: #000;" matInput 
+                        [matDatepicker]="dp2" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+                    <mat-datepicker #dp2 disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Fim </mat-label>
+                    <input [(ngModel)]="discountRegister.dataFim" formControlName="endDate" style="color: #000;" matInput 
+                        [matDatepicker]="dp3" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        
+        <div class="opt-modal-message-btn-container">
+            <button class="opt-btn-form" (click)="sendStep('SELECTION')" mat-button type="button">Voltar</button>
+            <button [disabled]="(!this.formGroupDiscountRegister.valid)" class="opt-btn-form" mat-button type="submit">Enviar</button>
+        </div>
+        
+    </form>
+
+</div>

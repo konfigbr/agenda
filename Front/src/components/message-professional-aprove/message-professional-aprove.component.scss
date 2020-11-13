@@ -1,0 +1,49 @@
+@import "../../theme/variables";
+
+.opt-modal-message-container {
+    // padding: 24px;
+    .opt-modal-title-container {
+        padding: 16px;
+        color: #fff;
+        background: $color-primary;
+        font-weight: bold;
+    }
+    .opt-modal-body-container {
+        padding: 16px;
+    }
+    .opt-btn-approve {
+        background: #05ac72;
+    }
+    .opt-btn-reprove {
+        background: #ff2c55;
+    }
+    .opt-bnt-chekckin {
+        background: $color-primary;
+    }
+    p {
+        color: $color-primary;
+        filter: brightness(130%);
+        font-size: 16px;
+        // text-align: center;
+        font-weight: 700;
+    }
+
+    .opt-modal-message-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 32px;
+        button {
+            height: 40px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .opt-cancel-btn-modal {
+            font-weight: bold;
+            margin-right: 16px;
+        }
+        .opt-confirm-btn-modal {
+            // background: $color-primary;
+            color: #fff;
+        }
+    }
+}

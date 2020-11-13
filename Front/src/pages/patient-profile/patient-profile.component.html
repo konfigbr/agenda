@@ -1,0 +1,117 @@
+<div class="page-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>account_circle</mat-icon>
+            <h1>Meu Perfil</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="patientFormGroup" (submit)="onSubmit()">
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome</mat-label>
+                        <input (input)="inputEvent($event)" [(ngModel)]="patient.nome" matInput
+                            formControlName="name" [errorStateMatcher]="matcher" placeholder="Nome">
+                        <mat-error *ngIf="formPatientHasError('name', 'required')">
+                            O nome é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+               
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>E-mail</mat-label>
+                        <input (input)="inputEvent($event)" type="email" [(ngModel)]="patient.username" matInput
+                            formControlName="username" [errorStateMatcher]="matcher" placeholder="E-mail">
+                        <mat-error
+                            *ngIf="formPatientHasError('username', 'email') && !formPatientHasError('username', 'required')">
+                            Por favor entre com um e-mail válido!
+                        </mat-error>
+                        <mat-error *ngIf="formPatientHasError('username', 'required')">
+                            O e-mail é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Telefone</mat-label>
+                         <input (input)="inputEvent($event)" mask="(00) 00000-0000" [specialCharacters]="[ '(' , ' ' ,  ')' , '-' ]"
+                            [dropSpecialCharacters]="true" [(ngModel)]="patient.telefone" matInput
+                            formControlName="telefone" [errorStateMatcher]="matcher"  type="telefone" placeholder="Telefone">    
+                        <mat-icon matSuffix>call</mat-icon>
+                            <mat-error *ngIf="formPatientHasError('telefone', 'required')">
+                            O Telefone é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-row">
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CPF</mat-label>
+                            <input mask="000.000.000-00" [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true"
+                            [(ngModel)]="patient.cpf" name="cpf" id="cpf" matInput formControlName="cpf"
+                            [errorStateMatcher]="matcher" placeholder="CPF">
+                        <mat-error *ngIf="formPatientHasError('cpf', 'required')">
+                                O CPF é <strong>obrigatório</strong>!
+                        </mat-error>
+                        <mat-error *ngIf="formPatientHasError('cpf', 'invalidCpf')">
+                            O cpf não é <strong>Válido</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>RG</mat-label>
+                        <input (input)="inputEvent($event)" [(ngModel)]="patient.rg" matInput formControlName="rg" [errorStateMatcher]="matcher"
+                            placeholder="Digite seu RG">                        
+                        <mat-error *ngIf="formPatientHasError('rg', 'required')">
+                            O RG é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-row">
+               
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CEP</mat-label>
+                            <input (input)="inputEvent($event)" (blur)="getCep()" mask="00.000-000"
+                            [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true"
+                            [(ngModel)]="patient.cep" matInput formControlName="cep"
+                            [errorStateMatcher]="matcher" placeholder="CEP">                     
+                        <mat-error *ngIf="formPatientHasError('cep', 'required')">
+                            O RG é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Endereço</mat-label>
+                        <input (input)="inputEvent($event)" [(ngModel)]="patient.endereco" matInput formControlName="address"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu Endereco">                       
+                        <mat-error *ngIf="formPatientHasError('address', 'required')">
+                            O Endereço é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>           
+          
+              <div class="opt-btn-form-container">
+                <button [disabled]="!patientFormGroup.valid || !changed" class="opt-btn-form" mat-button
+                    type="submit">Salvar</button>
+            </div>  
+        </form>
+
+    </div>
+</div>

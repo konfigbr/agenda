@@ -1,0 +1,32 @@
+@import "../../theme/variables";
+
+.opt-modal-message-container {
+    padding: 24px;
+    p {
+        color: $color-primary;
+        filter: brightness(130%);
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .opt-modal-message-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 32px;
+        button {
+            height: 40px;
+            text-transform: uppercase;
+        }
+        .opt-cancel-btn-modal {
+           
+            background: $color-primary;
+            font-weight: bold;
+            color: #fff;
+            margin-right: 16px;
+        }
+        .opt-confirm-btn-modal {
+            background: #f00;
+            color: #fff;
+        }
+    }
+}

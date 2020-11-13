@@ -1,0 +1,101 @@
+<div class="opt-modal-container">
+    <div class="opt-header-modal">
+        Novo Agendamento
+        <mat-icon (click)="close()">close</mat-icon>
+    </div>
+    <div class="opt-body-modal">
+        <p class="professional-name" *ngIf="data.profissional">
+            Profissional: <span>{{ data.profissional.nome }}</span>
+        </p>
+        <form name="eventForm" [formGroup]="eventForm">
+            <div class="opt-row">
+                <div class="opt-form-control opt-form-inline">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Início</mat-label>
+                        <mat-select formControlName="horaInicio" (selectionChange)="changeHour($event)">
+                            <mat-option *ngFor="let hora of getHorarios(0)" [value]="hora">
+                                {{ hora | date:'HH:mm'}}
+                            </mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="formRoomHasError('start', 'required')">
+                            A data de início é <strong>obrigatória</strong>!
+                        </mat-error> -->
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control opt-form-inline">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fim</mat-label>
+                        <mat-select formControlName="horaFim" (selectionChange)="changeHour($event)">
+                            <mat-option *ngFor="let hora of getHorariosFinais(0)" [value]="hora">
+                                {{ hora | date:'HH:mm'}}
+                            </mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="formRoomHasError('end', 'required')">
+                            A data de fim é <strong>obrigatória</strong>!
+                        </mat-error> -->
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline" class="pr-sm-8">
+                        <mat-label>Repetir a cada</mat-label>
+                        <input matInput type="number" name="repeticaoPeriodo" formControlName="repeticaoPeriodo"
+                            (change)="repeticaoPeriodoChanged()">
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Período</mat-label>
+                        <mat-select name="periodo" formControlName="periodo">
+                            <mat-option value="SEMANAL">Semanal</mat-option>
+                            <mat-option value="QUINZENAL">Quinzenal</mat-option>
+                            <mat-option value="MENSAL">Mensal</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-form-control">
+                <!-- <mat-form-field appearance="outline"> -->
+                <!-- <mat-label>Repetir</mat-label> -->
+                <fieldset>
+                    <legend>Repetir</legend>
+                    <div class="example-button-row">
+                        <button mat-mini-fab type="button" *ngFor="let diaSemana of diasSemana"
+                            (click)="diaSemanaClicked(diaSemana)" color="{{isDiaSelecionado(diaSemana)}}">
+                            {{ diaSemana.toString().charAt(0) }}
+                        </button>
+                    </div>
+                </fieldset>
+
+                <!-- </mat-form-field> -->
+            </div>
+            <div class="opt-row">
+                <div class="opt-form-control">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Termina em</mat-label>
+                        <input matInput [matDatepicker]="dataFimDatePicker" name="dataFim" formControlName="dataFim"
+                            [min]="dataAtual" (dateChange)="dataFimChanged()">
+                        <mat-datepicker-toggle matSuffix [for]="dataFimDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #dataFimDatePicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+
+                    <mat-form-field appearance="outline" fxFlex="50">
+                        <mat-label>Após número x</mat-label>
+                        <input matInput type="number" name="maximoAgendamentos" formControlName="maximoAgendamentos">
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+    </div>
+    <div class="opt-footer-modal">
+        <button (click)="save()" [disabled]="eventForm.invalid" mat-button>Salvar</button>
+    </div>
+</div>

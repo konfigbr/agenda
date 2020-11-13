@@ -1,0 +1,5 @@
+package osahner.enums
+
+enum class StatusConsulta {
+    SOLICITADA, APROVADA, CONFIRMADA, NAO_CONFIRMADA, CANCELADA, REAGENDADA, NAO_APROVADA
+}

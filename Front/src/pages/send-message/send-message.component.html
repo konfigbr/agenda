@@ -1,0 +1,58 @@
+<div class="page-container rooms-container">
+    <div class="header-page-container opt-form-header-container">
+        <div>
+            <mat-icon>event_note</mat-icon>
+            <h1>Painel de Agendamentos</h1>
+        </div>
+    </div>
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="sendMessageFormGroup" (submit)="onSubmit()">
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Profissional</mat-label>
+                        <mat-select formControlName="professional" [(ngModel)]="sendMessage.professional">
+                            <mat-option *ngFor="let professional of professionals" [value]="professional">
+                                {{ professional?.nome }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="sendMessageHasError('professional', 'required')">
+                            O profissional é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-professional-box-details" *ngIf="sendMessage.professional">
+                <p>
+                    Nome: {{ sendMessage?.professional?.nome || '-' }}
+                </p>
+                <p>
+                    E-mail: {{ sendMessage?.professional?.username || '-' }}
+                </p>
+                <p>
+                    Telefone: {{ sendMessage?.professional?.telefone || '-' }}
+                </p>
+            </div>
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Mensagem</mat-label>
+                    <textarea rows="5" [matTextareaAutosize]="false" [(ngModel)]="sendMessage.message" matInput
+                        formControlName="message" [errorStateMatcher]="matcher" placeholder="Mensagem"></textarea>
+                    <mat-error *ngIf="sendMessageHasError('message', 'required')">
+                        A mensagem é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="opt-btn-form-container">
+                <button [disabled]="!sendMessageFormGroup.valid" class="opt-btn-form" mat-button
+                    type="submit">Enviar</button>
+
+            </div>
+
+        </form>
+    </div>
+</div>

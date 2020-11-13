@@ -1,0 +1,14 @@
+<div class="opt-modal-message-container">
+    <div class="opt-modal-title-container">
+        {{ data?.title }}
+    </div>
+    <div class="opt-modal-body-container">
+        <p>{{ data?.message }}</p>
+        <div class="opt-modal-message-btn-container">
+            <button class="opt-cancel-btn-modal" mat-button (click)="close(false)">Cancelar</button>
+            <button class="opt-confirm-btn-modal"
+                [ngClass]="{'opt-btn-approve': data.confirmLabel.toLowerCase() === 'aprovar' || data.confirmLabel.toLowerCase() === 'agendar','opt-bnt-chekckin': data.confirmLabel.toLowerCase() === 'Fazer Checking' || data.confirmLabel.toLowerCase() === 'Fazer Checkout', 'opt-btn-reprove': data.confirmLabel.toLowerCase() === 'reprovar'}"
+                mat-button (click)="close(true)">{{ data?.confirmLabel }}</button>
+        </div>
+    </div>
+</div>

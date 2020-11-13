@@ -1,0 +1,466 @@
+<div class="page-container">
+
+
+    <div class="header-page-container opt-form-header-container" *ngIf="!isNext">
+        <div>
+            <mat-icon>account_circle</mat-icon>
+            <h1>Meu Perfil</h1>
+        </div>
+
+    </div>
+    <div class="header-page-container opt-form-header-container" *ngIf="isNext">
+        <div>
+            <mat-icon>fact_check</mat-icon>
+            <h1>Termos de Uso</h1>
+        </div>
+
+    </div>
+
+    <div class="opt-messages-generic-card" *ngIf="!isNext">
+        <div class="opt-messages-title-container">
+            <h2>Observações</h2>
+        </div>
+        <div class="opt-messages-list-container">
+            <strong> Para a aprovação do seu perfil e liberação da sala para
+                o trabalho é necessário o preenchimento de todos os dados deste formulário.
+            </strong>
+        </div>
+    </div>
+
+    <div class="page-content opt-form-container">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="professionalFormGroup" (submit)="onSubmit()">
+            <div *ngIf="!isNext">
+
+                <div class="opt-row">
+
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>E-mail</mat-label>
+                            <input (input)="inputEvent($event)" type="email" [(ngModel)]="professional.username"
+                                matInput formControlName="username" [errorStateMatcher]="matcher"
+                                placeholder="E-mail do Profissional">
+                            <mat-error
+                                *ngIf="formProfessionalHasError('username', 'email') && !formProfessionalHasError('username', 'required')">
+                                Por favor entre com um e-mail válido!
+                            </mat-error>
+                            <mat-error *ngIf="formProfessionalHasError('username', 'required')">
+                                O e-mail do profissional é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="opt-form-control opt-form-control-file">
+                        <label for="opt-form-photo-file">
+                            <div class="opt-file-btn">Imagem Foto</div>
+                            <span>{{filePhoto ? filePhoto.name : 'Nome do arquivo' }}</span>
+                            <input (input)="setFile('photo', $event)" type="file" id="opt-form-photo-file"
+                                accept="image/png, image/jpeg">
+                        </label>
+                    </div>
+
+                </div>
+                <div class="opt-row">
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Nome do Profissional</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.nome" matInput
+                                formControlName="name" [errorStateMatcher]="matcher" placeholder="Nome do Profissional">
+                            <mat-icon class="show-document-btn" (click)="showDocument('photo')"
+                                matTooltip="Ver documento" matSuffix>subtitles</mat-icon>
+                            <mat-error *ngIf="formProfessionalHasError('name', 'required')">
+                                O nome do profissional é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Telefone</mat-label>
+                            <input (input)="inputEvent($event)" mask="(00) 00000-0000"
+                                [specialCharacters]="[ '(' , ' ' ,  ')' , '-' ]" [dropSpecialCharacters]="true"
+                                [(ngModel)]="professional.telefone" matInput formControlName="phone"
+                                [errorStateMatcher]="matcher" placeholder="Telefone">
+                            <mat-error *ngIf="formProfessionalHasError('phone', 'required')">
+                                O telefone é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+                <!-- INICIO  NOVOS CAMPOS NACIONALIDADE  / ESTADO CIVIL -->
+                <div class="opt-row">
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Nacionalidade</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.nacionalidade" matInput
+                                formControlName="nacionalidade" [errorStateMatcher]="matcher"
+                                placeholder="Nacionalidade">
+                            <mat-error *ngIf="formProfessionalHasError('nacionalidade', 'required')">
+                                O nome do profissional é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Estado Civil</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.estadoCivil" matInput
+                                formControlName="estadoCivil" [errorStateMatcher]="matcher" placeholder="Estado Civil">
+                            <mat-error *ngIf="formProfessionalHasError('estadoCivil', 'required')">
+                                O estado civil é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+                <!-- FIM NOVOS CAMPOS NACIONALIDADE  / ESTADO CIVIL -->
+
+                <div class="opt-row">
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Tipo Pessoa</mat-label>
+                            <mat-select [(ngModel)]="professional.tipoDocumento" formControlName="documentType"
+                                (selectionChange)="changeDocumentType()">
+                                <mat-option *ngFor="let type of personTypes" [value]="type.key">
+                                    {{type.value}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="formProfessionalHasError('documentType', 'required')">
+                                O Tipo Pessoa é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Especialidade</mat-label>
+                            <mat-select (selectionChange)="inputEvent($event)" formControlName="specialty"
+                                [(ngModel)]="professional.especialidade">
+                                <mat-option *ngFor="let specialty of specialties" [value]="specialty">
+                                    {{ specialty.nome }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="formProfessionalHasError('specialty', 'required')">
+                                A especialidade da sala é <strong>obrigatória</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="opt-row">
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Documento</mat-label>
+                            <input (input)="inputEvent($event)"
+                                [mask]="professional.tipoDocumento === 'CNPJ' ? '00.000.000/0000-00' : '000.000.000-00'"
+                                [specialCharacters]="[ '.' ,'-','/' ]" [dropSpecialCharacters]="true"
+                                [(ngModel)]="professional.cpf" matInput formControlName="cpf"
+                                [errorStateMatcher]="matcher" placeholder="CPF / CNPJ">
+                            <mat-icon class="show-document-btn" (click)="showDocument('cpf')" matTooltip="Ver documento"
+                                matSuffix>subtitles</mat-icon>
+
+                            <mat-error *ngIf="formProfessionalHasError('cpf', 'required')">
+                                O Documento é <strong>obrigatório</strong>!
+                            </mat-error>
+                            <mat-error
+                                *ngIf="formProfessionalHasError('cpf', 'invalidCpf') && professional.cpf && professional.cpf.length === 11">
+                                O CPF <strong>é invalido</strong>!
+                            </mat-error>
+                            <mat-error
+                                *ngIf="formProfessionalHasError('cpf', 'invalidCnpj') && professional.cpf && professional.cpf.length === 14">
+                                O CNPJ <strong>é invalido</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="opt-form-control opt-form-control-file">
+                        <label for="opt-form-cpf-file">
+                            <div class="opt-file-btn">Imagem DOC</div>
+                            <span>{{fileCPF ? fileCPF.name : 'Nome do arquivo' }}</span>
+                            <input (input)="setFile('cpf', $event)" type="file" id="opt-form-cpf-file"
+                                accept="image/png, image/jpeg">
+                        </label>
+                    </div>
+                </div>
+                <div class="opt-row">
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Identidade (RG)</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.rg" matInput
+                                formControlName="rg" [errorStateMatcher]="matcher" placeholder="Identidade (RG)">
+                            <mat-icon class="show-document-btn" (click)="showDocument('rg')" matTooltip="Ver documento"
+                                matSuffix>account_box</mat-icon>
+                            <mat-error *ngIf="formProfessionalHasError('rg', 'required')">
+                                O RG é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="opt-form-control opt-form-control-file">
+                        <label for="opt-form-rg-file">
+                            <div class="opt-file-btn">Imagem RG</div>
+                            <span>{{fileRG ? fileRG.name : 'Nome do arquivo' }}</span>
+                            <input (input)="setFile('rg', $event)" type="file" id="opt-form-rg-file"
+                                accept="image/png, image/jpeg">
+                        </label>
+                    </div>
+                </div>
+                <div class="opt-row">
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Documento Profissional</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.crm" matInput
+                                formControlName="crm" [errorStateMatcher]="matcher"
+                                placeholder="Documento Profissional">
+                            <mat-icon class="show-document-btn" (click)="showDocument('crm')" matTooltip="Ver documento"
+                                matSuffix>chrome_reader_mode</mat-icon>
+                            <mat-error *ngIf="formProfessionalHasError('crm', 'required')">
+                                O Documento Profissional é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="opt-form-control opt-form-control-file">
+                        <label for="opt-form-crm-file">
+                            <div class="opt-file-btn">Img DOC PRO</div>
+                            <span>{{fileCRM ? fileCRM.name : 'Nome do arquivo' }}</span>
+                            <input (input)="setFile('crm', $event)" type="file" id="opt-form-crm-file"
+                                accept="image/png, image/jpeg">
+                        </label>
+                    </div>
+                </div>
+                <div class="opt-row">
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>U.F emissão Documento Profissional</mat-label>
+                            <mat-select (selectionChange)="inputEvent($event)" [errorStateMatcher]="matcher"
+                                formControlName="ufcrm" [(ngModel)]="professional.ufcrm">
+                                <mat-option *ngFor="let state of states" [value]="state">
+                                    {{ state }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="formProfessionalHasError('ufcrm', 'required')">
+                                O estado do Documento Profissional é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>CEP</mat-label>
+                            <input (input)="inputEvent($event)" (blur)="getCep()" mask="00.000-000"
+                                [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true"
+                                [(ngModel)]="professional.cep" matInput formControlName="cep"
+                                [errorStateMatcher]="matcher" placeholder="CEP">
+                            <mat-error *ngIf="formProfessionalHasError('cep', 'required')">
+                                O CEP é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+
+                </div>
+                <!--  <div class="opt-row">
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Endereço</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.endereco" matInput
+                                formControlName="address" [errorStateMatcher]="matcher" placeholder="Endereço">
+                            <mat-icon class="show-document-btn" (click)="showDocument('end')" matTooltip="Ver documento"
+                                matSuffix>subtitles</mat-icon>
+                            <mat-error *ngIf="formProfessionalHasError('address', 'required')">
+                                O endereço é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="opt-form-control opt-form-control-file" *ngIf="!isEdit">
+                        <label for="opt-form-end-file">
+                            <div class="opt-file-btn">Imagem End</div>
+                            <span>{{fileEnd ? fileEnd.name : 'Nome do arquivo' }}</span>
+                            <input (input)="setFile('end', $event)" type="file" id="opt-form-end-file"
+                                accept="image/png, image/jpeg">
+                        </label>
+                    </div>
+
+                </div>
+ -->
+                <!--    INICIO DE NOVOS CAMPOS  LOGRADOURO / NUMERO / CIDADE/ ESTADO  -->
+
+                <div class="opt-row">
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Logradouro</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.logradouro" matInput
+                                formControlName="logradouro" [errorStateMatcher]="matcher" placeholder="Logradouro">
+                            <mat-icon class="show-document-btn" (click)="showDocument('end')" matTooltip="Ver documento"
+                                matSuffix>chrome_reader_mode</mat-icon>
+                            <mat-error *ngIf="formProfessionalHasError('logradouro', 'required')">
+                                O logradouro é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Número</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.numero" matInput
+                                formControlName="numero" [errorStateMatcher]="matcher" placeholder="Número">
+                            <mat-error *ngIf="formProfessionalHasError('numero', 'required')">
+                                O número é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+                <div class="opt-row">
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Bairro</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.bairro" matInput
+                                formControlName="bairro" [errorStateMatcher]="matcher" placeholder="Bairro">
+                            <mat-error *ngIf="formProfessionalHasError('bairro', 'required')">
+                                bairro é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Cidade</mat-label>
+                            <input (input)="inputEvent($event)" [(ngModel)]="professional.cidade" matInput
+                                formControlName="cidade" [errorStateMatcher]="matcher" placeholder="Cidade">
+                            <mat-error *ngIf="formProfessionalHasError('cidade', 'required')">
+                                cidade é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+                <!--    FIM DE NOVOS CAMPOS  LOGRADOURO / NUMERO / CIDADE/ ESTADO  -->
+
+
+
+                <div class="opt-row">
+                    <div class="opt-form-control">
+                        <mat-form-field appearance="outline">
+                            <mat-label>U.F</mat-label>
+                            <mat-select (selectionChange)="inputEvent($event)" [errorStateMatcher]="matcher"
+                                formControlName="uf" [(ngModel)]="professional.uf">
+                                <mat-option *ngFor="let state of states" [value]="state">
+                                    {{ state }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="formProfessionalHasError('uf', 'required')">
+                                O uf é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="opt-form-control opt-form-control-file">
+                        <label for="opt-form-end-file">
+                            <div class="opt-file-btn">Imagem End</div>
+                            <span>{{fileEnd ? fileEnd.name : 'Nome do arquivo' }}</span>
+                            <input (input)="setFile('end', $event)" type="file" id="opt-form-end-file"
+                                accept="image/png, image/jpeg">
+                        </label>
+                    </div>
+
+
+                </div>
+
+                <div class="opt-row">
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>URL</mat-label>
+                            <mat-icon class="show-document-btn"
+                                matTooltip="Conter de 3 a 20 caracteres,São aceitos letras, números e traços,Não é permitido espaços,Não é permitido acentos e caracteres especiais!"
+                                matTooltipPosition="after" matSuffix>help_outline
+                            </mat-icon>
+                            <input [(ngModel)]="professional.url" matInput formControlName="url"
+                                [errorStateMatcher]="matcher" placeholder="URL" minlength="3" maxlength="20">
+                            <mat-error >
+                                A URL do profissional é <strong>obrigatória</strong>!
+                            </mat-error>
+                            <mat-error *ngIf="!formProfessionalHasError && (formProfessionalHasError('url', 'minlength') || formProfessionalHasError('url', 'maxlength') )">
+                                A URL do profissional deve conter de <strong>3 a 20</strong> caracteres!
+                            </mat-error>
+                            
+                        </mat-form-field>
+                    </div>
+                     </div>
+
+
+                    <div class="opt-row">
+                        <span class="previa">
+                        <p><strong>Prévia:</strong></p>
+                        <p>&nbsp;{{getprevia()}}</p>
+                    </span>
+                    </div>
+                    <br>
+                <div class="opt-row-to-end">
+                    <div class="status-container"
+                        [ngClass]="{'status-warning': professional.status === 'AGUARDANDO_APROVAÇÃO', 'status-danger': professional.status === 'NEGADO', 'status-confirm': professional.status === 'APROVADO' }">
+                        <p>
+                            Meu Status:
+                        </p>
+                        <p>
+                            {{ professional.status === 'AGUARDANDO_APROVAÇÃO' ? 'Aguardando Aprovação' : professional.status === 'NEGADO' ? 'Negado' : 'Aprovado' }}
+
+                        </p>
+                    </div>
+                </div>
+                <div class="opt-btn-form-container">
+                    <button [disabled]="!professionalFormGroup.valid && !acceptTerms " *ngIf="acceptTerms"
+                        class="opt-btn-form" mat-button type="button" (click)="onSubmit()">Salvar</button>
+                </div>
+                <div class="opt-btn-form-container" *ngIf="!acceptTerms">
+                    <button [disabled]="!isCompleteNext" class="opt-btn-form" mat-button type="button"
+                        (click)="next()">Continuar</button>
+                    <!-- <button (click)="close()" mat-button>Ok</button> -->
+                </div>
+            </div>
+            <!-- ------------------------------ -->
+
+
+
+            <div *ngIf="isNext">
+
+
+                <div *ngIf="isLoading" class="opt-loading-page-container">
+                    <mat-spinner color="light" diameter="75"></mat-spinner>
+                </div>
+
+                <mat-card class="opt-term-container" *ngIf="isNext">
+                    <mat-card-header>
+                        <mat-card-title>Termos de uso</mat-card-title>
+                        <!--  <mat-card-subtitle>Dog Breed</mat-card-subtitle> -->
+                    </mat-card-header>
+                    <mat-card-content>
+                        <p>{{selectedTermOfUse.texto}}
+                        </p>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <div class="opt-form-control">
+                            <div class="accept-terms-container">
+                                <mat-checkbox formControlName="acceptTerms" (change)="changeCheckboxUserData($event)">
+                                </mat-checkbox><span>Eu li e
+                                    concordo com os termos de uso.</span>
+                            </div>
+                        </div>
+                    </mat-card-actions>
+
+                </mat-card>
+
+
+
+                <div class="opt-btn-form-container">
+                    <button class="opt-btn-form" mat-button type="button" (click)="back()">Voltar</button>
+                    <button [disabled]="!professionalFormGroup.valid || !acceptTerms" class="opt-btn-form" mat-button
+                        type="submit">Salvar</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>

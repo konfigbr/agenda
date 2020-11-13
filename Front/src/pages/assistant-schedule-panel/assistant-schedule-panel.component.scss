@@ -1,0 +1,20 @@
+@import "../../theme/variables";
+
+.header-calendar-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-primary;
+    font-size: 24px;
+    padding: 16px 0;
+    font-weight: bold;
+    text-transform: capitalize;
+    line-height: 32px;
+
+    mat-icon {
+        line-height: 32px;
+        font-size: 32px;
+        height: 32px;
+        width: 32px;
+    }
+}

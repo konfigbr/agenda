@@ -1,0 +1,44 @@
+<div class="checking-checkout-auth-modal-container">
+    <div class="checking-checkout-auth-modal-header">
+        Check-in / Check-out do Profissional
+    </div>
+    <div class="checking-checkout-auth-modal-body">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="checkingCheckoutAuthFormGroup" (submit)="onSubmit()">
+            <div class="opt-form-control ">
+                <mat-form-field appearance="outline">
+                    <mat-label>E-mail do Profissional</mat-label>
+                    <input [(ngModel)]="authProfessional.username" type="email" matInput formControlName="username"
+                        [errorStateMatcher]="matcher" placeholder="E-mail do Profissional">
+                    <mat-error *ngIf="formCheckingCheckoutAuthHasError('username', 'required')">
+                        O e-mail é <strong>obrigatório</strong>!
+                    </mat-error>
+                    <mat-error
+                        *ngIf="!formCheckingCheckoutAuthHasError('username', 'required') && formCheckingCheckoutAuthHasError('username', 'email')">
+                        E-mail <strong>inválido</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Senha do Profissional</mat-label>
+                    <input [(ngModel)]="authProfessional.password" type="password" matInput formControlName="password"
+                        [errorStateMatcher]="matcher" placeholder="Senha do Profissional">
+                    <mat-error *ngIf="formCheckingCheckoutAuthHasError('password', 'required')">
+                        A senha é <strong>obrigatória</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="opt-btn-form-container">
+                <button class="opt-btn-form-back" mat-button type="button" (click)="cancel()">Cancelar</button>
+                <button [disabled]="!checkingCheckoutAuthFormGroup.valid" class="opt-btn-form opt-btn-checkin"
+                    mat-button type="submit">Fazer {{ data.status === 'checkin' ? 'Check-in' : 'Check-out' }}</button>
+
+            </div>
+
+        </form>
+    </div>
+</div>

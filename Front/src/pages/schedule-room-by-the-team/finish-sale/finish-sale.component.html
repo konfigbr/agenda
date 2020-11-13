@@ -1,0 +1,172 @@
+<div class="finish-sale-modal-container">
+    <div class="finish-sale-modal-header">
+        Finalizar Compra
+    </div>
+    <div class="finish-sale-modal-body">
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="finishSaleFormGroup" (submit)="onSubmit()">
+            <div class="opt-form-control ">
+                <mat-form-field appearance="outline">
+                    <mat-label>Titular do cartão</mat-label>
+                    <input [(ngModel)]="finishSale.cardHolderName" name="cardholder-name" id="cardholder-name" matInput
+                        formControlName="cardholder" [errorStateMatcher]="matcher" placeholder="Titular do cartão">
+                    <mat-error *ngIf="formFinishSaleHasError('cardholder', 'required')">
+                        O titular do cartão é <strong>obrigatório</strong>!
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Número do cartão</mat-label>
+                        <input [specialCharacters]="[ ' ' ]" [dropSpecialCharacters]="true"
+                            (input)="changeCreditCardNumber($event)" [mask]="myMaskCardNumber"
+                            [maxlength]="cardMaxLength" [(ngModel)]="finishSale.number" name="card-number"
+                            id="card-number" matInput formControlName="cardNumber" [errorStateMatcher]="matcher"
+                            placeholder="Número do cartão">
+                        <mat-hint align="end">{{ finishSale.number?.length || 0 }}/{{ cardMaxLength }}</mat-hint>
+                        <mat-error *ngIf="formFinishSaleHasError('cardNumber', 'required')">
+                            O número do cartão é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Bandeira</mat-label>
+                        <input [(ngModel)]="finishSale.brandName" name="card-brand" id="card-brand" matInput disabled
+                            formControlName="brandName" placeholder="Bandeira">
+                    </mat-form-field>
+                </div>
+            </div>
+            <p class="opt-subtitle-form"> Data de expiração:</p>
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Mês</mat-label>
+                        <mat-select id="card-expiration-month" name="card-expiration-month"
+                            [errorStateMatcher]="matcher" formControlName="expirationMonth"
+                            [value]="finishSale.tipoEquipamento" [(ngModel)]="finishSale.expirationMonth">
+                            <mat-option *ngFor="let month of months" [value]="month">
+                                {{ month }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formFinishSaleHasError('expirationMonth', 'required')">
+                            O mês de expiração é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Ano</mat-label>
+                        <mat-select id="card-expiration-year" name="card-expiration-year" [errorStateMatcher]="matcher"
+                            formControlName="expirationYear" [value]="finishSale.tipoEquipamento"
+                            [(ngModel)]="finishSale.expirationYear">
+                            <mat-option *ngFor="let year of years" [value]="year">
+                                {{ year }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="formFinishSaleHasError('expirationYear', 'required')">
+                            O ano de expiração é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="opt-row">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Código de Segurança</mat-label>
+                        <input [mask]="securityCodeMask" [(ngModel)]="finishSale.securityCode" name="card-security-code"
+                            id="card-security-code" matInput formControlName="securityCode"
+                            [errorStateMatcher]="matcher" placeholder="Código de segurança">
+                        <mat-error *ngIf="formFinishSaleHasError('securityCode', 'required')">
+                            O código de segurança é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CPF</mat-label>
+                        <input mask="000.000.000-00" [specialCharacters]="[ '.' ,'-' ]" [dropSpecialCharacters]="true"
+                            [(ngModel)]="finishSale.holderCpf" name="cpf" id="cpf" matInput formControlName="holderCpf"
+                            [errorStateMatcher]="matcher" placeholder="CPF">
+                        <mat-error *ngIf="formFinishSaleHasError('holderCpf', 'required')">
+                            O cpf é <strong>obrigatório</strong>!
+                        </mat-error>
+                        <mat-error *ngIf="formFinishSaleHasError('holderCpf', 'invalidCpf')">
+                            O cpf não é <strong>Válido</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+            </div>
+            <div class="opt-form-control">
+                <mat-checkbox (change)="changeCheckboxUserData($event)" formControlName="mesmosDadosMedico"
+                    [(ngModel)]="finishSale.mesmosDadosMedico">
+                    Dados pessoais da compra são os mesmos do profissional!
+                </mat-checkbox>
+                <input type="checkbox" style="position: absolute; left: -200vw; opacity: 0; z-index: -1;"
+                    [(ngModel)]="finishSale.mesmosDadosMedico" formControlName="mesmosDadosMedico">
+            </div>
+
+
+
+
+            <div *ngIf="!finishSale.mesmosDadosMedico">
+                <div class="opt-form-control ">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome completo</mat-label>
+                        <input [(ngModel)]="finishSale.holderName" name="name" id="name" matInput
+                            formControlName="holderName" [errorStateMatcher]="matcher" placeholder="Nome completo">
+                        <mat-error *ngIf="formFinishSaleHasError('holderName', 'required')">
+                            O nome completo é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-row">
+
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>E-mail</mat-label>
+                            <input type="email" [(ngModel)]="finishSale.holderEmail" name="cardholder-name"
+                                id="cardholder-name" matInput formControlName="holderEmail"
+                                [errorStateMatcher]="matcher" placeholder="E-mail">
+                            <mat-error *ngIf="formFinishSaleHasError('holderEmail', 'required')">
+                                O e-mail é <strong>obrigatório</strong>!
+                            </mat-error>
+                            <mat-error
+                                *ngIf="!formFinishSaleHasError('holderEmail', 'required') && formFinishSaleHasError('holderEmail', 'email')">
+                                E-mail <strong>inválido</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="opt-form-control ">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Telefone</mat-label>
+                            <input mask="(00) 00000-0000" [specialCharacters]="[ '(', ')', ' ' ,'-' ]"
+                                [dropSpecialCharacters]="true" [(ngModel)]="finishSale.holderPhone" name="phone-number"
+                                id="phone-number" matInput formControlName="holderPhone" [errorStateMatcher]="matcher"
+                                placeholder="Telefone">
+                            <mat-error *ngIf="formFinishSaleHasError('holderPhone', 'required')">
+                                O telefone é <strong>obrigatório</strong>!
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="opt-btn-form-container">
+                <!-- <button class="opt-btn-form-back" mat-button type="button"
+                    [routerLink]="['/tipos-de-equipamentos']">Voltar</button> -->
+                <button [disabled]="!finishSaleFormGroup.valid" class="opt-btn-form" mat-button type="submit">Realizar
+                    Pagamento</button>
+
+            </div>
+
+        </form>
+    </div>
+</div>

@@ -1,0 +1,174 @@
+<div class="page-container">
+    <div class="header-page-container">
+        <div>
+            <mat-icon>airline_seat_flat</mat-icon>
+            <h1>Consultas</h1>
+        </div>
+    </div>
+    <form [formGroup]="appointmentAdministrativeFormGroup" (submit)="onSubmit()">
+        <div class="opt-row ">
+            <div class="opt-form-control mat-opt-consulta" *ngIf="getAccessType() !== 'ROLE_PROFISSIONAL'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Profissional</mat-label>
+                    <mat-select formControlName="professional" [(ngModel)]="professional">
+                        <mat-option [value]="''">
+                            Todos
+                        </mat-option>
+                        <mat-option *ngFor="let professional of professionals" [value]="professional">
+                            {{ professional.nome }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control mat-opt-consulta">
+                <mat-form-field appearance="outline">
+                    <mat-label>Sala</mat-label>
+                    <mat-select formControlName="room" [(ngModel)]="room">
+                        <mat-option [value]="''">
+                            Todos
+                        </mat-option>
+                        <mat-option *ngFor="let room of rooms" [value]="room">
+                            {{ room.nome }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control mat-opt-consulta">
+                <mat-form-field appearance="outline">
+                    <mat-label>Paciente</mat-label>
+                    <mat-select formControlName="patient" [(ngModel)]="patient">
+                        <mat-option [value]="''">
+                            Todos
+                        </mat-option>
+                        <mat-option *ngFor="let patient of patients" [value]="patient">
+                            {{ patient.nome }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="opt-row ">
+
+            <div class="opt-form-control mat-opt-consulta">
+                <mat-form-field appearance="outline">
+                    <mat-label>Status</mat-label>
+                    <mat-select formControlName="status" [(ngModel)]="status">
+                        <mat-option [value]="''">
+                            Todos
+                        </mat-option>
+                        <mat-option *ngFor="let option of statusList" [value]="option.value">
+                            {{option.label}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control mat-opt-consulta">
+                <mat-form-field appearance="outline">
+                    <mat-label>Início do Agendamento</mat-label>
+                    <input formControlName="startDate" [(ngModel)]="startDate" style="color: #000;" matInput
+                        placeholder="Início do Agendamento" [matDatepicker]="dp2" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+                    <mat-datepicker #dp2 disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="opt-form-control mat-opt-consulta">
+                <mat-form-field appearance="outline">
+                    <mat-label>Fim do Agendamento</mat-label>
+                    <input formControlName="endDate" [(ngModel)]="endDate" style="color: #000;" matInput
+                        placeholder="Fim do Agendamento" [matDatepicker]="dp3" disabled>
+                    <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        
+        <div class="opt-btn-form-container ">
+                <button [disabled]="!appointmentAdministrativeFormGroup.valid || isLoading" class="opt-btn-form opt-generic" mat-button
+                type="submit">Pesquisar</button>
+
+                <button (click)="schedulingAppointment()" class="opt-btn-form " mat-button
+                type="submit">Novo Agendamento</button>
+        </div>
+    </form>
+    <br>
+   
+    <div class="page-content">
+
+       
+        <table mat-table [dataSource]="dataSource" matSort class="opt-list-items">
+  
+           
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <p>Status</p>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element?.status || '-'}}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="paciente">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <p>Paciente</p>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element?.paciente.nome || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="telpaciente">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <p>Contato do Paciente</p>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    {{element?.paciente?.telefone? (element.paciente.telefone | mask: '(00) 00000-0000') : '-'}} </td>
+            </ng-container>
+                <ng-container matColumnDef="profissional">
+                <th mat-header-cell *matHeaderCellDef>Profissional</th>
+                <td mat-cell *matCellDef="let element"> {{element?.medico.nome || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="telprofissional">
+                <th mat-header-cell *matHeaderCellDef>Contato do Profissional</th>
+                <td mat-cell *matCellDef="let element">
+                    {{element?.medico?.telefone? (element.medico.telefone | mask: '(00) 00000-0000') : '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="data">
+                <th mat-header-cell *matHeaderCellDef>Data </th>
+                <td mat-cell *matCellDef="let element">{{formatDateWithPattern(element?.dataInicio, 'dd/MM/yyyy')}}
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="inicio">
+                <th mat-header-cell *matHeaderCellDef>Inicio </th>
+                <td mat-cell *matCellDef="let element">{{formatDateWithPattern(element?.dataInicio, 'HH:mm')}} </td>
+            </ng-container>
+            <ng-container matColumnDef="fim">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fim</th>
+                <td mat-cell *matCellDef="let element">
+                    {{formatDateWithPattern(element?.dataFim, 'HH:mm')}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>
+                    <p> Ações </p>
+                </th>
+                <td mat-cell *matCellDef="let element">
+                    <div *ngIf="element.status !== 'CANCELADA'">
+                        <mat-icon matTooltip="Editar" (click)="editConsulta(element)">edit</mat-icon>
+
+                        <mat-icon matTooltip="Reagendar" (click)="rescheduling(element)">sync_alt</mat-icon>
+                        <div>
+                            <mat-icon matTooltip="Apagar" (click)="deleteElement(element)">delete</mat-icon>
+                        </div>
+
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <p class="opt-message-empty-table" *ngIf="!isLoading && !errorTableData && dataSource && !dataSource.data.length">
+            Nenhum consulta encontrada.
+        </p>
+        <p class="opt-message-error-table-data" *ngIf="!isLoading && errorTableData">Erro ao carregar dados.</p>
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+              <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <mat-paginator [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons></mat-paginator>
+    </div>
+</div>

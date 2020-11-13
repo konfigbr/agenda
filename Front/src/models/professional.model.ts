@@ -1,0 +1,36 @@
+export default class Professional {
+  public id?: string | number;
+  public nome!: string;
+  public username!: string;
+  public especialidade!: any;
+  public ufcrm!: string;
+  public crm!: string;
+  public rg!: string;
+  public cpf?: string;
+  public cnpj?: string;
+  public endereco!: string;
+  public cep!: string;
+  public telefone!: string;
+  public password?: string;
+  public confirmPassword?: string;
+  public imagerg: string | null = null;
+  public imagecrm: string | null = null;
+  public imagecpf: string | null = null;
+  public imageComprovante: string | null = null;
+  public imageFoto: string | null = null;
+  public status!: string;
+  public tipoDocumento: any = {};
+  public url: string;
+  public previa: string;
+  public termoUsoPrivacidade: string;
+  public termo: string;
+  public termoAceite: string | null = null;
+  public nacionalidade!: string;
+  public estadoCivil!: string;
+  public logradouro!: string;
+  public numero!: string;
+  public bairro!: string;
+  public cidade!: string;
+  public uf!: string;
+
+}

@@ -1,0 +1,36 @@
+<div class="opt-modal-container">
+    <div class="opt-header-modal">
+        Agendar Assistente
+        <mat-icon (click)="close()">close</mat-icon>
+    </div>
+    <div class="opt-body-modal">
+        <form name="eventForm" [formGroup]="eventForm" *ngIf="!isLoading">
+
+            <div class="opt-form-control">
+                <mat-form-field appearance="outline">
+                    <mat-label>Sala</mat-label>
+                    <mat-select [(ngModel)]="roomSelected" formControlName="sala" (selectionChange)="changeRoom($event.value)">
+                        <mat-option *ngFor="let room of rooms" [value]="room">{{ room.nome }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="opt-form-control">
+                <fieldset>
+                    <legend>Repetir</legend>
+                    <div class="example-button-row">
+                        <button mat-mini-fab type="button" *ngFor="let diaSemana of diasSemana"
+                            (click)="diaSemanaClicked(diaSemana)" color="{{isDiaSelecionado(diaSemana)}}">
+                            {{ diaSemana.toString().charAt(0) }}
+                        </button>
+                    </div>
+                </fieldset>
+            </div>
+        </form>
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+    </div>
+    <div class="opt-footer-modal">
+        <button *ngIf="!isLoading" (click)="dialogRef.close(eventForm)" [disabled]="eventForm.invalid" mat-button>Salvar</button>
+    </div>
+</div>

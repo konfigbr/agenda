@@ -1,0 +1,54 @@
+<div class="page-container equipment-types-container">
+    <div class="header-page-container">
+        <div>
+            <mat-icon>list_alt</mat-icon>
+            <h1>Auditoria</h1>
+        </div>
+        <div>
+            <div class="opt-form-control opt-filter-list-container">
+                <mat-form-field appearance="outline">
+                    <mat-label>Pesquisar</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium">
+                </mat-form-field>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="page-content">
+
+
+
+        <table mat-table [dataSource]="dataSource" matSort class="opt-list-items">
+
+            <ng-container matColumnDef="nome">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+                <td mat-cell *matCellDef="let element"> {{element?.user?.nome || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="data">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Data </th>
+                <td mat-cell *matCellDef="let element"> {{element?.dataExibir|| '-'}} </td>
+                </ng-container>
+            <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </th>
+                <td mat-cell *matCellDef="let element"> {{getLabelTipo(element?.tipoLog) || '-'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="descricao">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </th>
+                <td mat-cell *matCellDef="let element"> {{element?.descricao|| '-'}} </td>
+                </ng-container>
+
+
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <p class="opt-message-empty-table" *ngIf="!isLoading && !errorTableData && !dataSource.data.length">Nenhum log
+            encontrado.</p>
+        <p class="opt-message-error-table-data" *ngIf="!isLoading && errorTableData">Erro ao carregar dados.</p>
+        <div *ngIf="isLoading" class="opt-loading-page-container">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <mat-paginator [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons></mat-paginator>
+    </div>
+</div>

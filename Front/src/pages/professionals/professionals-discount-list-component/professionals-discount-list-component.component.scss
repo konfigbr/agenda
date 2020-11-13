@@ -1,0 +1,56 @@
+@import "../../../theme/variables";
+::ng-deep .mat-form-field-flex > .mat-form-field-infix {
+    padding: 0.4em 0px !important;
+}
+::ng-deep .mat-form-field-label-wrapper {
+    top: -1.5em;
+}
+
+::ng-deep
+    .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+    .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+}
+.opt-btn-form {
+    margin-left: 16px !important;
+}
+.opt-modal-message-container {
+    padding: 24px;
+    p {
+        color: $color-primary;
+        filter: brightness(130%);
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .opt-modal-message-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 32px;
+        button {
+            height: 40px;
+            text-transform: uppercase;
+        }
+        .opt-cancel-btn-modal {
+           
+            background: $color-primary;
+            font-weight: bold;
+            color: #fff;
+            margin-right: 16px;
+        }
+        .opt-confirm-btn-modal {
+            background: #f00;
+            color: #fff;
+        }
+        .opt-btn-form {
+            margin: 10px;
+            height: 50px;
+            background: $color-primary;
+            color: #fff;
+        }
+    }
+    .table{
+        width: 100%;
+    }
+}

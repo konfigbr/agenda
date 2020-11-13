@@ -1,0 +1,114 @@
+@import "../../theme/variables";
+
+.opt-inco-cards-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+p {
+    padding: 0 16px;
+}
+.opt-info-card {
+    display: inline-block;
+    background: #fff;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+        0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+
+    &-header {
+        background: $color-primary;
+        font-weight: bold;
+        color: #fff;
+        padding: 16px;
+        span {
+            display: block;
+            float: right;
+        }
+        .opt-status-warning {
+            color: #ffc100;
+        }
+    }
+    &-body {
+        padding: 16px 0;
+    }
+}
+.messages-card {
+    width: calc(40% - 24px);
+    height: fit-content;
+}
+
+.next-schedule-card {
+    // width: calc(60% - 24px);
+    width: 100%;
+}
+.opt-item-title {
+    text-transform: capitalize;
+    padding: 0;
+}
+.opt-item-value {
+    font-weight: bold;
+    text-transform: uppercase;
+    // font-weight: bold;
+}
+.opt-row-panel {
+    p {
+        display: inline-block;
+        width: fit-content;
+        padding-left: 0 16px;
+    }
+}
+.opt-form-control {
+    padding: 16px 16px 0;
+}
+.opt-current-scheduling-item {
+    padding: 8px 16px;
+}
+.opt-btn-action-container {
+    padding: 16px 16px 0;
+
+    button {
+        text-transform: capitalize;
+    }
+}
+.opt-btn-rom-checkin {
+    background: $color-secondary;
+    color: #fff !important;
+    &:disabled {
+        opacity: 0.4;
+    }
+}
+.opt-btn-rom-checkout {
+    background: $color-primary;
+    color: #fff !important;
+    margin-left: 16px;
+    &:disabled {
+        opacity: 0.4;
+    }
+}
+.opt-btn-more-time {
+    background: $color-primary;
+    color: #fff !important;
+    margin: 16px;
+}
+.opt-btn-observation {
+    display: block;
+    margin-left: auto;
+}
+@media (max-width: 480px) {
+    .opt-info-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .opt-item-value {
+            font-size: 14px;
+        }
+    }
+    .opt-btn-action-container {
+        button {
+            display: block;
+            margin: 16px auto;
+        }
+    }
+}

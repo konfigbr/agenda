@@ -1,0 +1,105 @@
+<div class="login-container">
+    <div class="opt-box-login" >
+        <div class="opt-logo-container">
+            <img src="assets/logo.png" alt="Logo OPT.DOC">
+        </div>              
+        <p class="opt-title-login">Cadastrar Paciente</p>
+        <div *ngIf="isLoading" class="opt-loading-page-container opt-loading-primary">
+            <mat-spinner color="light" diameter="75"></mat-spinner>
+        </div>
+        <form [formGroup]="formGroupUserRegister" *ngIf="!isLoading">
+
+            <div class="opt-row">
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nome</mat-label>
+                        <input [(ngModel)]="patient.nome" matInput formControlName="name"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu nome completo">
+                        <mat-icon matSuffix>account_circle</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('name', 'required')">
+                            O nome é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div> 
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>E-mail</mat-label>
+                        <input [(ngModel)]="patient.username" matInput formControlName="email"
+                            [errorStateMatcher]="matcher" type="email" placeholder="Digite seu e-mail">
+                        <mat-icon matSuffix>mail</mat-icon>
+                        <mat-error
+                            *ngIf="formRegisterHasError('email', 'email') && !formRegisterHasError('email', 'required')">
+                            Por favor entre com um e-mail válido!
+                        </mat-error>
+                        <mat-error *ngIf="formRegisterHasError('email', 'required')">
+                            O e-mail é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+          
+            <div class="opt-row">
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CPF</mat-label>
+                        <input [(ngModel)]="patient.cpf" mask='000.000.000-00' matInput formControlName="document"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu CPF">
+                        <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('document', 'required')">
+                            O CPF é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>RG</mat-label>
+                        <input [(ngModel)]="patient.rg" matInput formControlName="rg"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu RG">
+                        <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('rg', 'required')">
+                            O RG é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="opt-row">
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Endereço</mat-label>
+                        <input [(ngModel)]="patient.endereco" matInput formControlName="endereco"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu Endereco">
+                        <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('endereco', 'required')">
+                            O endereço é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="opt-form-control">
+                    <mat-form-field appearance="outline">
+                        <mat-label>CEP</mat-label>
+                        <input (blur)="getCep()" [(ngModel)]="patient.cep" matInput formControlName="cep"
+                            [errorStateMatcher]="matcher" placeholder="Digite seu CEP">
+                        <mat-icon matSuffix>subtitles</mat-icon>
+                        <mat-error *ngIf="formRegisterHasError('cep', 'required')">
+                            O CEP é <strong>obrigatório</strong>!
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>           
+
+          
+           
+            <button [disabled]="isLoading || !formGroupUserRegister.valid" class="opt-btn-submit-login"
+                mat-button type="button" (click)="onSubmitRegister()">Cadastrar</button>
+            <p class="opt-text-register">Já possui cadastro?</p>
+            <a [routerLink]="['/auth/login']" class="opt-register-link">Entrar</a>
+        </form>            
+        
+    </div>
+</div>

@@ -1,0 +1,17 @@
+@import "../../../theme/variables";
+
+.opt-modal-container {
+    .opt-modal-header {
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        background: $color-primary;
+        color: #fff;
+        padding: 16px;
+    }
+    .opt-modal-body {
+        padding: 16px;
+    }
+}
+.opt-btn-form-back {
+    margin-right: 16px;
+}

@@ -1,0 +1,41 @@
+@import "../../../theme/variables";
+
+.equipment-modal-container {
+    border-radius: 4px;
+
+    .equipment-modal-header {
+        background-color: $color-primary;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        color: #fff;
+        padding: 16px;
+    }
+    .equipment-modal-body {
+        padding: 16px;
+    }
+}
+.equipments-added-list {
+    list-style: none;
+    padding: 16px 0;
+    .equipment-added-item {
+        padding: 8px;
+        display: flex;
+        justify-content: space-between;
+        &:nth-child(even) {
+            background-color: rgba($color: $color-primary, $alpha: 0.06);
+        }
+        mat-icon {
+            &:hover {
+                cursor: pointer;
+                color: $color-primary;
+                filter: brightness(130%);
+            }
+        }
+    }
+}
+.opt-btn-form-add {
+    background: $color-primary;
+    color: #fff;
+    display: block;
+    margin-left: auto;
+}
